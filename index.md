@@ -4,14 +4,14 @@
 
 ### Team Roster: 
 
-- Baban Hamesalh
-- Dillan Merchant
-- Fernando Bracamonte
-- Sash Gollamudi
-- Sean Ye
-- Sharon Lei
-- Siddharth Nag
-- Sijie Wang
+- [Baban Hamesalh](#Baban-Hamesalh)
+- [Dillan Merchant](#Dillan-Merchant)
+- [Fernando Bracamonte](#Fernando-Bracamonte)
+- [Sash Gollamudi](#Sash-Gollamudi)
+- [Sean Ye](#Sean-Ye)
+- [Sharon Lei](#Sharon-Lei)
+- [Siddharth Nag](#Siddharth-Nag)
+- [Sijie Wang](#Sijie-Wang)
 
 
 
