@@ -29,6 +29,10 @@ GitHub page:
 
 #### Fernando Bracamonte
 
+
+
+<img src="./images/fernandobracamonte.png" style="zoom:33%;" />
+
 Enter intro here:
 
 GitHub page: https://github.com/Fernandobrac 
