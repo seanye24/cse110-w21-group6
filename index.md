@@ -2,7 +2,7 @@
 
 **Values**: 
 
-### Team Roster: 
+## Team Roster: 
 
 - [Baban Hamesalh](#Baban-Hamesalh)
 - [Dillan Merchant](#Dillan-Merchant)
@@ -15,53 +15,53 @@
 
 
 
-#### Baban Hamesalh 
+### Baban Hamesalh 
 
 Enter intro here:
 
 GitHub page: 
 
-#### Dillan Merchant
+### Dillan Merchant
 
 Enter intro here:
 
 GitHub page: 
 
-#### Fernando Bracamonte
+### Fernando Bracamonte
 
 
 
-<img src="/images/fernandobracamonte.PNG" style="zoom:75%;" />
+<img src="/images/fernandobracamonte.PNG" style="zoom:75%;"  align="center"/>
 
-Enter intro here:
+I am a 4th year Computer Science specialized in Bioinformatics major in Muir College, and transferred to UCSD in Fall 19. In my free time I like taking my dog for walks, playing basketball and exercising, as well as watching sports (NBA and NFL). 
 
 GitHub page: https://github.com/Fernandobrac 
 
-#### Sash Gollamudi
+### Sash Gollamudi
 
 I am a second year Computer Science major in Warren College. I am from San Diego and my favorite programming language is Java. I’m very much looking forward to working with my team throughout the course of the quarter to create our project!
 
 GitHub page:  
 
-#### Sean Ye
+### Sean Ye
 
 Enter intro here:
 
 GitHub page: 
 
-#### Sharon Lei
+### Sharon Lei
 
 Enter intro here:
 
 GitHub page: 
 
-#### Siddharth Nag
+### Siddharth Nag
 
 Enter intro here:
 
 GitHub page: 
 
-#### Sijie Wang
+### Sijie Wang
 
 Enter intro here:
 
