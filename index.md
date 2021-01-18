@@ -39,7 +39,7 @@ GitHub page: https://github.com/Fernandobrac
 
 ### Sash Gollamudi
 
-<img src="/images/sashgollamudi.PNG" style="zoom:75%;"  align="center"/>
+<img src="/images/sashgollamudi.png" style="zoom:75%;"  align="center"/>
 
 I am a second year Computer Science major in Warren College. I am from San Diego and my favorite programming language is Java. I’m very much looking forward to working with my team throughout the course of the quarter to create our project!
 
