@@ -31,7 +31,7 @@ GitHub page:
 
 
 
-<img src="./images/fernandobracamonte.png" style="zoom:33%;" />
+<img src="/images/fernandobracamonte.PNG" style="zoom:75%;" />
 
 Enter intro here:
 
