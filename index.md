@@ -23,9 +23,11 @@ GitHub page:
 
 ### Dillan Merchant
 
-Enter intro here:
+<img src="/images/dillan.png" align="center" width="350" height="300"/>
 
-GitHub page: 
+I am a second year Computer Science major from Warren college. I have been in San Diego all my life and love setting up bonfires on the La Jolla Shores. Apart from school, I have a passion for dancing and have joined various dance teams. I also enjoy filming/editing - on school breaks I venture out with some high school friends to national parks and capture the best moments on film!
+
+GitHub page: https://github.com/dillanmerchant
 
 ### Fernando Bracamonte
 
