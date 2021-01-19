@@ -46,7 +46,7 @@ GitHub page: https://github.com/Fernandobrac
 
 <img src="/images/sashgollamudi.png" style="zoom:75%;"  align="center"/>
 
-I am a second year Computer Science major in Warren College. I am from San Diego and my favorite programming language is Java. I’m very much looking forward to working with my team throughout the course of the quarter to create our project!
+I am a second year Computer Science major in Warren College. I am from San Diego and my favorite programming language is Java. In my free time, I like to play video games, go biking, listen to music, and watch TV shows. I’m very much looking forward to working with my team throughout the course of the quarter to create our project!
 
 GitHub page: https://github.com/sash132/
 
