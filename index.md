@@ -1,3 +1,4 @@
+# Pomodo Dragons
 # Theme/Brand: 
 
 **Values**: 
@@ -37,7 +38,7 @@ GitHub page: https://github.com/dillanmerchant
 
 <img src="/images/fernandobracamonte.PNG" style="zoom:75%;"  align="center"/>
 
-I am a 4th year Computer Science specialized in Bioinformatics major in Muir College, and transferred to UCSD in Fall 19. In my free time I like taking my dog for walks, playing basketball and exercising, as well as watching sports (NBA and NFL). 
+I am a 4th year Computer Science specialized in Bioinformatics major in Muir College, and transferred to UCSD in Fall 2019. In my free time I like taking my dog for walks, playing basketball and exercising, as well as watching sports (NBA and NFL). 
 
 GitHub page: https://github.com/Fernandobrac 
 
@@ -63,15 +64,17 @@ GitHub page:
 
 ### Siddharth Nag
 
-Enter intro here:
+<img src="/images/sidnag.jpg" style="zoom:75%;"  align="center"/>
 
-GitHub page: 
+I am a second year Computer Engineering major in Eleanor Roosevelt College. When I'm down in San Diego, I love going to the beaches and enjoying the scenery, the cool ocean water, and breathing in the fresh air. I am a huge fan of going to new places with friends and meeting new people, so I'm really excited to be working on this project with my amazing teammates! 
+
+GitHub page: https://github.com/siddharthnag
 
 ### Sijie Wang
 
 <img src="/images/sijiewang.png" style="zoom:75%;"  align="center" height="30%" width="30%" />
 
-I am a 4th year Computer Science major in Revelle College, and transferred to UCSD in fall 2019. I'm interested in programming and my favorite programming language is Java. In my leisure time, I like cooking traditional Chinese cuisine, walking my dog and playing soccer. I'm very looking forward to collaborating with my teamates to create our project. 
+I am a 4th year Computer Science major in Revelle College, and transferred to UCSD in Fall 2019. I'm interested in programming and my favorite programming language is Java. In my leisure time, I like cooking traditional Chinese cuisine, walking my dog and playing soccer. I'm very looking forward to collaborating with my teammates to create our project. 
 
 GitHub page: https://github.com/sijiewang6569
 
