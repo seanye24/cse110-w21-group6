@@ -19,7 +19,7 @@
 
 <img src="/images/BabanPFP.jpg" style="zoom:75%;"  align="center"/>
 
-Enter intro here:
+I am a 4th year Pharmacological Chemistry major with a minor in Computer Science at Sixth College. I was born and raised in San Diego. When I have time to relax, I love to watch movies, read articles, go on outdoor walks, and play video games (primarily on my PC and Nintendo Switch).
 
 GitHub page: https://github.com/bhamesal
 
