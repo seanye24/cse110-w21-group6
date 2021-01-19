@@ -69,7 +69,7 @@ GitHub page:
 
 ### Sijie Wang
 
-Enter intro here:
+<img src="/images/sijiewang.PNG" style="zoom:75%;"  align="center"/>
 
 GitHub page: 
 
