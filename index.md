@@ -17,9 +17,11 @@
 
 ### Baban Hamesalh 
 
+<img src="/images/BabanPFP.jpg" style="zoom:100%;"  align="center"/>
+
 Enter intro here:
 
-GitHub page: 
+GitHub page: https://github.com/bhamesal
 
 ### Dillan Merchant
 
