@@ -64,7 +64,7 @@ GitHub page:
 
 ### Siddharth Nag
 
-<img src="/images/sidnag.jpg" style="zoom:75%;"  align="center"/>
+<img src="/images/sidnag.jpg" width="350"  align="center"/>
 
 I am a second year Computer Engineering major in Eleanor Roosevelt College. When I'm down in San Diego, I love going to the beaches and enjoying the scenery, the cool ocean water, and breathing in the fresh air. I am a huge fan of going to new places with friends and meeting new people, so I'm really excited to be working on this project with my amazing teammates! 
 
