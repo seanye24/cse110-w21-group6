@@ -69,7 +69,9 @@ GitHub page:
 
 ### Sijie Wang
 
-<img src="/images/sijiewang.png" style="zoom:75%;"  align="center" height="40%" width="40%" />
+<img src="/images/sijiewang.png" style="zoom:75%;"  align="center" height="30%" width="30%" />
+
+I am a 4th year Computer Science major in Revelle College, and transferred to UCSD in fall 2019. I'm interested in programming and my favorite programming language is Java. In my leisure time, I like cooking traditional Chinese cuisine, walking my dog and playing soccer. I'm very looking forward to collaborating with my teamates to create our project. 
 
 GitHub page: https://github.com/sijiewang6569
 
