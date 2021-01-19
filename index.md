@@ -17,7 +17,7 @@
 
 ### Baban Hamesalh 
 
-<img src="/images/BabanPFP.jpg" style="zoom:100%;"  align="center"/>
+<img src="/images/BabanPFP.jpg" style="zoom:75%;"  align="center"/>
 
 Enter intro here:
 
