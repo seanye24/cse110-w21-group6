@@ -52,7 +52,7 @@ GitHub page: https://github.com/sash132/
 
 ### Sean Ye
 
-<img src="/images/seanye.png" style="zoom:35%;"  align="center"/>
+<img src="/images/seanye.png" width="350"  align="center"/>
 I am a second year Computer Science major in Warren College. I am from Los Angeles and my favorite programming language is JavaScript. In my free time, I like to build websites, keyboards, and watching the office. Excited to be building a Pomodoro timer!
 
 GitHub page: 
