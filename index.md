@@ -1,7 +1,7 @@
 # Pomodo Dragons
-# Theme/Brand: 
+# Theme/Brand: Working 'til we make it work!
 
-**Values**: 
+**Values**: Minimalism, Determination, Strive, and Strength
 
 ## Team Roster: 
 
