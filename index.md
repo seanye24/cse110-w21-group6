@@ -59,9 +59,10 @@ GitHub page: https://github.com/seanye24
 
 ### Sharon Lei
 
-Enter intro here:
+<img src="/images/sharonlei.png" width="350"  align="center"/>
+I am a fourth year at Muir college majoring in Mathematics and Economics with a minor in Computer Science. I'm from Los Angeles but I love the beaches in San Diego. I enjoy hiking and going to the beach on my free time. I look forward to working with this team this quarter!
 
-GitHub page: 
+GitHub page: https://github.com/sharonlei3
 
 ### Siddharth Nag
 
