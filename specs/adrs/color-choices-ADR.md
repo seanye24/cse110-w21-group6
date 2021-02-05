@@ -5,7 +5,7 @@
 
 ## Context and Problem Statement
 
-[Describe the context and problem statement, e.g., in free form using two to three sentences. You may want to articulate the problem in form of a question.]
+When creating our website, we have to decide upon the best colors that will overarch specific sections of it. Which colors would be the best?
 
 ## Considered Options
 
