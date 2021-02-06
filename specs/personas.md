@@ -1,6 +1,6 @@
-## Role: 
+## Role: College Student
 
-## Name:
+## Name: Thomas Smith
 
 ## Image: 
 <insert image here>
@@ -9,15 +9,18 @@
 
 ## Quote:
 
-> Candy donut chupa chups chocolate danish sweet. Candy canes biscuit jelly beans. Jelly beans cotton candy chocolate cake marzipan apple pie. Toffee caramels tart wafer jujubes bonbon candy.
+> ...
 
 ## Background:
-**Age:** 30<br> 
-**Location:** New York<br> 
-**Marital Status:** Engaged<br> 
+** 
+**Location:** San Francisco<br> 
+**Marital Status:** Single<br> 
 **Kids:** No<br> 
-**Occupation:** Account Manager<br> 
-**Education:** B.S.
+**Occupation:** Student<br>
+
+**Age:** 22
+
+**Education:** Undergraduate B.S.
 
 ## Characteristics
 * Reliable
@@ -29,26 +32,123 @@
 
 ## Goals/Needs
 
-* Wafer sesame snaps caramels chupa chups candy. Sweet roll dessert powder powder halvah. Apple pie chocolate cake cotton candy apple pie biscuit tiramisu. Liquorice chocolate bar cupcake sweet roll
-* Gingerbread dragée pudding chupa chups carrot cake. Donut marshmallow pastry biscuit. Sugar plum ice cream bonbon.
+* Distracted easily, so looking for an app to focus on getting homework done and study
+* Looking to increase productivity in the day, so that he can have more time playing video games
 
 
 ### TECH KNOWLEDGE
-██████████████████████████████░░░░░░░░░░░░░░░░░░░░░<br> 
-n00b                                                                                                                                               expert
-
-### KNOWS STAFF SKILLS
-                                      
-███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
-who are you?                                                                                                                                 besties!
+██████████████████████████████████████████████████████████░░░<br> 
+basic                                                                                                                                               expert
 
 ### TIME AVAILABILITY 
-███████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
-needed it yesterday                                                                                                                    I can wait
+██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
+Busy                                                                                                                   Free
+
+## About
+
+Write paragraph on this person's background
 
 
-##About
 
-Wafer sesame snaps caramels chupa chups candy. Sweet roll dessert powder powder halvah. Apple pie chocolate cake cotton candy apple pie biscuit tiramisu. Liquorice chocolate bar cupcake sweet roll chocolate halvah chocolate cake. Danish lollipop chocolate croissant. Candy oat cake gummies chocolate cake. Donut tart pudding toffee muffin halvah. Lollipop muffin fruitcake ice cream brownie pastry. Bear claw sugar plum bear claw topping pudding toffee caramels gummi bears marzipan. Pie fruitcake fruitcake. Danish lollipop jelly chupa chups fruitcake biscuit sweet macaroon sweet roll. Cheesecake gummies sugar plum tootsie roll chupa chups sesame snaps. Lemon drops jelly-o tiramisu cupcake cookie soufflé sweet jelly-o chupa chups. Jujubes caramels chocolate.
+## Role: Professor
 
-Gingerbread dragée pudding chupa chups carrot cake. Donut marshmallow pastry biscuit. Sugar plum ice cream bonbon.
+## Name: Thomas Smith
+
+## Image: 
+<insert image here>
+
+**Image Credit:**
+
+## Quote:
+
+> ...
+
+## Background:
+** 
+**Location:** San Francisco<br> 
+**Marital Status:** Single<br> 
+**Kids:** No<br> 
+**Occupation:** Student<br>
+
+**Age:** 22
+
+**Education:** Undergraduate B.S.
+
+## Characteristics
+* Reliable
+* Caring
+* Committed
+* Action Oriented
+* Focused 
+* Eager
+
+## Goals/Needs
+
+* Distracted easily, so looking for an app to focus on getting homework done and study
+* Looking to increase productivity in the day, so that he can have more time playing video games
+
+
+### TECH KNOWLEDGE
+██████████████████████████████████████████████████████████░░░<br> 
+basic                                                                                                                                               expert
+
+### TIME AVAILABILITY 
+██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
+Busy                                                                                                                   Free
+
+## About
+
+Write paragraph on this person's background
+
+
+
+
+## Role: Software Engineer
+
+## Name: Thomas Smith
+
+## Image: 
+<insert image here>
+
+**Image Credit:**
+
+## Quote:
+
+> ...
+
+## Background:
+** 
+**Location:** San Francisco<br> 
+**Marital Status:** Single<br> 
+**Kids:** No<br> 
+**Occupation:** Student<br>
+
+**Age:** 22
+
+**Education:** Undergraduate B.S.
+
+## Characteristics
+* Reliable
+* Caring
+* Committed
+* Action Oriented
+* Focused 
+* Eager
+
+## Goals/Needs
+
+* Distracted easily, so looking for an app to focus on getting homework done and study
+* Looking to increase productivity in the day, so that he can have more time playing video games
+
+
+### TECH KNOWLEDGE
+██████████████████████████████████████████████████████████░░░<br> 
+basic                                                                                                                                               expert
+
+### TIME AVAILABILITY 
+██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
+Busy                                                                                                                   Free
+
+## About
+
+Write paragraph on this person's background
