@@ -62,57 +62,64 @@ A busy college student who needs ways to improve their daily productivity and ac
 
 <hr>
 
-
-
-## Role: Professor
-
-## Name: Thomas Smith
+# Allan Cooper
+### Eduction Professor
+### **Age:** 56
 
 ## Image: 
-<insert image here>
-
-**Image Credit:**
+<img src="https://ca-times.brightspotcdn.com/dims4/default/8a9d757/2147483647/strip/true/crop/2048x1151+0+0/resize/840x472!/quality/90/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2F45%2F79%2F19d7737d7763ee47c72b14d5564a%2Fla-1508973424-bmjjssbcsk-snap-image" width="500" align="center">
+<p style="text-align: center;">  Credit: 
+<a href="https://www.latimes.com/socal/la-canada-valley-sun/news/tn-vsl-me-civics-20171026-story.html">Website</a></p>
 
 ## Quote:
 
-> ...
+> I would like to find an easy-to-operate app to help me manage office hours and class time.
 
 ## Background:
-** 
-**Location:** San Francisco<br> 
-**Marital Status:** Single<br> 
-**Kids:** No<br> 
-**Occupation:** Student<br>
 
-**Age:** 22
+**Location:** Los Angeles<br> 
+**Marital Status:** Married<br> 
+**Kids:** two sons and one daughter<br> 
+**Occupation:** College Professor<br>
 
-**Education:** Undergraduate B.S.
 
-## Characteristics
-* Reliable
-* Caring
-* Committed
-* Action Oriented
-* Focused 
-* Eager
+
+
+## Frustrations 
+* Sometimes spends too much time with a few students and makes other students wait too long during office hours 
+* Some class activities take too much time, which affects the accomplishment of the class plan
+* Unfamiliar with new technologies, unable to handle overly complicated apps
+
+
+
 
 ## Goals/Needs
 
-* Distracted easily, so looking for an app to focus on getting homework done and study
-* Looking to increase productivity in the day, so that he can have more time playing video games
+* Needs an app to help manage time to improve class efficiency
+* Expects the app can be simple and easy to use 
+* Wants to increase her work efficiency during office hours to shorten students' waiting time and provide help for more students 
+
+
 
 
 ### TECH KNOWLEDGE
-██████████████████████████████████████████████████████████░░░<br> 
-basic                                                                                                                                               expert
+██████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
+Basic                                                                                                                                               Expert
 
 ### TIME AVAILABILITY 
-██████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
-Busy                                                                                                                   Free
+██████████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
+Busy                                                                                                                                                   Free
+
+### Daily Productivity
+████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░<br> 
+Poor Productivity                                                                                                             Very Productive
+
+
 
 ## About
 
-Write paragraph on this person's background
+A college professor who needs an app to help her manage time to increase the efficiency of class and office hours and requires the app to be user friendly and easy to operate.
+ 
 
 
 
