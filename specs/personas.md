@@ -129,7 +129,7 @@ Write paragraph on this person's background
 <img src="https://www.efrontlearning.com/blog/wp-content/uploads/2014/09/photodune-2360811-computer-programmer-s.jpg" width="500" align="center">
 
 <p style="text-align: center;">  Credit: 
-<a href="https://www.purdueglobal.edu/blog/student-life/12-study-hacks-college-students-infographic/">Website</a></p>
+<a href="https://www.efrontlearning.com/blog/2014/09/programming-compared.html/">Website</a></p>
 
 ## Quote:
 
