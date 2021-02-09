@@ -2,7 +2,7 @@
 node_modules
 
 # MacOS
-**/.DS_Store
+.DS_Store
 
 # misc
-**/*.log
+*.log
