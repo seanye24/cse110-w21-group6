@@ -1,0 +1,33 @@
+# CI/CD
+name: CI/CD
+
+# run on all pushes or PR with main
+on:
+  push:
+  pull_request:
+    branches: [ main ]
+    
+# set `run` options
+defaults:
+  run:
+    shell: bash
+
+# lint and test
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2     # checkout repo
+      - uses: actions/setup-node@v2   # install node
+      - run: npm install -g yarn
+      - run: yarn run build
+  
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2      
+      - run: npm install -g yarn
+      - run: yarn install
+      - run: yarn run lint
+      - run: yarn run test
