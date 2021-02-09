@@ -19,9 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2     # checkout repo
       - uses: actions/setup-node@v2   # install node
-      - run: npm install -g yarn
       - run: |
-          yarn install
+          yarn
           yarn run build
   
   lint-test:
@@ -29,8 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2      
-      - run: npm install -g yarn
       - run: |
-          yarn install
+          yarn
           yarn run lint
           yarn test
