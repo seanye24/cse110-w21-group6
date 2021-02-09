@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "lint": "eslint --no-error-on-unmatched-pattern '**/*.js' && npx stylelint --allow-empty-input '**/*.css'"
+    "lint": "eslint --no-error-on-unmatched-pattern '**/*.js' && npx stylelint --allow-empty-input '**/*.css'",
+    "build": "echo 'build successfull'"
   },
   "devDependencies": {
     "eslint": "^7.19.0",
