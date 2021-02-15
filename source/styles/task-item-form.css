@@ -1,0 +1,28 @@
+.task-form {
+  margin: 1em;
+  padding: 1em 20%;
+  background: lightblue;
+  font-family: Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-input[type='text'] {
+  margin-bottom: 1em;
+}
+
+#submit-input {
+  width: 25%;
+  margin: auto;
+  background: rgba(51, 51, 51, 0.75);
+  border-radius: 20px;
+  outline: none;
+  border: none;
+  color: white;
+  padding: 1em;
+}
+
+#submit-input:hover {
+  cursor: pointer;
+  background: rgba(51, 51, 51, 1);
+}
