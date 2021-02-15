@@ -9,5 +9,9 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  rules: {},
+  plugins: ['prettier'],
+  rules: {
+    'prettier/prettier': 'error',
+  },
+  extends: ['plugin:prettier/recommended'],
 };
