@@ -28,24 +28,18 @@ class TaskItem extends HTMLElement {
     this.descriptionElement.setAttribute('class', 'description');
 
     this.editTaskButton = document.createElement('span');
-    this.editTaskButton.setAttribute(
-      'class',
-      'material-icons task-button edit-task-button',
-    );
+    this.editTaskButton.setAttribute('class', 'material-icons task-button');
+    this.editTaskButton.setAttribute('id', 'edit-button');
     this.editTaskButton.innerText = 'mode';
 
     this.finishTaskButton = document.createElement('span');
-    this.finishTaskButton.setAttribute(
-      'class',
-      'material-icons task-button finish-task-button',
-    );
+    this.finishTaskButton.setAttribute('class', 'material-icons task-button');
+    this.finishTaskButton.setAttribute('id', 'finish-button');
     this.finishTaskButton.innerText = 'done';
 
     this.deleteTaskButton = document.createElement('span');
-    this.deleteTaskButton.setAttribute(
-      'class',
-      'material-icons task-button delete-task-button',
-    );
+    this.deleteTaskButton.setAttribute('class', 'material-icons task-button');
+    this.deleteTaskButton.setAttribute('id', 'delete-button');
     this.deleteTaskButton.innerText = 'delete';
 
     this.shadow.append(this.containerElement);

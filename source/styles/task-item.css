@@ -28,17 +28,22 @@
   cursor: pointer;
 }
 
-.edit-task-button {
+#edit-button {
+  display: none;
+}
+
+.container:hover > #edit-button {
+  display: initial;
   top: 0;
   right: 0;
 }
 
-.finish-task-button {
+#finish-button {
   bottom: 0;
   right: 1.5em;
 }
 
-.delete-task-button {
+#delete-button {
   bottom: 0;
   right: 0;
 }
