@@ -1,0 +1,10 @@
+.container {
+  margin: 1em;
+  font-family: Roboto, sans-serif;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+}
+
+.title {
+  text-align: center;
+}
