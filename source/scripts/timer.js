@@ -1,15 +1,15 @@
 const timerButton = document.getElementById('timer-button');
 let timer = document.getElementById('timer');
-    
-const sessionTime =  25 + ":" + "0" + 0; //25 minutes
-const sBreakTime = "0" + 5 + ":" + "0" + 0; //5 minutes
-const lBreakTime = 25 + ":" + "0" + 0;  //15 minutes
-let sWork = "Work";
-let sBreak = "Break";
-    
-const title = document.title;   //variable to update title with current time left
-let session = document.getElementById("session");
-let currSession = session.innerHTML;    //starts with work 
+
+const sessionTime = 25 + ':' + '0' + 0; //25 minutes
+const sBreakTime = '0' + 5 + ':' + "0" + 0; //5 minutes
+const lBreakTime = 25 + ':' + '0' + 0;  //15 minutes
+let sWork = 'Work';
+let sBreak = 'Break';
+
+const title = document.title; //variable to update title with current time left
+let session = document.getElementById('session');
+let currSession = session.innerHTML; //starts with work
 
 var sessionsCompleted = 0;
 
