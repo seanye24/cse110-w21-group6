@@ -4,6 +4,7 @@
   margin: 1em;
   padding: 0.5em;
   position: relative;
+  border-radius: 5px;
 }
 
 .title {
