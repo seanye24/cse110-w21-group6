@@ -16,92 +16,94 @@ var sessionsCompleted = 0;
 timer.innerHTML = sessionTime;
 document.title = sessionTime;
 
-timerButton.addEventListener('click', function () { pomodoro(); });
+timerButton.addEventListener('click', function () { 
+    pomodoro(); 
+});
 
 function pomodoro() {
-    if (timerButton.innerHTML == 'START') {
-        timerButton.innerHTML = 'STOP';
-        startCountdown();
-    }
-    else {
-        timerButton.innerHTML = 'START';
-        resetTimer();
-    }
+  if (timerButton.innerHTML == 'START') {
+    timerButton.innerHTML = 'STOP';
+    startCountdown();
+  }
+  else {
+    timerButton.innerHTML = 'START';
+    resetTimer();
+  }
 }
 
 var timerName;
 function startCountdown() {
-    let presentTime = timer.innerHTML;
-    let timeArray = presentTime.split(/[:]+/);
-    let min = checkMinute(timeArray[0] - 0);
-    let sec = checkSecond((timeArray[1] - 1));
+  let presentTime = timer.innerHTML;
+  let timeArray = presentTime.split(/[:]+/);
+  let min = checkMinute(timeArray[0] - 0);
+  let sec = checkSecond((timeArray[1] - 1));
 
-    if(sec == 59){
-        min = min - 1;
-        if(min < 10){
-            min = "0" + min;
-        }
+  if(sec == 59){
+    min = min - 1;
+    if(min < 10){
+      min = "0" + min;
     }
-              
-    timer.innerHTML = min + ":" + sec;  //update html time
-    document.title = timer.innerText;   //update tab title with current time
-
-    timerName = setTimeout(startCountdown, 1000);   //set timeout for 1 second
-
-    if(min == 0 && sec == 0){
+  }
         
-        if(currSession == sWork){
-            sessionsCompleted++;
-            currSession = sBreak;
-            session.innerHTML = sBreak;
-        }
-        else{
-            currSession = sWork;
-            session.innerHTML = sWork;
-        }
-        
-        resetTimer();
+  timer.innerHTML = min + ":" + sec;  //update html time
+  document.title = timer.innerText;   //update tab title with current time
+
+  timerName = setTimeout(startCountdown, 1000);   //set timeout for 1 second
+
+  if(min == 0 && sec == 0){
+    
+    if(currSession == sWork){
+      sessionsCompleted++;
+      currSession = sBreak;
+      session.innerHTML = sBreak;
     }
+    else{
+      currSession = sWork;
+      session.innerHTML = sWork;
+    }
+    
+    resetTimer();
+  }
 }
 
 function resetTimer(){
-    clearTimeout(timerName);
+  clearTimeout(timerName);
 
-    if(currSession == sWork){
-        presentTime = sessionTime;
-        timer.innerHTML = presentTime;
+  if(currSession == sWork){
+    presentTime = sessionTime;
+    timer.innerHTML = presentTime;
+  }
+  else{
+    if(sessionsCompleted != 0 && sessionsCompleted % 4 == 0){
+      presentTime = lBreakTime;
+      timer.innerHTML = presentTime;
     }
     else{
-        if(sessionsCompleted != 0 && sessionsCompleted % 4 == 0){
-            presentTime = lBreakTime;
-            timer.innerHTML = presentTime;
-        }
-        else{
-            presentTime = sBreakTime;
-            timer.innerHTML = presentTime;
-        }
+      presentTime = sBreakTime;
+      timer.innerHTML = presentTime;
     }
+  }
 
-    if (timerButton.innerHTML == 'STOP') {
-        startCountdown();
-    }
+  if (timerButton.innerHTML == 'STOP') {
+    startCountdown();
+  }
 }
 
 function checkMinute(min){
-    if( min <= 9 ){
-        min = "0" + min;
-    }
-    return min;
+  if( min <= 9 ){
+    min = "0" + min;
+  }
+  return min;
 }
-        
+    
 function checkSecond(sec) {
-    if (sec < 10 && sec >= 0) {
-        sec = "0" + sec
-    };
-    if (sec < 0) {
-        sec = "59"
-    };
-    return sec;
+  if (sec < 10 && sec >= 0) {
+    sec = "0" + sec
+  };
+  if (sec < 0) {
+    sec = "59"
+  };
+  return sec;
 }
 
 /*
@@ -118,7 +120,7 @@ function checkSecond(sec) {
 <div id="wrapper">
 	<div id="timer"></div>
 	<button id="timer-button">START</button><br><br>
-    <p id="session">Work</p>
+  <p id="session">Work</p>
 
 </div>
 <script src="timer.js"></script>
