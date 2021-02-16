@@ -2,8 +2,8 @@ const timerButton = document.getElementById('timer-button');
 let timer = document.getElementById('timer');
 
 const sessionTime = 25 + ':' + '0' + 0; //25 minutes
-const sBreakTime = '0' + 5 + ':' + "0" + 0; //5 minutes
-const lBreakTime = 25 + ':' + '0' + 0;  //15 minutes
+const sBreakTime = '0' + 5 + ':' + '0' + 0; //5 minutes
+const lBreakTime = 25 + ':' + '0' + 0; //15 minutes
 let sWork = 'Work';
 let sBreak = 'Break';
 
@@ -16,24 +16,21 @@ var sessionsCompleted = 0;
 timer.innerHTML = sessionTime;
 document.title = sessionTime;
 
-timerButton.addEventListener('click', function(){
-    pomodoro();
-});
+timerButton.addEventListener('click', function () { pomodoro(); });
 
-function pomodoro(){
-    if (timerButton.innerHTML == 'START'){
+function pomodoro() {
+    if (timerButton.innerHTML == 'START') {
         timerButton.innerHTML = 'STOP';
         startCountdown();
     }
-    else{
+    else {
         timerButton.innerHTML = 'START';
         resetTimer();
-        
     }
 }
 
 var timerName;
-function startCountdown(){
+function startCountdown() {
     let presentTime = timer.innerHTML;
     let timeArray = presentTime.split(/[:]+/);
     let min = checkMinute(timeArray[0] - 0);
