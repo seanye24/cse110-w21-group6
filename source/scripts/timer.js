@@ -17,7 +17,7 @@ timer.innerHTML = sessionTime;
 document.title = sessionTime;
 
 timerButton.addEventListener('click', function () {
-  pomodoro(); 
+  pomodoro();
 });
 
 function pomodoro() {
@@ -50,7 +50,7 @@ function startCountdown() {
   timerName = setTimeout(startCountdown, 1000); //set timeout for 1 second
 
   if (min == 0 && sec == 0) {
-    
+
     if (currSession == sWork) {
       sessionsCompleted++;
       currSession = sBreak;
@@ -70,8 +70,7 @@ function resetTimer() {
   if (currSession == sWork) {
     presentTime = sessionTime;
     timer.innerHTML = presentTime;
-  }
-  else {
+  } else {
     if (sessionsCompleted != 0 && sessionsCompleted % 4 == 0) {
       presentTime = lBreakTime;
       timer.innerHTML = presentTime;
