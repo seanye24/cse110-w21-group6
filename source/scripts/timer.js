@@ -21,7 +21,7 @@ timerButton.addEventListener('click', function(){
 });
 
 function pomodoro(){
-    if (timerButton.innerHTML = 'START'){
+    if (timerButton.innerHTML == 'START'){
         timerButton.innerHTML = 'STOP';
         startCountdown();
     }
@@ -71,24 +71,23 @@ function resetTimer(){
     clearTimeout(timerName);
 
     if(currSession == sWork){
-        presentTime = sessionTime
+        presentTime = sessionTime;
         timer.innerHTML = presentTime;
-        pomodoro();
     }
     else{
         if(sessionsCompleted != 0 && sessionsCompleted % 4 == 0){
             presentTime = lBreakTime;
             timer.innerHTML = presentTime;
-            pomodoro();
-
         }
         else{
             presentTime = sBreakTime;
             timer.innerHTML = presentTime;
-            pomodoro();
         }
     }
-    
+
+    if (timerButton.innerHTML == 'STOP') {
+        startCountdown();
+    }
 }
 
 function checkMinute(min){
