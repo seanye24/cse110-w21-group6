@@ -1,51 +1,61 @@
+import { createElement } from '../utils/index.js';
+
 class TaskItemForm extends HTMLElement {
   constructor() {
     super();
 
     this.shadow = this.attachShadow({ mode: 'open' });
-    this.styleLinkElement = document.createElement('link');
-    this.styleLinkElement.setAttribute('rel', 'stylesheet');
-    this.styleLinkElement.setAttribute(
-      'href',
-      'source/styles/task-item-form.css',
-    );
 
-    this.containerElement = document.createElement('form');
-    this.containerElement.setAttribute('class', 'task-form');
+    this.styleLinkElement = createElement({
+      element: 'link',
+      rel: 'stylesheet',
+      href: 'source/styles/task-item-form.css',
+    });
 
-    this.titleInputLabel = document.createElement('label');
-    this.titleInputLabel.setAttribute('for', 'task-title-input');
-    this.titleInputLabel.innerText = 'Title';
+    this.containerElement = createElement({
+      element: 'form',
+      class: 'task-form',
+    });
 
-    this.titleInputElement = document.createElement('input');
-    this.titleInputElement.setAttribute('class', 'task-input');
-    this.titleInputElement.setAttribute('id', 'task-title-input');
-    this.titleInputElement.setAttribute('type', 'text');
-    this.titleInputElement.setAttribute('name', 'title');
-    this.titleInputElement.setAttribute('placeholder', 'task title');
+    this.titleInputLabel = createElement({
+      element: 'label',
+      for: 'title-input',
+      innerText: 'Title',
+    });
 
-    this.descriptionInputLabel = document.createElement('label');
-    this.descriptionInputLabel.setAttribute('for', 'task-description-input');
-    this.descriptionInputLabel.innerText = 'Description';
+    this.titleInputElement = createElement({
+      element: 'input',
+      class: 'task-input',
+      id: 'title-input',
+      type: 'text',
+      name: 'title',
+      placeholder: 'task title',
+    });
 
-    this.descriptionInputElement = document.createElement('input');
-    this.descriptionInputElement.setAttribute('class', 'task-input');
-    this.descriptionInputElement.setAttribute('id', 'task-description-input');
-    this.descriptionInputElement.setAttribute('type', 'text');
-    this.descriptionInputElement.setAttribute('name', 'description');
-    this.descriptionInputElement.setAttribute(
-      'placeholder',
-      'task description',
-    );
+    this.descriptionInputLabel = createElement({
+      element: 'label',
+      for: 'description-input',
+      innerText: 'Description',
+    });
 
-    this.submitInputElement = document.createElement('input');
-    this.submitInputElement.setAttribute('class', 'task-input');
-    this.submitInputElement.setAttribute('id', 'submit-input');
-    this.submitInputElement.setAttribute('type', 'submit');
-    this.submitInputElement.setAttribute('value', 'Add');
+    this.descriptionInputElement = createElement({
+      element: 'input',
+      class: 'task-input',
+      id: 'description-input',
+      type: 'text',
+      name: 'description',
+      placeholder: 'task description',
+    });
 
-    this.shadow.append(this.containerElement);
-    this.shadow.append(this.styleLinkElement);
+    this.submitInputElement = createElement({
+      element: 'input',
+      class: 'task-input',
+      id: 'submit-input',
+      type: 'submit',
+      value: 'Add',
+    });
+
+    this.shadow.append(this.styleLinkElement, this.containerElement);
     this.containerElement.append(
       this.titleInputLabel,
       this.titleInputElement,
