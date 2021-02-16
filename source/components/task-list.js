@@ -23,19 +23,20 @@ class TaskList extends HTMLElement {
       innerText: 'Task List',
     });
 
-    this.taskItemContainerElement = createElement({
+    this.taskItemListContainerElement = createElement({
       element: 'div',
       class: 'task-item-container',
     });
 
     this.taskItemFormElement = createElement({
       element: 'task-item-form',
+      class: 'task-item-form',
     });
 
     this.shadow.append(this.stylesLinkElement, this.containerElement);
     this.containerElement.append(
       this.titleElement,
-      this.taskItemContainerElement,
+      this.taskItemListContainerElement,
       this.taskItemFormElement,
     );
   }
