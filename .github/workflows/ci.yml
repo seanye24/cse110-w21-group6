@@ -1,5 +1,6 @@
-# CI/CD
-name: CI/CD
+# CI pipeline
+# Ensure code is free of building, linting, and testing errors
+name: CI
 
 # run on all pushes or PR with main
 on:
@@ -23,7 +24,7 @@ jobs:
           yarn
           yarn run build
   
-  lint-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -31,4 +32,11 @@ jobs:
       - run: |
           yarn
           yarn run lint
-          yarn test
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2      
+      - run: |
+          yarn
+          yarn run test
