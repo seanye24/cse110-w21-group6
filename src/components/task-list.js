@@ -5,12 +5,19 @@ class TaskList extends HTMLElement {
     super();
 
     this.shadow = this.attachShadow({ mode: 'open' });
+    this.styleElement = document.createElement('style');
+    this.styleElement.innerText = `
+      .container {
+        margin: 1em;
+        font-family: Roboto, sans-serif;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+      }
 
-    this.stylesLinkElement = createElement({
-      element: 'link',
-      rel: 'stylesheet',
-      href: 'source/styles/task-list.css',
-    });
+      .title {
+        text-align: center;
+      }
+    `;
 
     this.containerElement = createElement({
       element: 'div',
@@ -33,7 +40,7 @@ class TaskList extends HTMLElement {
       class: 'task-item-form',
     });
 
-    this.shadow.append(this.stylesLinkElement, this.containerElement);
+    this.shadow.append(this.styleElement, this.containerElement);
     this.containerElement.append(
       this.titleElement,
       this.taskItemListContainerElement,
