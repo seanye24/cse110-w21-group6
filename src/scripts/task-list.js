@@ -1,4 +1,7 @@
 import { createElement } from '../utils/index.js';
+import '../components/task-item.js';
+import '../components/task-item-form.js';
+import '../components/task-list.js';
 
 let tasks = [];
 
@@ -159,7 +162,7 @@ const handleTaskFormSubmit = (e) => {
   Object.values(taskItemFormInputs).forEach((input) => (input.value = ''));
 };
 
-document.addEventListener('DOMContentLoaded', async () => {
+const initializeTaskList = () => {
   document.body.appendChild(taskList);
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
 
@@ -169,4 +172,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   tasks = JSON.parse(window.localStorage.getItem('tasks'));
   tasks.forEach((task) => addTaskToDom(task));
-});
+};
+
+export { initializeTaskList };
