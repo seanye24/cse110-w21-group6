@@ -6,11 +6,53 @@ class TaskItemForm extends HTMLElement {
 
     this.shadow = this.attachShadow({ mode: 'open' });
 
-    this.styleLinkElement = createElement({
-      element: 'link',
-      rel: 'stylesheet',
-      href: 'source/styles/task-item-form.css',
-    });
+    this.styleElement = document.createElement('style');
+    this.styleElement.innerText = `
+      .task-form {
+        margin: 1em;
+        padding: 1em 20%;
+        font-family: Roboto, sans-serif;
+        display: flex;
+        flex-direction: column;
+        border-radius: 5px;
+      }
+
+      .task-input[type='text'] {
+        margin-bottom: 1em;
+        padding: 0.75em;
+        border-radius: 5px;
+        border: 1px solid #777;
+        font-size: 0.9rem;
+        color: #444;
+      }
+
+      .task-input[type='text']:focus {
+        border: 2px solid #0077b6;
+        outline: none;
+        box-shadow: none;
+      }
+
+      .task-input[type='text']::placeholder {
+        color: #777;
+      }
+
+      #submit-input {
+        width: 100%;
+        margin: auto;
+        background: rgba(51, 51, 51, 0.75);
+        border-radius: 5px;
+        outline: none;
+        border: none;
+        color: white;
+        padding: 1em;
+        font-size: 1rem;
+      }
+
+      #submit-input:hover {
+        cursor: pointer;
+        background: rgba(51, 51, 51, 1);
+      }
+    `;
 
     this.containerElement = createElement({
       element: 'form',
@@ -55,7 +97,7 @@ class TaskItemForm extends HTMLElement {
       value: 'Add',
     });
 
-    this.shadow.append(this.styleLinkElement, this.containerElement);
+    this.shadow.append(this.styleElement, this.containerElement);
     this.containerElement.append(
       this.titleInputLabel,
       this.titleInputElement,
