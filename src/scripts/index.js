@@ -1,5 +1,5 @@
 import { initializeTaskList } from './task-list.js';
 
 window.addEventListener('DOMContentLoaded', () => {
-  initializeTaskList();
+  initializeTaskList(document.body);
 });
