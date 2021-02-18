@@ -81,6 +81,31 @@ const addTask = (newTask) => {
 };
 
 /**
+ * Update existing task
+ * @param {task} prevTask - task to be updated
+ * @param {task} nextTask - updated task
+ */
+const updateTask = (prevTask, nextTask) => {
+  const { title: prevTitle, description: prevDescription } = prevTask;
+  const { title: nextTitle, description: nextDescription } = nextTask;
+
+  // update localStorage
+  const taskIndex = tasks.findIndex(
+    ({ title, description }) =>
+      prevTitle === title && prevDescription === description,
+  );
+  tasks[taskIndex] = nextTask;
+  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // update task in dom
+  const taskItem = taskItemListContainer.querySelector(
+    `[title="${prevTitle}"][description="${prevDescription}"]`,
+  );
+  taskItem.setAttribute('title', nextTitle);
+  taskItem.setAttribute('description', nextDescription);
+};
+
+/**
  * Deleting existing task
  * @param {task} newTask - task to be deleted
  */
@@ -89,7 +114,7 @@ const deleteTask = (taskToDelete) => {
 
   // update localStorage
   const taskIndex = tasks.findIndex(
-    ({ t, d }) => title === t && description === d,
+    ({ title: t, description: d }) => title === t && description === d,
   );
   tasks.splice(taskIndex, 1);
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -102,26 +127,11 @@ const deleteTask = (taskToDelete) => {
 };
 
 /**
- * Update existing task
- * @param {task} newTask - task to be updated
+ * Get tasklist
+ * @return {Task[]} - current list of tasks
  */
-const updateTask = (prevTask, nextTask) => {
-  const { prevTitle, prevDescription } = prevTask;
-  const { nextTitle, nextDescription } = nextTask;
-
-  // update localStorage
-  const taskIndex = tasks.findIndex(
-    ({ t, d }) => prevTitle === t && prevDescription === d,
-  );
-  tasks[taskIndex] = nextTask;
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // update task in dom
-  const taskItem = taskItemContainer.querySelector(
-    `[title="${prevTitle}"][description="${prevDescription}"]`,
-  );
-  taskItem.setAttribute('title', nextTitle);
-  taskItem.setAttribute('description', nextDescription);
+const getTasks = () => {
+  return tasks;
 };
 
 /**
@@ -162,8 +172,8 @@ const handleTaskFormSubmit = (e) => {
   Object.values(taskItemFormInputs).forEach((input) => (input.value = ''));
 };
 
-const initializeTaskList = () => {
-  document.body.appendChild(taskList);
+const initializeTaskList = (containerElement) => {
+  containerElement.appendChild(taskList);
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
 
   // retrive and add tasks from localStorage
@@ -174,4 +184,4 @@ const initializeTaskList = () => {
   tasks.forEach((task) => addTaskToDom(task));
 };
 
-export { initializeTaskList };
+export { initializeTaskList, addTask, getTasks, updateTask, deleteTask };
