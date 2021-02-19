@@ -82,7 +82,7 @@ const addTaskToDom = (newTask) => {
 
 /**
  * Add new task to localStorage
- * @param {task} newTask - new task to be added
+ * @param {Task} newTask - new task to be added
  */
 const addTask = (newTask) => {
   // update localStorage
@@ -118,7 +118,7 @@ const updateTask = (prevTask, nextTask) => {
 
 /**
  * Deleting existing task
- * @param {Task} newTask - task to be deleted
+ * @param {Task} taskToDelete - task to be deleted
  */
 const deleteTask = (taskToDelete) => {
   const { title, description } = taskToDelete;
@@ -140,7 +140,6 @@ const deleteTask = (taskToDelete) => {
 /**
  * Handle form submission, validate input
  * @param {Event} e - submit event
- * @param {Task} newTask - new task to be submitted
  */
 const handleTaskFormSubmit = (e) => {
   e.preventDefault(); // prevent page reload
