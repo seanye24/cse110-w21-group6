@@ -10,7 +10,8 @@
     "test": "jest",
     "lint": "eslint --fix --no-error-on-unmatched-pattern '**/*.js' && npx stylelint --allow-empty-input '**/*.css'",
     "build": "yarn run webpack --config webpack.config.js",
-    "ci": "yarn run lint && yarn run test && yarn build"
+    "ci": "yarn run lint && yarn run test && yarn build",
+    "docs": "jsdoc -c ./jsdoc.config.js ./src/**/*.js"
   },
   "devDependencies": {
     "css-loader": "^5.0.2",
