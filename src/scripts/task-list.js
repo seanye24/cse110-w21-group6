@@ -1,3 +1,15 @@
+/**
+ * @file Manage tasklist for page
+ * @author Sean Ye
+ */
+
+/**
+ * A task object containing a title and description
+ * @typedef {Object} Task
+ * @property {string} title       - title of the task
+ * @property {string} description - description of the task
+ */
+
 import { createElement } from '../utils/index.js';
 import '../components/task-item.js';
 import '../components/task-item-form.js';
@@ -6,34 +18,33 @@ import '../components/task-list.js';
 let tasks = [];
 
 // task-list element
+// task-list container element
+// container element for task-list-item
 const taskList = createElement({
   element: 'task-list',
 });
-
-// task-list container element
 const taskListContainer = Array.from(taskList.shadowRoot.childNodes).find(
   (elem) => elem.getAttribute('class') === 'container',
 );
-// task-list item list container element
-const taskItemListContainer = taskListContainer.querySelector(
+const taskListItemContainer = taskListContainer.querySelector(
   '.task-item-container',
 );
 
 // task-item-form element
-const taskItemForm = taskListContainer.querySelector('.task-item-form');
 // task-item-form container element
+// task-item-form text input elements
+const taskItemForm = taskListContainer.querySelector('.task-item-form');
 const taskItemFormContainer = Array.from(
   taskItemForm.shadowRoot.childNodes,
 ).find((elem) => elem.getAttribute('class') === 'task-form');
-// task-item-form text input elements
 const taskItemFormInputs = Array.from(
   taskItemFormContainer.querySelectorAll('.task-input[type="text"]'),
 ).reduce((acc, elem) => ({ ...acc, [elem.name]: elem }), {});
 
 /**
  * Get button elements from task-item element
- * @param {task-item} task - task-item element
- * @return {[button-role]: button} - button elements object
+ * @param {Task} task - task-item element
+ * @return {{finish: HTMLButtonElement, delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
  */
 const getTaskItemButtons = (task) => {
   const buttons = Array.from(
@@ -51,7 +62,7 @@ const getTaskItemButtons = (task) => {
 
 /**
  * Add task object to DOM, add event listeners to task-item
- * @param {task} newTask - new task to be added
+ * @param {Task} newTask - new task to be added
  */
 const addTaskToDom = (newTask) => {
   const { title, description } = newTask;
@@ -66,7 +77,7 @@ const addTaskToDom = (newTask) => {
   buttons.finish.addEventListener('click', () => deleteTask(newTask));
   buttons.delete.addEventListener('click', () => deleteTask(newTask));
   buttons.edit.addEventListener('click', () => window.alert('editting task!'));
-  taskItemListContainer.append(taskItem);
+  taskListItemContainer.append(taskItem);
 };
 
 /**
@@ -81,8 +92,36 @@ const addTask = (newTask) => {
 };
 
 /**
+<<<<<<< Updated upstream
+=======
+ * Update existing task
+ * @param {Task} prevTask - task to be updated
+ * @param {Task} nextTask - updated task
+ */
+const updateTask = (prevTask, nextTask) => {
+  const { title: prevTitle, description: prevDescription } = prevTask;
+  const { title: nextTitle, description: nextDescription } = nextTask;
+
+  // update localStorage
+  const taskIndex = tasks.findIndex(
+    ({ title, description }) =>
+      prevTitle === title && prevDescription === description,
+  );
+  tasks[taskIndex] = nextTask;
+  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // update task in dom
+  const taskItem = taskListItemContainer.querySelector(
+    `[title="${prevTitle}"][description="${prevDescription}"]`,
+  );
+  taskItem.setAttribute('title', nextTitle);
+  taskItem.setAttribute('description', nextDescription);
+};
+
+/**
+>>>>>>> Stashed changes
  * Deleting existing task
- * @param {task} newTask - task to be deleted
+ * @param {Task} newTask - task to be deleted
  */
 const deleteTask = (taskToDelete) => {
   const { title, description } = taskToDelete;
@@ -95,7 +134,7 @@ const deleteTask = (taskToDelete) => {
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
 
   // remove task from dom
-  const taskItem = taskItemListContainer.querySelector(
+  const taskItem = taskListItemContainer.querySelector(
     `[title="${title}"][description="${description}"]`,
   );
   taskItem.remove();
@@ -162,8 +201,18 @@ const handleTaskFormSubmit = (e) => {
   Object.values(taskItemFormInputs).forEach((input) => (input.value = ''));
 };
 
+<<<<<<< Updated upstream
 const initializeTaskList = () => {
   document.body.appendChild(taskList);
+=======
+/**
+ * Initialize tasklist on page
+ * Retrieve tasks from localStorage
+ * @param {HTMLElement} containerElement - container for task list
+ */
+const initializeTaskList = (containerElement) => {
+  containerElement.appendChild(taskList);
+>>>>>>> Stashed changes
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
 
   // retrive and add tasks from localStorage
