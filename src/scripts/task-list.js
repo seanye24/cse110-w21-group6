@@ -136,7 +136,8 @@ const deleteTask = (taskToDelete) => {
   );
   taskItem.remove();
 };
-  
+
+/**
  * Get tasklist
  * @return {Task[]} - current list of tasks
  */
