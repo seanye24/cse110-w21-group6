@@ -125,7 +125,7 @@ const deleteTask = (taskToDelete) => {
 
   // update localStorage
   const taskIndex = tasks.findIndex(
-    ({ t, d }) => title === t && description === d,
+    ({ title: t, description: d }) => title === t && description === d,
   );
   tasks.splice(taskIndex, 1);
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -135,6 +135,13 @@ const deleteTask = (taskToDelete) => {
     `[title="${title}"][description="${description}"]`,
   );
   taskItem.remove();
+};
+  
+ * Get tasklist
+ * @return {Task[]} - current list of tasks
+ */
+const getTasks = () => {
+  return tasks;
 };
 
 /**
@@ -191,4 +198,4 @@ const initializeTaskList = (containerElement) => {
   tasks.forEach((task) => addTaskToDom(task));
 };
 
-export { initializeTaskList };
+export { initializeTaskList, addTask, getTasks, updateTask, deleteTask };
