@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = (env, argv) => {
   const config = {
     entry: './src/scripts/index.js',
-    mode: argv.mode || 'production',
+    mode: argv.mode || 'production', // run in development if specified
     output: {
       filename: 'main.js',
       path: path.resolve(__dirname, 'dist'),
@@ -31,6 +31,7 @@ module.exports = (env, argv) => {
     },
     devtool: 'inline-source-map',
   };
+
   console.log('running in', config.mode, 'mode');
   return config;
 };
