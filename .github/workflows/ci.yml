@@ -13,30 +13,28 @@ defaults:
   run:
     shell: bash
 
-# lint and test
+# build, lint and test
 jobs:
-  build:
+  build-lint-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2     # checkout repo
-      - uses: actions/setup-node@v2   # install node
-      - run: |
+      - name: Checkout repo
+        uses: actions/checkout@v2     
+      
+      - name: Install node
+        uses: actions/setup-node@v2  
+        
+      - name: Build project
+        run: |
           yarn
           yarn run build
-  
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2      
-      - run: |
+      
+      - name: Run linting checks
+        run: |
           yarn
           yarn run lint
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2      
-      - run: |
+      
+      - name: Run tests
+        run: |
           yarn
           yarn run test
