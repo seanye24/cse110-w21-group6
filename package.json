@@ -8,9 +8,10 @@
   "scripts": {
     "start": "yarn run webpack serve --mode=development --open",
     "test": "jest",
-    "lint": "eslint --fix --no-error-on-unmatched-pattern '**/*.js' && npx stylelint --allow-empty-input '**/*.css'",
+    "lint": "eslint --fix --no-error-on-unmatched-pattern './src/**/*.js' && npx stylelint --allow-empty-input './src/**/*.css'",
     "build": "yarn run webpack --config webpack.config.js",
-    "ci": "yarn run lint && yarn run test && yarn build"
+    "ci": "yarn run lint && yarn run test && yarn run build",
+    "docs": "jsdoc -c ./jsdoc.config.js ./src/**/*.js"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
