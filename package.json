@@ -11,7 +11,7 @@
     "lint": "eslint --fix --no-error-on-unmatched-pattern './src/**/*.js' && npx stylelint --allow-empty-input './src/**/*.css'",
     "build": "yarn run webpack --config webpack.config.js",
     "ci": "yarn run lint && yarn run test && yarn run build",
-    "docs": "jsdoc -c ./jsdoc.config.js ./src/**/*.js"
+    "docs": "jsdoc -r -c ./jsdoc.config.js ./src"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
