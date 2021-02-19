@@ -92,8 +92,6 @@ const addTask = (newTask) => {
 };
 
 /**
-<<<<<<< Updated upstream
-=======
  * Update existing task
  * @param {Task} prevTask - task to be updated
  * @param {Task} nextTask - updated task
@@ -119,7 +117,6 @@ const updateTask = (prevTask, nextTask) => {
 };
 
 /**
->>>>>>> Stashed changes
  * Deleting existing task
  * @param {Task} newTask - task to be deleted
  */
@@ -138,29 +135,6 @@ const deleteTask = (taskToDelete) => {
     `[title="${title}"][description="${description}"]`,
   );
   taskItem.remove();
-};
-
-/**
- * Update existing task
- * @param {task} newTask - task to be updated
- */
-const updateTask = (prevTask, nextTask) => {
-  const { prevTitle, prevDescription } = prevTask;
-  const { nextTitle, nextDescription } = nextTask;
-
-  // update localStorage
-  const taskIndex = tasks.findIndex(
-    ({ t, d }) => prevTitle === t && prevDescription === d,
-  );
-  tasks[taskIndex] = nextTask;
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // update task in dom
-  const taskItem = taskItemContainer.querySelector(
-    `[title="${prevTitle}"][description="${prevDescription}"]`,
-  );
-  taskItem.setAttribute('title', nextTitle);
-  taskItem.setAttribute('description', nextDescription);
 };
 
 /**
@@ -201,10 +175,6 @@ const handleTaskFormSubmit = (e) => {
   Object.values(taskItemFormInputs).forEach((input) => (input.value = ''));
 };
 
-<<<<<<< Updated upstream
-const initializeTaskList = () => {
-  document.body.appendChild(taskList);
-=======
 /**
  * Initialize tasklist on page
  * Retrieve tasks from localStorage
@@ -212,7 +182,6 @@ const initializeTaskList = () => {
  */
 const initializeTaskList = (containerElement) => {
   containerElement.appendChild(taskList);
->>>>>>> Stashed changes
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
 
   // retrive and add tasks from localStorage
