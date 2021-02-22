@@ -1,5 +1,4 @@
 // testing tasklist, crud operations
-'use strict';
 
 const {
   initializeTaskList,

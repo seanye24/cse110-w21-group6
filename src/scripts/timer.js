@@ -1,28 +1,28 @@
-const WORK_SESSION = 25 * 60; //convert 25 minutes to seconds
-const SHORT_BREAK = 5 * 60; //convert 5 minutes to seconds
-const LONG_BREAK = 15 * 60; //convert 15 minutes to seconds
+const WORK_SESSION = 25 * 60; // convert 25 minutes to seconds
+const SHORT_BREAK = 5 * 60; // convert 5 minutes to seconds
+const LONG_BREAK = 15 * 60; // convert 15 minutes to seconds
 
-let workSession = 'Work';
-let shortBreak = 'Short Break';
-let longBreak = 'Long Break';
+const workSession = 'Work';
+const shortBreak = 'Short Break';
+const longBreak = 'Long Break';
 let currSession = workSession;
 
-let startButton = 'START';
-let stopButton = 'STOP';
-let yesButton = 'Yes';
+const startButton = 'START';
+const stopButton = 'STOP';
+const yesButton = 'Yes';
 
 const timerButton = document.getElementById('timer-button');
-let timeDisplay = document.getElementById('time-display');
-let sessionDisplay = document.getElementById('session-display');
-let finishedTask = document.getElementById('task-finished');
+const timeDisplay = document.getElementById('time-display');
+const sessionDisplay = document.getElementById('session-display');
+const finishedTask = document.getElementById('task-finished');
 
 myStorage = window.localStorage;
-myStorage.pomodoros = 0; //save number of pomodoros completed
+myStorage.pomodoros = 0; // save number of pomodoros completed
 
-let countdown = undefined;
+let countdown;
 
 function timer(seconds) {
-  displayTimeLeft(seconds); //fixes bug where initial time does not show
+  displayTimeLeft(seconds); // fixes bug where initial time does not show
   sessionDisplay.textContent = currSession;
 
   countdown = setInterval(() => {
@@ -33,8 +33,9 @@ function timer(seconds) {
 
       if (currSession == workSession) {
         myStorage.pomodoros = parseInt(myStorage.pomodoros) + 1;
-        document.getElementById('pom-completed').innerHTML =
-          'Pomos completed: ' + myStorage.pomodoros;
+        document.getElementById(
+          'pom-completed',
+        ).innerHTML = `Pomos completed: ${myStorage.pomodoros}`;
       }
       updateSession();
       loopTimer();
@@ -46,15 +47,15 @@ function timer(seconds) {
 }
 
 function displayTimeLeft(seconds) {
-  let minutes = Math.floor(seconds / 60);
-  let remainderSeconds = seconds % 60;
+  const minutes = Math.floor(seconds / 60);
+  const remainderSeconds = seconds % 60;
 
   const display = `${minutes < 10 ? '0' : ''}${minutes}:${
     remainderSeconds < 10 ? '0' : ''
   }${remainderSeconds}`;
 
   timeDisplay.textContent = display;
-  document.title = display; //set title of website with countdown
+  document.title = display; // set title of website with countdown
 }
 
 function startTimer() {

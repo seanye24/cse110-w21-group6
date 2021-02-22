@@ -156,7 +156,7 @@ const handleTaskFormSubmit = (e) => {
     title: { value: title },
     description: { value: description },
   } = taskItemFormInputs;
-  let [trimmedTitle, trimmedDescription] = [title.trim(), description.trim()];
+  const [trimmedTitle, trimmedDescription] = [title.trim(), description.trim()];
 
   // check if fields are non-empty
   if (!trimmedTitle || !trimmedDescription) {
