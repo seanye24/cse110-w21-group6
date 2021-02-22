@@ -1,105 +1,121 @@
+const WORK_SESSION = 25 * 60; //convert 25 minutes to seconds
+const SHORT_BREAK = 5 * 60; //convert 5 minutes to seconds
+const LONG_BREAK = 15 * 60; //convert 15 minutes to seconds
+
+let workSession = 'Work';
+let shortBreak = 'Short Break';
+let longBreak = 'Long Break';
+let currSession = workSession;
+
+let startButton = 'START';
+let stopButton = 'STOP';
+let yesButton = 'Yes';
+
 const timerButton = document.getElementById('timer-button');
-let timer = document.getElementById('timer');
+let timeDisplay = document.getElementById('time-display');
+let sessionDisplay = document.getElementById('session-display');
+let finishedTask = document.getElementById('task-finished');
 
-const sessionTime = 25 + ':' + '0' + 0; //25 minutes
-const sBreakTime = '0' + 5 + ':' + '0' + 0; //5 minutes
-const lBreakTime = 25 + ':' + '0' + 0; //15 minutes
-let sWork = 'Work';
-let sBreak = 'Break';
+myStorage = window.localStorage;
+myStorage.pomodoros = 0; //save number of pomodoros completed
 
-const title = document.title; //variable to update title with current time left
-let session = document.getElementById('session');
-let currSession = session.innerHTML; //starts with work
+let countdown = undefined;
 
-var sessionsCompleted = 0;
+function timer(seconds) {
+  displayTimeLeft(seconds); //fixes bug where initial time does not show
+  sessionDisplay.textContent = currSession;
 
-timer.innerHTML = sessionTime;
-document.title = sessionTime;
+  countdown = setInterval(() => {
+    seconds -= 1;
 
-timerButton.addEventListener('click', function () {
-  pomodoro();
-});
+    if (seconds < 0) {
+      clearInterval(countdown);
 
-function pomodoro() {
-  if (timerButton.innerHTML == 'START') {
-    timerButton.innerHTML = 'STOP';
-    startCountdown();
-  } else {
-    timerButton.innerHTML = 'START';
-    resetTimer();
+      if (currSession == workSession) {
+        myStorage.pomodoros = parseInt(myStorage.pomodoros) + 1;
+        document.getElementById('pom-completed').innerHTML =
+          'Pomos completed: ' + myStorage.pomodoros;
+      }
+      updateSession();
+      loopTimer();
+      return;
+    }
+
+    displayTimeLeft(seconds);
+  }, 1000);
+}
+
+function displayTimeLeft(seconds) {
+  let minutes = Math.floor(seconds / 60);
+  let remainderSeconds = seconds % 60;
+
+  const display = `${minutes < 10 ? '0' : ''}${minutes}:${
+    remainderSeconds < 10 ? '0' : ''
+  }${remainderSeconds}`;
+
+  timeDisplay.textContent = display;
+  document.title = display; //set title of website with countdown
+}
+
+function startTimer() {
+  if (timerButton.textContent == startButton) {
+    sessionDisplay.innerText = currSession;
+    timerButton.textContent = stopButton;
+
+    timer(WORK_SESSION);
+  } else if (timerButton.textContent == stopButton) {
+    clearInterval(countdown);
+    displayTimeLeft(WORK_SESSION);
+    timerButton.textContent = startButton;
+    currSession = workSession;
+  } else if (timerButton.textContent == yesButton) {
+    deleteTask();
+    timerButton.disabled = true;
   }
 }
 
-var timerName;
-function startCountdown() {
-  let presentTime = timer.innerHTML;
-  let timeArray = presentTime.split(/[:]+/);
-  let min = checkMinute(timeArray[0] - 0);
-  let sec = checkSecond(timeArray[1] - 1);
-
-  if (sec == 59) {
-    min = min - 1;
-    if (min < 10) {
-      min = '0' + min;
-    }
-  }
-
-  timer.innerHTML = min + ':' + sec; //update html time
-  document.title = timer.innerText; //update tab title with current time
-
-  timerName = setTimeout(startCountdown, 1000); //set timeout for 1 second
-
-  if (min == 0 && sec == 0) {
-    if (currSession == sWork) {
-      sessionsCompleted++;
-      currSession = sBreak;
-      session.innerHTML = sBreak;
+function updateSession() {
+  if (currSession == longBreak || currSession == shortBreak) {
+    currSession = workSession;
+    timerButton.textContent = stopButton;
+    finishedTask.textContent = '';
+  } else if (currSession == workSession) {
+    if (
+      parseInt(myStorage.pomodoros) % 4 == 0 &&
+      parseInt(myStorage.pomodoros) != 0
+    ) {
+      currSession = longBreak;
+      timerButton.textContent = yesButton;
+      finishedTask.textContent = 'Did you complete your task?';
     } else {
-      currSession = sWork;
-      session.innerHTML = sWork;
-    }
-
-    resetTimer();
-  }
-}
-
-function resetTimer() {
-  clearTimeout(timerName);
-
-  if (currSession == sWork) {
-    presentTime = sessionTime;
-    timer.innerHTML = presentTime;
-  } else {
-    if (sessionsCompleted != 0 && sessionsCompleted % 4 == 0) {
-      presentTime = lBreakTime;
-      timer.innerHTML = presentTime;
-    } else {
-      presentTime = sBreakTime;
-      timer.innerHTML = presentTime;
+      currSession = shortBreak;
+      timerButton.textContent = yesButton;
+      finishedTask.textContent = 'Did you complete your task?';
     }
   }
+}
 
-  if (timerButton.innerHTML == 'STOP') {
-    startCountdown();
+function loopTimer() {
+  timerButton.disabled = false;
+
+  if (currSession == workSession) {
+    timer(WORK_SESSION);
+  }
+  if (currSession == longBreak) {
+    timer(LONG_BREAK);
+  }
+  if (currSession == shortBreak) {
+    timer(SHORT_BREAK);
   }
 }
 
-function checkMinute(min) {
-  if (min <= 9) {
-    min = '0' + min;
-  }
-  return min;
+function deleteTask() {}
+
+function resetPomodoroCount() {
+  myStorage.pomodoros = 0;
 }
 
-function checkSecond(sec) {
-  if (sec < 10 && sec >= 0) {
-    sec = '0' + sec;
-  }
-  if (sec < 0) {
-    sec = '59';
-  }
-  return sec;
-}
+timerButton.addEventListener('click', startTimer);
 
 /*
 <!-- HTML ADDED IF NEEDED TO TEST CODE -->
@@ -113,12 +129,14 @@ function checkSecond(sec) {
 </head>
 <body>
 <div id="wrapper">
-	<div id="timer"></div>
+	<h2 id="time-display">25:00</h2>
+  <p id="task-finished"></p>
 	<button id="timer-button">START</button><br><br>
-  <p id="session">Work</p>
+  <p id="session-display">Work</p>
+  <p id="pom-completed"></p>
 
 </div>
-<script src="timer.js"></script>
+<script src="timer_new.js"></script>
 </body>
 </html>
 
