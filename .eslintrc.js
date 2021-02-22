@@ -12,6 +12,6 @@ module.exports = {
   plugins: ['prettier'],
   rules: {
     'prettier/prettier': 'error',
-    curly: 'error',
+    'import/prefer-default-export': 'warn',
   },
 };

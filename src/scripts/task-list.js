@@ -10,10 +10,10 @@
  * @property {string} description - description of the task
  */
 
-import { createElement } from '../utils/index.js';
-import '../components/task-item.js';
-import '../components/task-item-form.js';
-import '../components/task-list.js';
+import { createElement } from '../utils';
+import '../components/task-item';
+import '../components/task-item-form';
+import '../components/task-list';
 
 let tasks = [];
 
@@ -58,6 +58,27 @@ const getTaskItemButtons = (task) => {
     delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
     edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
   };
+};
+
+/**
+ * Deleting existing task
+ * @param {Task} taskToDelete - task to be deleted
+ */
+const deleteTask = (taskToDelete) => {
+  const { title, description } = taskToDelete;
+
+  // update localStorage
+  const taskIndex = tasks.findIndex(
+    ({ title: t, description: d }) => title === t && description === d,
+  );
+  tasks.splice(taskIndex, 1);
+  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // remove task from dom
+  const taskItem = taskListItemContainer.querySelector(
+    `[title="${title}"][description="${description}"]`,
+  );
+  taskItem.remove();
 };
 
 /**
@@ -117,27 +138,6 @@ const updateTask = (prevTask, nextTask) => {
 };
 
 /**
- * Deleting existing task
- * @param {Task} taskToDelete - task to be deleted
- */
-const deleteTask = (taskToDelete) => {
-  const { title, description } = taskToDelete;
-
-  // update localStorage
-  const taskIndex = tasks.findIndex(
-    ({ title: t, description: d }) => title === t && description === d,
-  );
-  tasks.splice(taskIndex, 1);
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // remove task from dom
-  const taskItem = taskListItemContainer.querySelector(
-    `[title="${title}"][description="${description}"]`,
-  );
-  taskItem.remove();
-};
-
-/**
  * Get tasklist
  * @return {Task[]} - current list of tasks
  */
@@ -167,8 +167,8 @@ const handleTaskFormSubmit = (e) => {
   // check if task already exists
   if (
     tasks.some(
-      ({ title, description }) =>
-        trimmedTitle === title && trimmedDescription === description,
+      ({ title: t, description: d }) =>
+        trimmedTitle === t && trimmedDescription === d,
     )
   ) {
     console.error(
@@ -179,7 +179,10 @@ const handleTaskFormSubmit = (e) => {
   }
 
   addTask({ title: trimmedTitle, description: trimmedDescription });
-  Object.values(taskItemFormInputs).forEach((input) => (input.value = ''));
+  Object.values(taskItemFormInputs).forEach((input) => ({
+    ...input,
+    value: '',
+  }));
 };
 
 /**
