@@ -1,4 +1,4 @@
-import { createElement } from '../utils/index.js';
+import { createElement } from '../utils';
 
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
