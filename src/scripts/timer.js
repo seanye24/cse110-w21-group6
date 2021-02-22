@@ -1,3 +1,6 @@
+/* global myStorage: true */
+/* eslint no-use-before-define: ["error", { "functions": false }] */
+
 const WORK_SESSION = 25 * 60; // convert 25 minutes to seconds
 const SHORT_BREAK = 5 * 60; // convert 5 minutes to seconds
 const LONG_BREAK = 15 * 60; // convert 15 minutes to seconds
@@ -21,31 +24,6 @@ myStorage.pomodoros = 0; // save number of pomodoros completed
 
 let countdown;
 
-function timer(seconds) {
-  displayTimeLeft(seconds); // fixes bug where initial time does not show
-  sessionDisplay.textContent = currSession;
-
-  countdown = setInterval(() => {
-    seconds -= 1;
-
-    if (seconds < 0) {
-      clearInterval(countdown);
-
-      if (currSession == workSession) {
-        myStorage.pomodoros = parseInt(myStorage.pomodoros) + 1;
-        document.getElementById(
-          'pom-completed',
-        ).innerHTML = `Pomos completed: ${myStorage.pomodoros}`;
-      }
-      updateSession();
-      loopTimer();
-      return;
-    }
-
-    displayTimeLeft(seconds);
-  }, 1000);
-}
-
 function displayTimeLeft(seconds) {
   const minutes = Math.floor(seconds / 60);
   const remainderSeconds = seconds % 60;
@@ -58,32 +36,15 @@ function displayTimeLeft(seconds) {
   document.title = display; // set title of website with countdown
 }
 
-function startTimer() {
-  if (timerButton.textContent == startButton) {
-    sessionDisplay.innerText = currSession;
-    timerButton.textContent = stopButton;
-
-    timer(WORK_SESSION);
-  } else if (timerButton.textContent == stopButton) {
-    clearInterval(countdown);
-    displayTimeLeft(WORK_SESSION);
-    timerButton.textContent = startButton;
-    currSession = workSession;
-  } else if (timerButton.textContent == yesButton) {
-    deleteTask();
-    timerButton.disabled = true;
-  }
-}
-
 function updateSession() {
-  if (currSession == longBreak || currSession == shortBreak) {
+  if (currSession === longBreak || currSession === shortBreak) {
     currSession = workSession;
     timerButton.textContent = stopButton;
     finishedTask.textContent = '';
-  } else if (currSession == workSession) {
+  } else if (currSession === workSession) {
     if (
-      parseInt(myStorage.pomodoros) % 4 == 0 &&
-      parseInt(myStorage.pomodoros) != 0
+      parseInt(myStorage.pomodoros, 10) % 4 === 0 &&
+      parseInt(myStorage.pomodoros, 10) !== 0
     ) {
       currSession = longBreak;
       timerButton.textContent = yesButton;
@@ -96,25 +57,77 @@ function updateSession() {
   }
 }
 
+function timer(seconds) {
+  displayTimeLeft(seconds); // fixes bug where initial time does not show
+  sessionDisplay.textContent = currSession;
+
+  let secondsLeft = seconds;
+
+  countdown = setInterval(() => {
+    secondsLeft -= 1;
+
+    if (secondsLeft < 0) {
+      clearInterval(countdown);
+
+      if (currSession === workSession) {
+        myStorage.pomodoros = parseInt(myStorage.pomodoros, 10) + 1;
+        document.getElementById(
+          'pom-completed',
+        ).innerHTML = `Pomos completed: ${myStorage.pomodoros}`;
+      }
+      updateSession();
+      loopTimer();
+      return;
+    }
+
+    displayTimeLeft(secondsLeft);
+  }, 1000);
+}
+
 function loopTimer() {
   timerButton.disabled = false;
 
-  if (currSession == workSession) {
+  if (currSession === workSession) {
     timer(WORK_SESSION);
   }
-  if (currSession == longBreak) {
+  if (currSession === longBreak) {
     timer(LONG_BREAK);
   }
-  if (currSession == shortBreak) {
+  if (currSession === shortBreak) {
     timer(SHORT_BREAK);
   }
 }
 
-function deleteTask() {}
+function startTimer() {
+  if (timerButton.textContent === startButton) {
+    sessionDisplay.innerText = currSession;
+    timerButton.textContent = stopButton;
 
+    timer(WORK_SESSION);
+  } else if (timerButton.textContent === stopButton) {
+    clearInterval(countdown);
+    displayTimeLeft(WORK_SESSION);
+    timerButton.textContent = startButton;
+    currSession = workSession;
+  } else if (timerButton.textContent === yesButton) {
+    // deleteTask(); //call fucntion to delete task
+    timerButton.disabled = true;
+  }
+}
+
+/**
+ * Function that deletes first task added to the "queue"
+ */
+// function deleteTask() {}
+
+/**
+ * Function to reset pomodoro count
+ * potentially usefull for end of day,
+ * so next day starts fresh
+ *
 function resetPomodoroCount() {
   myStorage.pomodoros = 0;
-}
+} */
 
 timerButton.addEventListener('click', startTimer);
 
