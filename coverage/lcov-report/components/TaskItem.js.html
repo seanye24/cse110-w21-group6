@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/task-item.js</title>
+    <title>Code coverage report for components/TaskItem.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">components</a> task-item.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">components</a> TaskItem.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -185,14 +185,7 @@
 <a name='L126'></a><a href='#L126'>126</a>
 <a name='L127'></a><a href='#L127'>127</a>
 <a name='L128'></a><a href='#L128'>128</a>
-<a name='L129'></a><a href='#L129'>129</a>
-<a name='L130'></a><a href='#L130'>130</a>
-<a name='L131'></a><a href='#L131'>131</a>
-<a name='L132'></a><a href='#L132'>132</a>
-<a name='L133'></a><a href='#L133'>133</a>
-<a name='L134'></a><a href='#L134'>134</a>
-<a name='L135'></a><a href='#L135'>135</a>
-<a name='L136'></a><a href='#L136'>136</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L129'></a><a href='#L129'>129</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -264,22 +257,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -291,9 +279,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -394,42 +380,35 @@ class TaskItem extends HTMLElement {
       }
     `;
 &nbsp;
-    this.materialIconLinkElement = createElement({
-      element: 'link',
+    this.materialIconLinkElement = createElement('link', {
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
     });
 &nbsp;
-    this.containerElement = createElement({
-      element: 'div',
-      class: 'container',
+    this.containerElement = createElement('div', {
+      className: 'container',
     });
-    this.titleElement = createElement({
-      element: 'h1',
-      class: 'title',
+    this.titleElement = createElement('h1', {
+      className: 'title',
     });
-    this.descriptionElement = createElement({
-      element: 'h2',
-      class: 'description',
+    this.descriptionElement = createElement('h2', {
+      className: 'description',
     });
 &nbsp;
-    this.editTaskButton = createElement({
-      element: 'span',
-      class: 'material-icons task-button',
+    this.editTaskButton = createElement('span', {
+      className: 'material-icons task-button',
       id: 'edit-button',
       innerText: 'mode',
     });
 &nbsp;
-    this.finishTaskButton = createElement({
-      element: 'span',
-      class: 'material-icons task-button',
+    this.finishTaskButton = createElement('span', {
+      className: 'material-icons task-button',
       id: 'finish-button',
       innerText: 'done',
     });
 &nbsp;
-    this.deleteTaskButton = createElement({
-      element: 'span',
-      class: 'material-icons task-button',
+    this.deleteTaskButton = createElement('span', {
+      className: 'material-icons task-button',
       id: 'delete-button',
       innerText: 'delete',
     });
@@ -469,7 +448,7 @@ customElements.define('task-item', TaskItem);
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Mon Feb 22 2021 23:28:51 GMT-0800 (Pacific Standard Time)
+                at Wed Feb 24 2021 15:46:20 GMT-0800 (Pacific Standard Time)
             </div>
         </div>
         <script src="../prettify.js"></script>
