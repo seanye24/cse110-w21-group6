@@ -19,25 +19,21 @@ class TaskList extends HTMLElement {
       }
     `;
 
-    this.containerElement = createElement({
-      element: 'div',
-      class: 'container',
+    this.containerElement = createElement('div', {
+      className: 'container',
     });
 
-    this.titleElement = createElement({
-      element: 'h1',
-      class: 'title',
+    this.titleElement = createElement('h1', {
+      className: 'title',
       innerText: 'Task List',
     });
 
-    this.taskItemListContainerElement = createElement({
-      element: 'div',
-      class: 'task-item-container',
+    this.taskItemListContainerElement = createElement('div', {
+      className: 'task-item-container',
     });
 
-    this.taskItemFormElement = createElement({
-      element: 'task-item-form',
-      class: 'task-item-form',
+    this.taskItemFormElement = createElement('task-item-form', {
+      className: 'task-item-form',
     });
 
     this.shadow.append(this.styleElement, this.containerElement);
