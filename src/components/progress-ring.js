@@ -1,3 +1,5 @@
+import { createElement } from '../utils';
+
 class ProgressRing extends HTMLElement {
   constructor() {
     super();
@@ -30,14 +32,22 @@ class ProgressRing extends HTMLElement {
     `;
 
     const svgNamespace = 'http://www.w3.org/2000/svg';
-    this.svgElement = document.createElementNS(svgNamespace, 'svg');
-    this.svgElement.setAttribute('class', 'svg');
+    this.svgElement = createElement(
+      'svg',
+      { class: 'svg' },
+      { namespace: svgNamespace },
+    );
 
-    this.circleElement = document.createElementNS(svgNamespace, 'circle');
-    this.circleElement.setAttribute('class', 'circle');
-    this.circleElement.setAttribute('r', normalizedRadius);
-    this.circleElement.setAttribute('cx', radius);
-    this.circleElement.setAttribute('cy', radius);
+    this.circleElement = createElement(
+      'circle',
+      {
+        class: 'circle',
+        r: normalizedRadius,
+        cx: radius,
+        cy: radius,
+      },
+      { namespace: svgNamespace },
+    );
 
     this.root.append(this.styleElement, this.svgElement);
     this.svgElement.appendChild(this.circleElement);
