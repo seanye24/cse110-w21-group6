@@ -14,11 +14,21 @@ const createElement = (elementType, props = {}, options = {}) => {
 
   // set attributes/properties
   Object.entries(props).forEach(([key, value]) => {
-    if (namespace) element.setAttribute(key, value);
+    if (namespace || !(key in element)) element.setAttribute(key, value);
     else element[key] = value;
   });
 
   return element;
 };
 
-export { createElement };
+/**
+ * Tries to convert input to a number
+ * @param {any} value - to be converted to number
+ * @return {number | null} - number if successful, null otherwise
+ */
+const validateNumber = (value) => {
+  const num = parseInt(value, 10);
+  return Number.isNaN(num) ? null : num;
+};
+
+export { createElement, validateNumber };
