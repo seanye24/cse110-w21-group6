@@ -11,9 +11,9 @@
  */
 
 import { createElement } from '../utils';
-import '../components/task-item';
-import '../components/task-item-form';
-import '../components/task-list';
+import '../components/TaskItem';
+import '../components/TaskItemForm';
+import '../components/TaskList';
 
 let tasks = [];
 

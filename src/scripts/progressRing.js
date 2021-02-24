@@ -1,4 +1,4 @@
-import ProgressRing from '../components/progress-ring';
+import ProgressRing from '../components/ProgressRing';
 import { createElement } from '../utils';
 
 window.customElements.define('progress-ring', ProgressRing);

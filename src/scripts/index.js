@@ -2,8 +2,8 @@
  * @file Entry point for application
  */
 
-import { initializeTaskList } from './task-list';
-import { initializeProgressRing, startRing } from './progress-ring';
+import { initializeTaskList } from './taskList';
+import { initializeProgressRing, startRing } from './progressRing';
 
 window.addEventListener('DOMContentLoaded', () => {
   initializeProgressRing(
