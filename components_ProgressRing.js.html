@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/ProgressRing.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/ProgressRing.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file progress-ring web component
+ */
+
+import { createElement, validateNumber } from '../utils';
+
+/**
+ * Custom web component representing a progress ring.
+ * @extends HTMLElement
+ * @param {number} stroke - width of circle stroke
+ * @param {number} radius - radius of circle
+ * @param {number} progress - progress of ring
+ */
+class ProgressRing extends HTMLElement {
+  static get observedAttributes() {
+    return ['radius', 'stroke', 'progress'];
+  }
+
+  constructor() {
+    super();
+
+    this.root = this.attachShadow({ mode: 'open' });
+    this.styleElement = document.createElement('style');
+
+    const svgNamespace = 'http://www.w3.org/2000/svg';
+    this.svgElement = createElement(
+      'svg',
+      { class: 'svg' },
+      { namespace: svgNamespace },
+    );
+
+    this.circleElement = createElement(
+      'circle',
+      { class: 'circle' },
+      { namespace: svgNamespace },
+    );
+
+    this._radius = 0;
+    this._stroke = 0;
+    this._progress = 0;
+    this.updateComponent(this._radius, this._stroke, this._progress);
+
+    this.root.append(this.styleElement, this.svgElement);
+    this.svgElement.appendChild(this.circleElement);
+  }
+
+  /** Updates component view */
+  updateComponent(radius, stroke, progress) {
+    const normalizedRadius = radius - stroke * 2;
+    const circumference = normalizedRadius * 2 * Math.PI;
+
+    this.styleElement.innerText = `
+      .svg {
+        overflow: hidden;
+        width: ${2 * radius}px;
+        height: ${2 * radius}px;
+      }
+
+      .circle {
+        stroke: #0095b3;
+        stroke-dasharray: ${circumference} ${circumference};
+        stroke-dashoffset: ${(1 - progress / 100) * circumference};
+        fill: transparent;
+        stroke-width: ${stroke};
+
+        transition: stroke-dashoffset 0.5s;
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+      }
+    `;
+
+    this.circleElement.setAttribute('r', normalizedRadius);
+    this.circleElement.setAttribute('cx', radius);
+    this.circleElement.setAttribute('cy', radius);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    const newValueNumber = validateNumber(newValue);
+
+    // check if attribute value is number
+    if (newValueNumber === null) return;
+
+    // validate attribute ranges
+    switch (name) {
+      case 'radius':
+        if (newValueNumber &lt; 0) return;
+        break;
+      case 'stroke':
+        if (newValueNumber &lt; 0) return;
+        break;
+      case 'progress':
+        if (name === 'progress')
+          if (newValueNumber &lt; 0 || newValueNumber > 100) return;
+        break;
+      default:
+        return;
+    }
+
+    this[`_${name}`] = newValueNumber;
+    this.updateComponent(this._radius, this._stroke, this._progress);
+  }
+
+  get radius() {
+    return this._radius;
+  }
+
+  set radius(val) {
+    const num = validateNumber(val);
+    this.setAttribute('radius', num);
+  }
+
+  get stroke() {
+    return this._stroke;
+  }
+
+  set stroke(val) {
+    const num = validateNumber(val);
+    this.setAttribute('stroke', num);
+  }
+
+  get progress() {
+    return this._progress;
+  }
+
+  set progress(val) {
+    const num = validateNumber(val);
+    this.setAttribute('progress', num);
+  }
+}
+
+export default ProgressRing;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#startProgressRing">startProgressRing</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Feb 24 2021 16:51:33 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

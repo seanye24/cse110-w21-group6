@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/task-list.js</title>
+    <title>JSDoc: Source: scripts/taskList.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/task-list.js</h1>
+    <h1 class="page-title">Source: scripts/taskList.js</h1>
 
     
 
@@ -38,21 +38,19 @@
  * @property {string} description - description of the task
  */
 
-import { createElement } from '../utils/index.js';
-import '../components/task-item.js';
-import '../components/task-item-form.js';
-import '../components/task-list.js';
+import { createElement } from '../utils';
+import '../components/TaskItem';
+import '../components/TaskItemForm';
+import '../components/TaskList';
 
 let tasks = [];
 
 // task-list element
 // task-list container element
 // container element for task-list-item
-const taskList = createElement({
-  element: 'task-list',
-});
+const taskList = createElement('task-list', {});
 const taskListContainer = Array.from(taskList.shadowRoot.childNodes).find(
-  (elem) => elem.getAttribute('class') === 'container',
+  (elem) => elem.className === 'container',
 );
 const taskListItemContainer = taskListContainer.querySelector(
   '.task-item-container',
@@ -64,7 +62,7 @@ const taskListItemContainer = taskListContainer.querySelector(
 const taskItemForm = taskListContainer.querySelector('.task-item-form');
 const taskItemFormContainer = Array.from(
   taskItemForm.shadowRoot.childNodes,
-).find((elem) => elem.getAttribute('class') === 'task-form');
+).find((elem) => elem.className === 'task-form');
 const taskItemFormInputs = Array.from(
   taskItemFormContainer.querySelectorAll('.task-input[type="text"]'),
 ).reduce((acc, elem) => ({ ...acc, [elem.name]: elem }), {});
@@ -89,6 +87,27 @@ const getTaskItemButtons = (task) => {
 };
 
 /**
+ * Deleting existing task
+ * @param {Task} taskToDelete - task to be deleted
+ */
+const deleteTask = (taskToDelete) => {
+  const { title, description } = taskToDelete;
+
+  // update localStorage
+  const taskIndex = tasks.findIndex(
+    ({ title: t, description: d }) => title === t &amp;&amp; description === d,
+  );
+  tasks.splice(taskIndex, 1);
+  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+
+  // remove task from dom
+  const taskItem = taskListItemContainer.querySelector(
+    `[title="${title}"][description="${description}"]`,
+  );
+  taskItem.remove();
+};
+
+/**
  * Add task object to DOM, add event listeners to task-item
  * @param {Task} newTask - new task to be added
  */
@@ -96,8 +115,7 @@ const addTaskToDom = (newTask) => {
   const { title, description } = newTask;
 
   // add task to dom
-  const taskItem = createElement({
-    element: 'task-item',
+  const taskItem = createElement('task-item', {
     title,
     description,
   });
@@ -145,27 +163,6 @@ const updateTask = (prevTask, nextTask) => {
 };
 
 /**
- * Deleting existing task
- * @param {Task} taskToDelete - task to be deleted
- */
-const deleteTask = (taskToDelete) => {
-  const { title, description } = taskToDelete;
-
-  // update localStorage
-  const taskIndex = tasks.findIndex(
-    ({ title: t, description: d }) => title === t &amp;&amp; description === d,
-  );
-  tasks.splice(taskIndex, 1);
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // remove task from dom
-  const taskItem = taskListItemContainer.querySelector(
-    `[title="${title}"][description="${description}"]`,
-  );
-  taskItem.remove();
-};
-
-/**
  * Get tasklist
  * @return {Task[]} - current list of tasks
  */
@@ -184,7 +181,7 @@ const handleTaskFormSubmit = (e) => {
     title: { value: title },
     description: { value: description },
   } = taskItemFormInputs;
-  let [trimmedTitle, trimmedDescription] = [title.trim(), description.trim()];
+  const [trimmedTitle, trimmedDescription] = [title.trim(), description.trim()];
 
   // check if fields are non-empty
   if (!trimmedTitle || !trimmedDescription) {
@@ -195,8 +192,8 @@ const handleTaskFormSubmit = (e) => {
   // check if task already exists
   if (
     tasks.some(
-      ({ title, description }) =>
-        trimmedTitle === title &amp;&amp; trimmedDescription === description,
+      ({ title: t, description: d }) =>
+        trimmedTitle === t &amp;&amp; trimmedDescription === d,
     )
   ) {
     console.error(
@@ -207,7 +204,10 @@ const handleTaskFormSubmit = (e) => {
   }
 
   addTask({ title: trimmedTitle, description: trimmedDescription });
-  Object.values(taskItemFormInputs).forEach((input) => (input.value = ''));
+  Object.values(taskItemFormInputs).forEach((input) => ({
+    ...input,
+    value: '',
+  }));
 };
 
 /**
@@ -238,13 +238,13 @@ export { initializeTaskList, addTask, getTasks, updateTask, deleteTask };
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#updateTask">updateTask</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#startProgressRing">startProgressRing</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Feb 19 2021 09:22:33 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Feb 24 2021 16:51:33 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
