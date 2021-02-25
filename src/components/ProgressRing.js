@@ -1,3 +1,7 @@
+/**
+ * @file progress-ring web component
+ */
+
 import { createElement, validateNumber } from '../utils';
 
 /**
@@ -40,6 +44,7 @@ class ProgressRing extends HTMLElement {
     this.svgElement.appendChild(this.circleElement);
   }
 
+  /** Updates component view */
   updateComponent(radius, stroke, progress) {
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
@@ -75,6 +80,7 @@ class ProgressRing extends HTMLElement {
     // check if attribute value is number
     if (newValueNumber === null) return;
 
+    // validate attribute ranges
     switch (name) {
       case 'radius':
         if (newValueNumber < 0) return;

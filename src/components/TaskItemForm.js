@@ -1,5 +1,15 @@
+/**
+ * @file task-item-form web component
+ */
+
 import { createElement } from '../utils';
 
+/**
+ * Custom web component representing a task item form.
+ * @extends HTMLElement
+ * @param {number} name - name of task
+ * @param {number} estimated-pomodoros - estimated number of pomodoros needed
+ */
 class TaskItemForm extends HTMLElement {
   constructor() {
     super();
