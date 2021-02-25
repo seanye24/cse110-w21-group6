@@ -37,7 +37,9 @@ const taskItemFormContainer = Array.from(
   taskItemForm.shadowRoot.childNodes,
 ).find((elem) => elem.className === 'task-form');
 const taskItemFormInputs = Array.from(
-  taskItemFormContainer.querySelectorAll('.task-input[type="text"]'),
+  taskItemFormContainer.querySelectorAll(
+    '.task-input[type="text"], .task-input[type="number"]',
+  ),
 ).reduce((acc, elem) => ({ ...acc, [elem.name]: elem }), {});
 
 /**
@@ -48,7 +50,7 @@ const taskItemFormInputs = Array.from(
 const getTaskItemButtons = (task) => {
   const buttons = Array.from(
     Array.from(task.shadowRoot.childNodes)
-      .find((elem) => elem.getAttribute('class') === 'container')
+      .find((elem) => elem.className.includes('item-container'))
       .querySelectorAll('.task-button'),
   );
 
@@ -81,14 +83,17 @@ const deleteTask = (taskToDelete) => {
  * @param {Task} newTask - new task to be added
  */
 const addTaskToDom = (newTask) => {
-  const { name } = newTask;
+  const { name, usedPomodoros, estimatedPomodoros } = newTask;
 
   // add task to dom
   const taskItem = createElement('task-item', {
     name,
+    'used-pomodoros': usedPomodoros,
+    'estimated-pomodoros': estimatedPomodoros,
+    selected: true,
   });
   const buttons = getTaskItemButtons(taskItem);
-  buttons.finish.addEventListener('click', () => deleteTask(newTask));
+  // buttons.finish.addEventListener('click', () => deleteTask(newTask));
   buttons.delete.addEventListener('click', () => deleteTask(newTask));
   buttons.edit.addEventListener('click', () => {
     console.log('editing task!');
@@ -143,12 +148,17 @@ const handleTaskFormSubmit = (e) => {
 
   const {
     name: { value: name },
+    pomodoro: { value: pomodoro },
   } = taskItemFormInputs;
   const trimmedName = name.trim();
 
   // check if fields are non-empty
   if (!trimmedName) {
     console.error('task name cannot be empty');
+    return;
+  }
+  if (!pomodoro) {
+    console.error('task pomodoros cannot be empty');
     return;
   }
 
@@ -158,7 +168,11 @@ const handleTaskFormSubmit = (e) => {
     return;
   }
 
-  addTask({ name: trimmedName });
+  addTask({
+    name: trimmedName,
+    estimatedPomodoros: pomodoro,
+    usedPomodoros: 0,
+  });
   Object.values(taskItemFormInputs).forEach((input) => {
     input.value = '';
   });
