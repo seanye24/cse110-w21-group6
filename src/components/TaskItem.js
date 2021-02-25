@@ -13,7 +13,7 @@ import { createElement } from '../utils';
  */
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
-    return ['title', 'description'];
+    return ['name', 'estimated-pomodoros', 'used-pomodoros'];
   }
 
   constructor() {
@@ -25,42 +25,33 @@ class TaskItem extends HTMLElement {
     this.styleElement = document.createElement('style');
     this.styleElement.innerText = `
       .container {
-        background: lightblue;
-        font-family: Roboto, sans-serif;
+        background: #fff;
+        color: #555;
         margin: 1em;
         padding: 0.5em;
         position: relative;
         border-radius: 5px;
       }
-
-      .title {
-        font-size: 1.25rem;
-      }
-
-      .description {
+      
+      .name {
         font-size: 1rem;
-        color: darkgray;
       }
 
       .task-button {
         position: absolute;
-        padding: 0.5em;
+        padding: 0.25em;
         color: rgba(51, 51, 51, 0.5);
+        font-size: 1rem;
       }
 
       .task-button:hover {
         border-radius: 50%;
-        background: rgba(238, 238, 238, 0.5);
+        background: rgba(200, 200, 200, 0.5);
         color: rgba(51, 51, 51, 1);
         cursor: pointer;
       }
 
       #edit-button {
-        display: none;
-      }
-
-      .container:hover > #edit-button {
-        display: initial;
         top: 0;
         right: 0;
       }
@@ -84,11 +75,8 @@ class TaskItem extends HTMLElement {
     this.containerElement = createElement('div', {
       className: 'container',
     });
-    this.titleElement = createElement('h1', {
-      className: 'title',
-    });
-    this.descriptionElement = createElement('h2', {
-      className: 'description',
+    this.nameElement = createElement('p', {
+      className: 'name',
     });
 
     this.editTaskButton = createElement('span', {
@@ -115,8 +103,7 @@ class TaskItem extends HTMLElement {
       this.containerElement,
     );
     this.containerElement.append(
-      this.titleElement,
-      this.descriptionElement,
+      this.nameElement,
       this.editTaskButton,
       this.finishTaskButton,
       this.deleteTaskButton,
@@ -125,11 +112,12 @@ class TaskItem extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'title':
-        this.titleElement.innerText = newValue;
+      case 'name':
+        this.nameElement.innerText = newValue;
         break;
-      case 'description':
-        this.descriptionElement.innerText = newValue;
+      case 'used-pomodoros':
+        break;
+      case 'estimated-pomodoros':
         break;
       default:
     }

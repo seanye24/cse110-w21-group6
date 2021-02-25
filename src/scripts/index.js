@@ -3,7 +3,11 @@
  */
 
 import { initializeTaskList } from './taskList';
-import { initializeProgressRing, startProgressRing } from './progressRing';
+import {
+  initializeProgressRing,
+  setProgress,
+  startProgressRing,
+} from './progressRing';
 
 window.addEventListener('DOMContentLoaded', () => {
   initializeProgressRing(
@@ -12,6 +16,9 @@ window.addEventListener('DOMContentLoaded', () => {
     10,
     100,
   );
-  startProgressRing(0.5, 60);
   initializeTaskList(document.body);
+  startProgressRing(0.5, 60);
+  setTimeout(() => {
+    setProgress(50);
+  }, 7000);
 });
