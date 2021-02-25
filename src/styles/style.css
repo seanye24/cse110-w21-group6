@@ -17,3 +17,14 @@ body {
   color: #fff;
   font-size: 3rem;
 }
+
+.task-list {
+  width: 80%;
+  height: 40%;
+  max-width: 1000px;
+}
+
+.announcement {
+  color: #fff;
+  font-size: 2.5rem;
+}
