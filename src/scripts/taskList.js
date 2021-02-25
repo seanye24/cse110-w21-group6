@@ -11,20 +11,18 @@
  */
 
 import { createElement } from '../utils';
-import '../components/task-item';
-import '../components/task-item-form';
-import '../components/task-list';
+import '../components/TaskItem';
+import '../components/TaskItemForm';
+import '../components/TaskList';
 
 let tasks = [];
 
 // task-list element
 // task-list container element
 // container element for task-list-item
-const taskList = createElement({
-  element: 'task-list',
-});
+const taskList = createElement('task-list', {});
 const taskListContainer = Array.from(taskList.shadowRoot.childNodes).find(
-  (elem) => elem.getAttribute('class') === 'container',
+  (elem) => elem.className === 'container',
 );
 const taskListItemContainer = taskListContainer.querySelector(
   '.task-item-container',
@@ -36,7 +34,7 @@ const taskListItemContainer = taskListContainer.querySelector(
 const taskItemForm = taskListContainer.querySelector('.task-item-form');
 const taskItemFormContainer = Array.from(
   taskItemForm.shadowRoot.childNodes,
-).find((elem) => elem.getAttribute('class') === 'task-form');
+).find((elem) => elem.className === 'task-form');
 const taskItemFormInputs = Array.from(
   taskItemFormContainer.querySelectorAll('.task-input[type="text"]'),
 ).reduce((acc, elem) => ({ ...acc, [elem.name]: elem }), {});
@@ -89,8 +87,7 @@ const addTaskToDom = (newTask) => {
   const { title, description } = newTask;
 
   // add task to dom
-  const taskItem = createElement({
-    element: 'task-item',
+  const taskItem = createElement('task-item', {
     title,
     description,
   });

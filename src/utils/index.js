@@ -1,23 +1,34 @@
 /**
  * Creates an HTMLElement and set its attributes
  * Created to reduce boilerplate from element creation
- * @param {{string: string}} props - obj containing element name and attribute
+ * @param {string} elementType - element tag name
+ * @param {{key: string}} props - element's attributes/properties
+ * @param {{option: string}} options - element options such as namespace
  * @return element - new HTMLElement created
  */
-const createElement = ({ element: elementType, ...attributes }) => {
-  const element = document.createElement(elementType); // create element
+const createElement = (elementType, props = {}, options = {}) => {
+  const { namespace } = options;
+  let element;
+  if (namespace) element = document.createElementNS(namespace, elementType);
+  else element = document.createElement(elementType); // create element
 
-  // set attributes
-  Object.entries(attributes).forEach(([key, value]) => {
-    if (key === 'innerText' || key === 'innerHTML') {
-      // some props like innerHTML are not attributes and should be assigned directly
-      element[key] = value;
-    } else {
-      element.setAttribute(key, value);
-    }
+  // set attributes/properties
+  Object.entries(props).forEach(([key, value]) => {
+    if (namespace || !(key in element)) element.setAttribute(key, value);
+    else element[key] = value;
   });
 
   return element;
 };
 
-export { createElement };
+/**
+ * Tries to convert input to a number
+ * @param {any} value - to be converted to number
+ * @return {number | null} - number if successful, null otherwise
+ */
+const validateNumber = (value) => {
+  const num = parseInt(value, 10);
+  return Number.isNaN(num) ? null : num;
+};
+
+export { createElement, validateNumber };

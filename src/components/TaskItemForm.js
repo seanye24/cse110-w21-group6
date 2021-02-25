@@ -1,5 +1,15 @@
+/**
+ * @file task-item-form web component
+ */
+
 import { createElement } from '../utils';
 
+/**
+ * Custom web component representing a task item form.
+ * @extends HTMLElement
+ * @param {number} name - name of task
+ * @param {number} estimated-pomodoros - estimated number of pomodoros needed
+ */
 class TaskItemForm extends HTMLElement {
   constructor() {
     super();
@@ -54,44 +64,38 @@ class TaskItemForm extends HTMLElement {
       }
     `;
 
-    this.containerElement = createElement({
-      element: 'form',
-      class: 'task-form',
+    this.containerElement = createElement('form', {
+      className: 'task-form',
     });
 
-    this.titleInputLabel = createElement({
-      element: 'label',
+    this.titleInputLabel = createElement('label', {
       for: 'title-input',
       innerText: 'Title',
     });
 
-    this.titleInputElement = createElement({
-      element: 'input',
-      class: 'task-input',
+    this.titleInputElement = createElement('input', {
+      className: 'task-input',
       id: 'title-input',
       type: 'text',
       name: 'title',
       placeholder: 'task title',
     });
 
-    this.descriptionInputLabel = createElement({
-      element: 'label',
+    this.descriptionInputLabel = createElement('label', {
       for: 'description-input',
       innerText: 'Description',
     });
 
-    this.descriptionInputElement = createElement({
-      element: 'input',
-      class: 'task-input',
+    this.descriptionInputElement = createElement('input', {
+      className: 'task-input',
       id: 'description-input',
       type: 'text',
       name: 'description',
       placeholder: 'task description',
     });
 
-    this.submitInputElement = createElement({
-      element: 'input',
-      class: 'task-input',
+    this.submitInputElement = createElement('input', {
+      className: 'task-input',
       id: 'submit-input',
       type: 'submit',
       value: 'Add',

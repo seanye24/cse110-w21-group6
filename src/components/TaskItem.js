@@ -1,5 +1,16 @@
+/**
+ * @file task-item web component
+ */
+
 import { createElement } from '../utils';
 
+/**
+ * Custom web component representing a task item.
+ * @extends HTMLElement
+ * @param {number} name - name of task
+ * @param {number} estimated-pomodoros - estimated number of pomodoros needed
+ * @param {number} used-pomodoros - pomodoros used so far
+ */
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
     return ['title', 'description'];
@@ -65,42 +76,35 @@ class TaskItem extends HTMLElement {
       }
     `;
 
-    this.materialIconLinkElement = createElement({
-      element: 'link',
+    this.materialIconLinkElement = createElement('link', {
       rel: 'stylesheet',
       href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
     });
 
-    this.containerElement = createElement({
-      element: 'div',
-      class: 'container',
+    this.containerElement = createElement('div', {
+      className: 'container',
     });
-    this.titleElement = createElement({
-      element: 'h1',
-      class: 'title',
+    this.titleElement = createElement('h1', {
+      className: 'title',
     });
-    this.descriptionElement = createElement({
-      element: 'h2',
-      class: 'description',
+    this.descriptionElement = createElement('h2', {
+      className: 'description',
     });
 
-    this.editTaskButton = createElement({
-      element: 'span',
-      class: 'material-icons task-button',
+    this.editTaskButton = createElement('span', {
+      className: 'material-icons task-button',
       id: 'edit-button',
       innerText: 'mode',
     });
 
-    this.finishTaskButton = createElement({
-      element: 'span',
-      class: 'material-icons task-button',
+    this.finishTaskButton = createElement('span', {
+      className: 'material-icons task-button',
       id: 'finish-button',
       innerText: 'done',
     });
 
-    this.deleteTaskButton = createElement({
-      element: 'span',
-      class: 'material-icons task-button',
+    this.deleteTaskButton = createElement('span', {
+      className: 'material-icons task-button',
       id: 'delete-button',
       innerText: 'delete',
     });

@@ -6,7 +6,7 @@ const {
   getTasks,
   updateTask,
   deleteTask,
-} = require('../scripts/task-list.js');
+} = require('../scripts/taskList');
 
 let tasks = [
   { title: 'task1', description: 'description1' },
