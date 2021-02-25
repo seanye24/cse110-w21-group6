@@ -1,19 +1,27 @@
 /* global myStorage: true */
 /* eslint no-use-before-define: ["error", { "functions": false }] */
 
+/**
+ * @author Fernando Bracamonte
+ * @file Timer script used to emulate the pomodoro process
+ */
+
 const WORK_SESSION = 25 * 60; // convert 25 minutes to seconds
 const SHORT_BREAK = 5 * 60; // convert 5 minutes to seconds
 const LONG_BREAK = 15 * 60; // convert 15 minutes to seconds
 
+// Variables to save the pomodoro sessions
 const workSession = 'Work';
 const shortBreak = 'Short Break';
 const longBreak = 'Long Break';
 let currSession = workSession;
 
+// variables to store the text for the pomodoro timer
 const startButton = 'START';
-const stopButton = 'STOP';
+const endButton = 'endButton';
 const yesButton = 'Yes';
 
+// Variables used to modify HTML elements
 const timerButton = document.getElementById('timer-button');
 const timeDisplay = document.getElementById('time-display');
 const sessionDisplay = document.getElementById('session-display');
@@ -22,8 +30,13 @@ const finishedTask = document.getElementById('task-finished');
 myStorage = window.localStorage;
 myStorage.pomodoros = 0; // save number of pomodoros completed
 
-let countdown;
+let countdown; // variable used to clear the time Interval if needed
 
+/**
+ * @param {number} seconds variable that contains seconds left in the timer
+ * @function displayTimeLeft helper function that takes seconds left and displays it
+ * into minutes and seconds left, as 00:00.
+ */
 function displayTimeLeft(seconds) {
   const minutes = Math.floor(seconds / 60);
   const remainderSeconds = seconds % 60;
@@ -32,14 +45,19 @@ function displayTimeLeft(seconds) {
     remainderSeconds < 10 ? '0' : ''
   }${remainderSeconds}`;
 
-  timeDisplay.textContent = display;
+  timeDisplay.textContent = display; // set html timer display with correct time left
   document.title = display; // set title of website with countdown
 }
 
+/**
+ * @function updateSession Helper function that updates to the correct pomodoro sessison
+ * @example If current session is 'work session', then we must either change it to
+ * 'long break' or 'short break' depending on how many pomodoros have been completed
+ */
 function updateSession() {
   if (currSession === longBreak || currSession === shortBreak) {
     currSession = workSession;
-    timerButton.textContent = stopButton;
+    timerButton.textContent = endButton;
     finishedTask.textContent = '';
   } else if (currSession === workSession) {
     if (
@@ -57,23 +75,31 @@ function updateSession() {
   }
 }
 
+/**
+ *
+ * @param {number} seconds
+ * @function timer Function that handles the updating of the time, second by second
+ */
 function timer(seconds) {
   displayTimeLeft(seconds); // fixes bug where initial time does not show
   sessionDisplay.textContent = currSession;
 
   let secondsLeft = seconds;
 
+  // set interval that counts down until 00:00, and it takes 1 second
+  // to decrement each second passed
   countdown = setInterval(() => {
     secondsLeft -= 1;
 
     if (secondsLeft < 0) {
       clearInterval(countdown);
 
+      // Increment pomodoros completed
       if (currSession === workSession) {
         myStorage.pomodoros = parseInt(myStorage.pomodoros, 10) + 1;
         document.getElementById(
           'pom-completed',
-        ).innerHTML = `Pomos completed: ${myStorage.pomodoros}`;
+        ).innerHTML = `Pomodoros completed: ${myStorage.pomodoros}`;
       }
       updateSession();
       loopTimer();
@@ -84,6 +110,11 @@ function timer(seconds) {
   }, 1000);
 }
 
+/**
+ * @function loopTimer Helper function that basically creates an infinite loop,
+ * where after each session, it determines which session would be the next and
+ * calls the timer function
+ */
 function loopTimer() {
   timerButton.disabled = false;
 
@@ -98,13 +129,17 @@ function loopTimer() {
   }
 }
 
+/**
+ * @function startTimer Function that is called when the timer button is clicked
+ * It handles the different scenarios of whether to disable button, or end timer, etc.
+ */
 function startTimer() {
   if (timerButton.textContent === startButton) {
     sessionDisplay.innerText = currSession;
-    timerButton.textContent = stopButton;
+    timerButton.textContent = endButton;
 
     timer(WORK_SESSION);
-  } else if (timerButton.textContent === stopButton) {
+  } else if (timerButton.textContent === endButton) {
     clearInterval(countdown);
     displayTimeLeft(WORK_SESSION);
     timerButton.textContent = startButton;
@@ -116,14 +151,13 @@ function startTimer() {
 }
 
 /**
- * Function that deletes first task added to the "queue"
+ * @function deleteTask Function that deletes first task added to the "queue"
  */
 // function deleteTask() {}
 
 /**
- * Function to reset pomodoro count
- * potentially usefull for end of day,
- * so next day starts fresh
+ * @function resetPomodoroCount Function to reset pomodoro count
+ * potentially usefull for end of day, so next day starts with 0 pomodoros completed
  *
 function resetPomodoroCount() {
   myStorage.pomodoros = 0;
