@@ -2,31 +2,14 @@
  * @file Manage progress ring for page
  */
 
-import ProgressRing from '../components/ProgressRing';
-import { createElement } from '../utils';
-
-window.customElements.define('progress-ring', ProgressRing);
 let progressRingElement;
 
 /**
- * Set progress ring size, attach to DOM
- * @param {HTMLElement} container - progress ring container
- * @param {number} radius - ring radius
- * @param {number} stroke - ring width
- * @param {number} progress - initial progress
+ * Set progress ring
+ * @param {HTMLElement} element - progress ring element
  */
-const initializeProgressRing = (
-  container,
-  radius = 0,
-  stroke = 0,
-  progress = 0,
-) => {
-  progressRingElement = createElement('progress-ring', {
-    radius,
-    stroke,
-    progress,
-  });
-  container.appendChild(progressRingElement);
+const initializeProgressRing = (element) => {
+  progressRingElement = element;
 };
 
 /**
@@ -55,4 +38,19 @@ const startProgressRing = (tickLength, tickFrequency) => {
   }, tickFrequency);
 };
 
-export { initializeProgressRing, getProgress, setProgress, startProgressRing };
+/**
+ * Set radius of ring
+ * @param {number} radius - new radius to set
+ */
+const setRadiusStroke = (radius, stroke) => {
+  progressRingElement.radius = radius;
+  progressRingElement.stroke = stroke;
+};
+
+export {
+  initializeProgressRing,
+  getProgress,
+  setProgress,
+  startProgressRing,
+  setRadiusStroke,
+};

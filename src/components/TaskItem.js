@@ -10,64 +10,97 @@ import { createElement } from '../utils';
  * @param {number} name - name of task
  * @param {number} estimated-pomodoros - estimated number of pomodoros needed
  * @param {number} used-pomodoros - pomodoros used so far
+ * @param {boolean} selected - indicates if the current task is selected
  */
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
-    return ['title', 'description'];
+    return ['name', 'estimated-pomodoros', 'used-pomodoros', 'selected'];
   }
 
   constructor() {
     super();
+
+    this.usedPomodoros = 0;
+    this.estimatedPomodoros = 0;
 
     // create shadow root
     this.shadow = this.attachShadow({ mode: 'open' });
 
     this.styleElement = document.createElement('style');
     this.styleElement.innerText = `
-      .container {
-        background: lightblue;
-        font-family: Roboto, sans-serif;
-        margin: 1em;
-        padding: 0.5em;
-        position: relative;
+      .item-container {
+        margin-bottom: 1em;
+        padding: 0.5em 2em;
         border-radius: 5px;
+        position: relative;
+        cursor: pointer;
       }
 
-      .title {
-        font-size: 1.25rem;
+      .selected {
+        background: #90e0ef;
       }
 
-      .description {
+      .text-container {
+        background: #fff;
+        color: #555;
+        position: relative;
+        padding: 0.5em;
+        border-radius: 5px;
         font-size: 1rem;
-        color: darkgray;
+        display: flex;
+        align-items: center;
+      }
+      
+      .name {
+        width: 80%;
+        display: inline-block;
+        margin: 0.5em 0;
+      }
+      
+      .pomodoro-container {
+        width: 20%;
+        height: 100%;
+        display: inline-block;
+        position: relative;
+        text-align: right;
+      }
+
+      .pomodoro-label {
+        position: absolute;
+        top: -0.5em;
+        right: 0;
+        font: 0.8rem 'Source Sans Pro', sans-serif;
+        color: #777;
+      }
+
+      .pomodoro {
+        display: inline-block;
+        margin: 1em 0 0 0;
       }
 
       .task-button {
+        display: none;
         position: absolute;
-        padding: 0.5em;
-        color: rgba(51, 51, 51, 0.5);
+        padding: 0.25em;
+        font-size: 1.2rem;
+        color: #fff;
       }
 
       .task-button:hover {
         border-radius: 50%;
-        background: rgba(238, 238, 238, 0.5);
-        color: rgba(51, 51, 51, 1);
+        background: rgba(0, 180, 216, 0.25);
+        color: #00b4d8;
         cursor: pointer;
       }
 
-      #edit-button {
-        display: none;
+      .item-container:hover > .task-button {
+        display: initial;
       }
 
-      .container:hover > #edit-button {
-        display: initial;
+
+      #edit-button {
         top: 0;
         right: 0;
-      }
-
-      #finish-button {
-        bottom: 0;
-        right: 1.5em;
       }
 
       #delete-button {
@@ -81,14 +114,26 @@ class TaskItem extends HTMLElement {
       href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
     });
 
-    this.containerElement = createElement('div', {
-      className: 'container',
+    this.textContainerElement = createElement('div', {
+      className: 'text-container',
     });
-    this.titleElement = createElement('h1', {
-      className: 'title',
+    this.itemContainerElement = createElement('div', {
+      className: 'item-container',
     });
-    this.descriptionElement = createElement('h2', {
-      className: 'description',
+    this.nameElement = createElement('p', {
+      className: 'name',
+    });
+    this.pomodoroContainer = createElement('span', {
+      className: 'pomodoro-container',
+    });
+    this.pomodoroLabel = createElement('label', {
+      className: 'pomodoro-label',
+      for: 'pomodoro',
+      innerText: 'Progress',
+    });
+    this.pomodoroElement = createElement('p', {
+      className: 'pomodoro',
+      id: 'pomodoro',
     });
 
     this.editTaskButton = createElement('span', {
@@ -112,24 +157,33 @@ class TaskItem extends HTMLElement {
     this.shadow.append(
       this.materialIconLinkElement,
       this.styleElement,
-      this.containerElement,
+      this.itemContainerElement,
     );
-    this.containerElement.append(
-      this.titleElement,
-      this.descriptionElement,
+    this.itemContainerElement.append(
+      this.textContainerElement,
       this.editTaskButton,
-      this.finishTaskButton,
       this.deleteTaskButton,
     );
+    this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
+    this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'title':
-        this.titleElement.innerText = newValue;
+      case 'name':
+        this.nameElement.innerText = newValue;
         break;
-      case 'description':
-        this.descriptionElement.innerText = newValue;
+      case 'used-pomodoros':
+        this.usedPomodoros = newValue;
+        this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
+        break;
+      case 'estimated-pomodoros':
+        this.estimatedPomodoros = newValue;
+        this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
+        break;
+      case 'selected':
+        this.itemContainerElement.className =
+          newValue === 'true' ? 'item-container selected' : 'item-container';
         break;
       default:
     }

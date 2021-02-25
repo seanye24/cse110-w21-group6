@@ -2,16 +2,24 @@
  * @file Entry point for application
  */
 
+import '../styles/style.css';
+import '../components/TaskList';
+import '../components/ProgressRing';
 import { initializeTaskList } from './taskList';
-import { initializeProgressRing, startProgressRing } from './progressRing';
+import {
+  initializeProgressRing,
+  setProgress,
+  setRadiusStroke,
+  startProgressRing,
+} from './progressRing';
 
 window.addEventListener('DOMContentLoaded', () => {
-  initializeProgressRing(
-    document.body,
-    Math.min(window.innerWidth / 3, window.innerHeight / 3),
-    10,
-    100,
-  );
+  initializeProgressRing(document.querySelector('.progress-ring'));
+  initializeTaskList(document.querySelector('.task-list'));
+
+  setRadiusStroke(180, 8);
   startProgressRing(0.5, 60);
-  initializeTaskList(document.body);
+  setTimeout(() => {
+    setProgress(50);
+  }, 7000);
 });

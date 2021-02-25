@@ -1,6 +1,8 @@
+import '../components/ProgressRing';
+import { createElement } from '../utils';
 import {
-  initializeProgressRing,
   getProgress,
+  initializeProgressRing,
   setProgress,
   startProgressRing,
 } from '../scripts/progressRing';
@@ -8,7 +10,15 @@ import {
 describe('testing progress ring', () => {
   // initialize progress ring before each test
   beforeEach(() => {
-    initializeProgressRing(document.body, 100, 10, 0);
+    const progressRingElement = createElement('progress-ring', {
+      radius: 100,
+      stroke: 10,
+      progress: 0,
+      className: 'progress-ring',
+    });
+    document.body.innerHTML = '';
+    document.body.appendChild(progressRingElement);
+    initializeProgressRing(progressRingElement);
     jest.useFakeTimers();
   });
 

@@ -16,14 +16,24 @@ class TaskList extends HTMLElement {
     this.styleElement = document.createElement('style');
     this.styleElement.innerText = `
       .container {
-        margin: 1em;
-        font-family: Roboto, sans-serif;
-        border: 1px solid #aaa;
+        padding: 1em;
+        font: normal 1rem 'Source Sans Pro', sans-serif;
         border-radius: 5px;
+        background: #00b4d8;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+      }
+
+      .task-item-container {
+        flex: 1;
+        overflow: auto;
       }
 
       .title {
         text-align: center;
+        color: #fff;
       }
     `;
 
