@@ -6,10 +6,15 @@ import {
   getTasks,
   updateTask,
   deleteTask,
+  incrementPomodoro,
+  selectPomodoro,
 } from '../scripts/taskList';
 
 describe('testing tasklist', () => {
-  const tasks = [{ name: 'task1' }, { name: 'task2' }];
+  const tasks = [
+    { name: 'task1', usedPomodoros: 0, estimatedPomodoros: 2, selected: false },
+    { name: 'task2', usedPomodoros: 0, estimatedPomodoros: 2, selected: false },
+  ];
   beforeEach(() => {
     window.localStorage.clear();
     window.localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -37,5 +42,19 @@ describe('testing tasklist', () => {
   test('delete existing task', () => {
     deleteTask(tasks[1]);
     expect(getTasks()).toStrictEqual([tasks[0]]);
+  });
+
+  test('increment task pomodoro', () => {
+    incrementPomodoro(tasks[1]);
+    expect(getTasks()[1].usedPomodoros).toBe(tasks[1].usedPomodoros + 1);
+  });
+
+  test('select pomodoro', () => {
+    selectPomodoro(tasks[1]);
+    expect(getTasks()[0].selected).toBe(false);
+    expect(getTasks()[1].selected).toBe(true);
+    selectPomodoro(tasks[0]);
+    expect(getTasks()[0].selected).toBe(true);
+    expect(getTasks()[1].selected).toBe(false);
   });
 });
