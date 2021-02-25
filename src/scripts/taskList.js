@@ -9,6 +9,7 @@
  * @property {string} name                - name of the task
  * @property {number} usedPomodoros       - pomodoros used so far
  * @property {number} estimatedPomodoros  - estimated number of pomos needed
+ * @property {boolean} selected           - whether task is selected
  */
 
 import { createElement } from '../utils';
@@ -62,6 +63,16 @@ const getTaskItemButtons = (task) => {
 };
 
 /**
+ * Retrieve task from tasks and DOM
+ * @param {string} name - name of task
+ * @return {{taskIndex: number, element: HTMLElement}}
+ */
+const getTask = (name) => ({
+  taskIndex: tasks.findIndex((task) => task.name === name),
+  taskElement: taskListItemContainer.querySelector(`[name="${name}"]`),
+});
+
+/**
  * Deleting existing task
  * @param {Task} taskToDelete - task to be deleted
  */
@@ -69,13 +80,12 @@ const deleteTask = (taskToDelete) => {
   const { name } = taskToDelete;
 
   // update localStorage
-  const taskIndex = tasks.findIndex((task) => task.name === name);
+  const { taskIndex, taskElement } = getTask(name);
   tasks.splice(taskIndex, 1);
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
 
   // remove task from dom
-  const taskItem = taskListItemContainer.querySelector(`[name="${name}"]`);
-  taskItem.remove();
+  taskElement.remove();
 };
 
 /**
@@ -119,16 +129,23 @@ const addTask = (newTask) => {
  */
 const updateTask = (prevTask, nextTask) => {
   const { name: prevName } = prevTask;
-  const { name: nextName } = nextTask;
+  const {
+    name: nextName,
+    usedPomodoros,
+    estimatedPomodoros,
+    selected,
+  } = nextTask;
+  const { taskIndex, taskElement } = getTask(prevName);
 
   // update localStorage
-  const taskIndex = tasks.findIndex((task) => task.name === prevName);
   tasks[taskIndex] = nextTask;
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
 
   // update task in dom
-  const taskItem = taskListItemContainer.querySelector(`[name="${prevName}"]`);
-  taskItem.setAttribute('name', nextName);
+  taskElement.setAttribute('name', nextName);
+  taskElement.setAttribute('used-pomodoros', usedPomodoros);
+  taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
+  taskElement.setAttribute('selected', selected);
 };
 
 /**
@@ -172,10 +189,32 @@ const handleTaskFormSubmit = (e) => {
     name: trimmedName,
     estimatedPomodoros: pomodoro,
     usedPomodoros: 0,
+    selected: false,
   });
   Object.values(taskItemFormInputs).forEach((input) => {
     input.value = '';
   });
+};
+
+/**
+ * Increment the usedPomodoros for one task
+ * @param {Task} task - task to be incremented
+ */
+const incrementPomodoro = (task) => {
+  const { usedPomodoros } = task;
+  updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
+};
+
+/**
+ * Select a task
+ * @param {Task} task - task to be selected
+ */
+const selectPomodoro = (task) => {
+  const prevSelectedTask = tasks.find((t) => t.selected);
+  if (prevSelectedTask) {
+    updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
+  }
+  updateTask(task, { ...task, selected: true });
 };
 
 /**
@@ -195,4 +234,12 @@ const initializeTaskList = (containerElement) => {
   tasks.forEach((task) => addTaskToDom(task));
 };
 
-export { initializeTaskList, addTask, getTasks, updateTask, deleteTask };
+export {
+  initializeTaskList,
+  addTask,
+  getTasks,
+  updateTask,
+  deleteTask,
+  incrementPomodoro,
+  selectPomodoro,
+};
