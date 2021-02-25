@@ -21,7 +21,6 @@ class TaskItemForm extends HTMLElement {
       .task-form {
         margin: 1em;
         padding: 1em 20%;
-        font-family: Roboto, sans-serif;
         display: flex;
         flex-direction: column;
         border-radius: 5px;
@@ -31,15 +30,14 @@ class TaskItemForm extends HTMLElement {
         margin-bottom: 1em;
         padding: 0.75em;
         border-radius: 5px;
-        border: 1px solid #777;
-        font-size: 0.9rem;
+        border: none;
+        font: 1rem 'Source Sans Pro', sans-serif;
         color: #444;
       }
 
       .task-input[type='text']:focus {
-        border: 2px solid #0077b6;
         outline: none;
-        box-shadow: none;
+        box-shadow: 0 0 0 2pt #48cae4;
       }
 
       .task-input[type='text']::placeholder {
@@ -47,20 +45,20 @@ class TaskItemForm extends HTMLElement {
       }
 
       #submit-input {
-        width: 100%;
+        width: 50%;
         margin: auto;
-        background: rgba(51, 51, 51, 0.75);
+        background: #4dcfe9;
         border-radius: 5px;
         outline: none;
         border: none;
         color: white;
-        padding: 1em;
-        font-size: 1rem;
+        padding: 0.5em;
+        font: 1.2rem 'Source Sans Pro', sans-serif;
       }
 
       #submit-input:hover {
+        background: #48cae4;
         cursor: pointer;
-        background: rgba(51, 51, 51, 1);
       }
     `;
 
@@ -68,45 +66,24 @@ class TaskItemForm extends HTMLElement {
       className: 'task-form',
     });
 
-    this.titleInputLabel = createElement('label', {
-      for: 'title-input',
-      innerText: 'Title',
-    });
-
-    this.titleInputElement = createElement('input', {
+    this.nameInputElement = createElement('input', {
       className: 'task-input',
-      id: 'title-input',
+      id: 'name-input',
       type: 'text',
-      name: 'title',
-      placeholder: 'task title',
-    });
-
-    this.descriptionInputLabel = createElement('label', {
-      for: 'description-input',
-      innerText: 'Description',
-    });
-
-    this.descriptionInputElement = createElement('input', {
-      className: 'task-input',
-      id: 'description-input',
-      type: 'text',
-      name: 'description',
-      placeholder: 'task description',
+      name: 'name',
+      placeholder: 'Task Description...',
     });
 
     this.submitInputElement = createElement('input', {
       className: 'task-input',
       id: 'submit-input',
       type: 'submit',
-      value: 'Add',
+      value: 'ADD',
     });
 
     this.shadow.append(this.styleElement, this.containerElement);
     this.containerElement.append(
-      this.titleInputLabel,
-      this.titleInputElement,
-      this.descriptionInputLabel,
-      this.descriptionInputElement,
+      this.nameInputElement,
       this.submitInputElement,
     );
   }

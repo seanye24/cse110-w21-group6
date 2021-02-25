@@ -17,9 +17,11 @@ class TaskList extends HTMLElement {
     this.styleElement.innerText = `
       .container {
         margin: 1em;
-        font-family: Roboto, sans-serif;
-        border: 1px solid #aaa;
+        padding: 1em;
+        font: normal 1rem 'Duru Sans', sans-serif;
         border-radius: 5px;
+        background: #00b4d8;
+        max-width: 700px;
       }
 
       .title {
