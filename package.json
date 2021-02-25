@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "yarn run webpack serve --mode=development --open",
-    "test": "jest --coverage",
+    "test": "jest --verbose --coverage",
     "lint": "eslint --fix --no-error-on-unmatched-pattern './src/**/*.js' && stylelint --formatter verbose --allow-empty-input './src/**/*.css' && htmlhint --config ./.htmlhintrc './src/**/*.html'",
     "build": "yarn run webpack --config webpack.config.js",
     "ci": "yarn run lint && yarn run test && yarn run build",
