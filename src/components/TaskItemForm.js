@@ -23,25 +23,62 @@ class TaskItemForm extends HTMLElement {
         padding: 1em 20%;
         display: flex;
         flex-direction: column;
-        border-radius: 5px;
       }
 
-      .task-input[type='text'] {
+      .field-input-container {
         margin-bottom: 1em;
-        padding: 0.75em;
         border-radius: 5px;
+        position: relative;
+      }
+
+      .task-input-label {
+        position: absolute;
+        z-index: 2;
+        font: 0.8rem 'Source Sans Pro', sans-serif;
+        color: #777;
+      }
+
+      #name-input-label {
+        top: 0.2em;
+        left: 0.75em;
+      }
+
+      #pomodoro-input-label {
+        top: 0.2em;
+        right: 9px;
+      }
+
+      .task-input[type='text'],
+      .task-input[type='number'] {
+        padding: 1.5em 0.75em 0.75em 0.75em;
         border: none;
         font: 1rem 'Source Sans Pro', sans-serif;
         color: #444;
+        box-sizing: border-box;
       }
 
-      .task-input[type='text']:focus {
-        outline: none;
+      .task-input:focus {
         box-shadow: 0 0 0 2pt #48cae4;
+        outline: none;
+        z-index: 1;
+        position: relative;
       }
 
-      .task-input[type='text']::placeholder {
-        color: #777;
+      #name-input {
+        width: 80%;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+      }
+
+      #pomodoro-input {
+        width: 20%;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
+
+      .task-input[type='text']::placeholder,
+      .task-input[type='number']::placeholder {
+        color: #c8c8c8;
       }
 
       #submit-input {
@@ -66,12 +103,39 @@ class TaskItemForm extends HTMLElement {
       className: 'task-form',
     });
 
+    this.fieldInputContainer = createElement('div', {
+      className: 'field-input-container',
+    });
+
+    this.nameInputLabel = createElement('label', {
+      className: 'task-input-label',
+      id: 'name-input-label',
+      for: 'name-input',
+      innerText: 'Name',
+    });
+
     this.nameInputElement = createElement('input', {
       className: 'task-input',
       id: 'name-input',
       type: 'text',
       name: 'name',
       placeholder: 'Task Description...',
+    });
+
+    this.pomodoroInputLabel = createElement('label', {
+      className: 'task-input-label',
+      id: 'pomodoro-input-label',
+      for: 'pomodoro-input',
+      innerText: 'Pomodoros',
+    });
+
+    this.pomodoroInputElement = createElement('input', {
+      className: 'task-input',
+      id: 'pomodoro-input',
+      type: 'number',
+      name: 'pomodoro',
+      placeholder: '#',
+      min: '1',
     });
 
     this.submitInputElement = createElement('input', {
@@ -83,8 +147,14 @@ class TaskItemForm extends HTMLElement {
 
     this.shadow.append(this.styleElement, this.containerElement);
     this.containerElement.append(
-      this.nameInputElement,
+      this.fieldInputContainer,
       this.submitInputElement,
+    );
+    this.fieldInputContainer.append(
+      this.nameInputLabel,
+      this.nameInputElement,
+      this.pomodoroInputLabel,
+      this.pomodoroInputElement,
     );
   }
 }
