@@ -47,6 +47,19 @@ class ProgressRing extends HTMLElement {
 
     this.root.append(this.styleElement, this.svgElement);
     this.svgElement.append(this.baseCircleElement, this.circleElement);
+    this.h1Container = createElement(
+      'foreignObject',
+      { x: 91, y: 91, width: 182, height: 182 },
+      { namespace: svgNamespace },
+    );
+    this.h1Container.appendChild(
+      createElement(
+        'h1',
+        { innerHTML: 'hello' },
+        { namespace: 'http://www.w3.org/1999/xhtml' },
+      ),
+    );
+    this.svgElement.appendChild(this.h1Container);
   }
 
   /** Updates component view */
@@ -145,4 +158,4 @@ class ProgressRing extends HTMLElement {
   }
 }
 
-export default ProgressRing;
+window.customElements.define('progress-ring', ProgressRing);

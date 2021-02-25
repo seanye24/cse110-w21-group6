@@ -22,7 +22,8 @@ let tasks = [];
 // task-list element
 // task-list container element
 // container element for task-list-item
-const taskList = createElement('task-list', {});
+// const taskList = createElement('task-list', { className: 'task-list' });
+const taskList = document.querySelector('.task-list');
 const taskListContainer = Array.from(taskList.shadowRoot.childNodes).find(
   (elem) => elem.className === 'container',
 );
@@ -223,7 +224,7 @@ const selectPomodoro = (task) => {
  * @param {HTMLElement} containerElement - container for task list
  */
 const initializeTaskList = (containerElement) => {
-  containerElement.appendChild(taskList);
+  // containerElement.appendChild(taskList);
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
 
   // retrive and add tasks from localStorage

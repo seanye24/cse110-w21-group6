@@ -20,7 +20,7 @@ class TaskItemForm extends HTMLElement {
     this.styleElement.innerText = `
       .task-form {
         margin: 1em;
-        padding: 1em 20%;
+        padding: 1em ;
         display: flex;
         flex-direction: column;
       }
@@ -28,6 +28,19 @@ class TaskItemForm extends HTMLElement {
       .field-input-container {
         margin-bottom: 1em;
         border-radius: 5px;
+        position: relative;
+        width: 100%;
+        display: flex;
+      }
+
+      .name-input-container {
+        flex: 4;
+        position: relative;
+      }
+
+      .pomodoro-input-container {
+        flex: 1;
+        min-width: 75px;
         position: relative;
       }
 
@@ -45,7 +58,7 @@ class TaskItemForm extends HTMLElement {
 
       #pomodoro-input-label {
         top: 0.2em;
-        right: 9px;
+        left: 0.75em;
       }
 
       .task-input[type='text'],
@@ -55,6 +68,7 @@ class TaskItemForm extends HTMLElement {
         font: 1rem 'Source Sans Pro', sans-serif;
         color: #444;
         box-sizing: border-box;
+        width: 100%;
       }
 
       .task-input:focus {
@@ -65,13 +79,11 @@ class TaskItemForm extends HTMLElement {
       }
 
       #name-input {
-        width: 80%;
         border-top-left-radius: 5px;
         border-bottom-left-radius: 5px;
       }
 
       #pomodoro-input {
-        width: 20%;
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
       }
@@ -79,9 +91,6 @@ class TaskItemForm extends HTMLElement {
       .task-input[type='text']::placeholder,
       .task-input[type='number']::placeholder {
         color: #c8c8c8;
-      }
-      .task-input[type='number']::placeholder {
-        text-align: center;
       }
 
       #submit-input {
@@ -110,6 +119,10 @@ class TaskItemForm extends HTMLElement {
       className: 'field-input-container',
     });
 
+    this.nameInputContainer = createElement('div', {
+      className: 'name-input-container',
+    });
+
     this.nameInputLabel = createElement('label', {
       className: 'task-input-label',
       id: 'name-input-label',
@@ -123,6 +136,10 @@ class TaskItemForm extends HTMLElement {
       type: 'text',
       name: 'name',
       placeholder: 'Task Description...',
+    });
+
+    this.pomodoroInputContainer = createElement('div', {
+      className: 'pomodoro-input-container',
     });
 
     this.pomodoroInputLabel = createElement('label', {
@@ -154,8 +171,11 @@ class TaskItemForm extends HTMLElement {
       this.submitInputElement,
     );
     this.fieldInputContainer.append(
-      this.nameInputLabel,
-      this.nameInputElement,
+      this.nameInputContainer,
+      this.pomodoroInputContainer,
+    );
+    this.nameInputContainer.append(this.nameInputLabel, this.nameInputElement);
+    this.pomodoroInputContainer.append(
       this.pomodoroInputLabel,
       this.pomodoroInputElement,
     );
