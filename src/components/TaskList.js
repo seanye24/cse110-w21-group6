@@ -18,7 +18,7 @@ class TaskList extends HTMLElement {
       .container {
         margin: 1em;
         padding: 1em;
-        font: normal 1rem 'Duru Sans', sans-serif;
+        font: normal 1rem 'Source Sans Pro', sans-serif;
         border-radius: 5px;
         background: #00b4d8;
         max-width: 700px;
@@ -26,6 +26,7 @@ class TaskList extends HTMLElement {
 
       .title {
         text-align: center;
+        color: #fff;
       }
     `;
 

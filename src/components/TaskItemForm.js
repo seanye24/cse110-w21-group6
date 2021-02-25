@@ -80,6 +80,9 @@ class TaskItemForm extends HTMLElement {
       .task-input[type='number']::placeholder {
         color: #c8c8c8;
       }
+      .task-input[type='number']::placeholder {
+        text-align: center;
+      }
 
       #submit-input {
         width: 50%;
