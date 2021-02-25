@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: utils/index.js</title>
+    <title>JSDoc: Source: scripts/progressRing.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: utils/index.js</h1>
+    <h1 class="page-title">Source: scripts/progressRing.js</h1>
 
     
 
@@ -27,39 +27,63 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Creates an HTMLElement and set its attributes
- * Created to reduce boilerplate from element creation
- * @param {string} elementType - element tag name
- * @param {{key: string}} props - element's attributes/properties
- * @param {{option: string}} options - element options such as namespace
- * @return element - new HTMLElement created
+ * @file Manage progress ring for page
  */
-const createElement = (elementType, props = {}, options = {}) => {
-  const { namespace } = options;
-  let element;
-  if (namespace) element = document.createElementNS(namespace, elementType);
-  else element = document.createElement(elementType); // create element
 
-  // set attributes/properties
-  Object.entries(props).forEach(([key, value]) => {
-    if (namespace || !(key in element)) element.setAttribute(key, value);
-    else element[key] = value;
+import ProgressRing from '../components/ProgressRing';
+import { createElement } from '../utils';
+
+window.customElements.define('progress-ring', ProgressRing);
+let progressRingElement;
+
+/**
+ * Set progress ring size, attach to DOM
+ * @param {HTMLElement} container - progress ring container
+ * @param {number} radius - ring radius
+ * @param {number} stroke - ring width
+ * @param {number} progress - initial progress
+ */
+const initializeProgressRing = (
+  container,
+  radius = 0,
+  stroke = 0,
+  progress = 0,
+) => {
+  progressRingElement = createElement('progress-ring', {
+    radius,
+    stroke,
+    progress,
   });
-
-  return element;
+  container.appendChild(progressRingElement);
 };
 
 /**
- * Tries to convert input to a number
- * @param {any} value - to be converted to number
- * @return {number | null} - number if successful, null otherwise
+ * Get progress
+ * @return {number} - current progress
  */
-const validateNumber = (value) => {
-  const num = parseInt(value, 10);
-  return Number.isNaN(num) ? null : num;
+const getProgress = () => progressRingElement.progress;
+
+/**
+ * Set progress
+ * @param {number} progress - progress to set
+ */
+const setProgress = (progress) => {
+  progressRingElement.progress = progress;
 };
 
-export { createElement, validateNumber };
+/**
+ * Start the progress bar
+ * @param {number} tickLength - amount of progress to decrease
+ * @param {number} tickFrequency - how often to decrease progress (in ms)
+ */
+const startProgressRing = (tickLength, tickFrequency) => {
+  const ticker = setInterval(() => {
+    if (progressRingElement.progress &lt;= 0) clearInterval(ticker);
+    setProgress(progressRingElement.progress - tickLength);
+  }, tickFrequency);
+};
+
+export { initializeProgressRing, getProgress, setProgress, startProgressRing };
 </code></pre>
         </article>
     </section>
