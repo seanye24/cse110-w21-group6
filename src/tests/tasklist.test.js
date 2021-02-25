@@ -8,10 +8,7 @@ const {
   deleteTask,
 } = require('../scripts/taskList');
 
-let tasks = [
-  { title: 'task1', description: 'description1' },
-  { title: 'task2', description: 'description2' },
-];
+let tasks = [{ name: 'task1' }, { name: 'task2' }];
 window.localStorage.setItem('tasks', JSON.stringify(tasks));
 
 test('retrieves tasks from localStorage', () => {
