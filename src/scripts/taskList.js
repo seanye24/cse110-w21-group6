@@ -18,48 +18,24 @@ import '../components/TaskItemForm';
 import '../components/TaskList';
 
 let tasks = [];
+let taskList;
+let taskListContainer;
+let taskListItemContainer;
+let taskItemForm;
+let taskItemFormContainer;
+let taskItemFormInputs;
 
-// task-list element
-// task-list container element
-// container element for task-list-item
-// const taskList = createElement('task-list', { className: 'task-list' });
-const taskList = document.querySelector('.task-list');
-const taskListContainer = Array.from(taskList.shadowRoot.childNodes).find(
-  (elem) => elem.className === 'container',
-);
-const taskListItemContainer = taskListContainer.querySelector(
-  '.task-item-container',
-);
-
-// task-item-form element
-// task-item-form container element
-// task-item-form text input elements
-const taskItemForm = taskListContainer.querySelector('.task-item-form');
-const taskItemFormContainer = Array.from(
-  taskItemForm.shadowRoot.childNodes,
-).find((elem) => elem.className === 'task-form');
-const taskItemFormInputs = Array.from(
-  taskItemFormContainer.querySelectorAll(
-    '.task-input[type="text"], .task-input[type="number"]',
-  ),
-).reduce((acc, elem) => ({ ...acc, [elem.name]: elem }), {});
-
-/**
- * Get button elements from task-item element
- * @param {Task} task - task-item element
- * @return {{finish: HTMLButtonElement, delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
- */
-const getTaskItemButtons = (task) => {
-  const buttons = Array.from(
-    Array.from(task.shadowRoot.childNodes)
-      .find((elem) => elem.className.includes('item-container'))
-      .querySelectorAll('.task-button'),
+const setRoot = (root) => {
+  taskList = root;
+  taskListContainer = taskList.shadowRoot.querySelector('.container');
+  taskListItemContainer = taskListContainer.querySelector(
+    '.task-item-container',
   );
-
-  return {
-    finish: buttons.find((btn) => btn.getAttribute('id') === 'finish-button'),
-    delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
-    edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
+  taskItemForm = taskListContainer.querySelector('.task-item-form');
+  taskItemFormContainer = taskItemForm.shadowRoot.querySelector('.task-form');
+  taskItemFormInputs = {
+    name: taskItemFormContainer.querySelector('#name-input'),
+    pomodoro: taskItemFormContainer.querySelector('#pomodoro-input'),
   };
 };
 
@@ -72,6 +48,25 @@ const getTask = (name) => ({
   taskIndex: tasks.findIndex((task) => task.name === name),
   taskElement: taskListItemContainer.querySelector(`[name="${name}"]`),
 });
+
+/**
+ * Get button elements from task-item element
+ * @param {Task} task - task-item element
+ * @return {{finish: HTMLButtonElement, delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
+ */
+const getTaskItemButtons = (task) => {
+  const buttons = Array.from(
+    task.shadowRoot
+      .querySelector('.item-container')
+      .querySelectorAll('.task-button'),
+  );
+
+  return {
+    finish: buttons.find((btn) => btn.getAttribute('id') === 'finish-button'),
+    delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
+    edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
+  };
+};
 
 /**
  * Deleting existing task
@@ -198,6 +193,26 @@ const handleTaskFormSubmit = (e) => {
 };
 
 /**
+ * Retrieve tasks from localStorage
+ */
+const restoreTasks = () => {
+  if (!window.localStorage.getItem('tasks')) {
+    window.localStorage.setItem('tasks', JSON.stringify([]));
+  }
+  tasks = JSON.parse(window.localStorage.getItem('tasks'));
+  tasks.forEach((task) => addTaskToDom(task));
+};
+
+/**
+ * Set tasklist
+ * @param {HTMLElement} element - task list element
+ */
+const initializeTaskList = (element) => {
+  setRoot(element);
+  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
+  restoreTasks();
+};
+/**
  * Increment the usedPomodoros for one task
  * @param {Task} task - task to be incremented
  */
@@ -216,23 +231,6 @@ const selectPomodoro = (task) => {
     updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
   }
   updateTask(task, { ...task, selected: true });
-};
-
-/**
- * Initialize tasklist on page
- * Retrieve tasks from localStorage
- * @param {HTMLElement} containerElement - container for task list
- */
-const initializeTaskList = (containerElement) => {
-  // containerElement.appendChild(taskList);
-  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
-
-  // retrive and add tasks from localStorage
-  if (!window.localStorage.getItem('tasks')) {
-    window.localStorage.setItem('tasks', JSON.stringify([]));
-  }
-  tasks = JSON.parse(window.localStorage.getItem('tasks'));
-  tasks.forEach((task) => addTaskToDom(task));
 };
 
 export {
