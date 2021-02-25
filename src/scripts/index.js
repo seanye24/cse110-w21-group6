@@ -2,6 +2,7 @@
  * @file Entry point for application
  */
 
+import '../styles/style.css';
 import { initializeTaskList } from './taskList';
 import {
   initializeProgressRing,
@@ -10,13 +11,14 @@ import {
 } from './progressRing';
 
 window.addEventListener('DOMContentLoaded', () => {
+  const mainElement = document.querySelector('#main');
   initializeProgressRing(
-    document.body,
+    mainElement,
     Math.min(window.innerWidth / 3, window.innerHeight / 3),
     10,
     100,
   );
-  initializeTaskList(document.body);
+  initializeTaskList(mainElement);
   startProgressRing(0.5, 60);
   setTimeout(() => {
     setProgress(50);

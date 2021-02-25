@@ -34,6 +34,11 @@ class ProgressRing extends HTMLElement {
       { class: 'circle' },
       { namespace: svgNamespace },
     );
+    this.baseCircleElement = createElement(
+      'circle',
+      { class: 'base-circle' },
+      { namespace: svgNamespace },
+    );
 
     this._radius = 0;
     this._stroke = 0;
@@ -41,7 +46,7 @@ class ProgressRing extends HTMLElement {
     this.updateComponent(this._radius, this._stroke, this._progress);
 
     this.root.append(this.styleElement, this.svgElement);
-    this.svgElement.appendChild(this.circleElement);
+    this.svgElement.append(this.baseCircleElement, this.circleElement);
   }
 
   /** Updates component view */
@@ -56,12 +61,20 @@ class ProgressRing extends HTMLElement {
         height: ${2 * radius}px;
       }
 
+      .base-circle {
+        stroke: #fff;
+        stroke-dasharray: ${circumference} ${circumference};
+        stroke-dashoffset: 0;
+        fill: #48cae4;
+        stroke-width: ${stroke};
+      }
+
       .circle {
         stroke: #0095b3;
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: ${(1 - progress / 100) * circumference};
         fill: transparent;
-        stroke-width: ${stroke};
+        stroke-width: ${stroke + 2};
 
         transition: stroke-dashoffset 0.5s;
         transform: rotate(-90deg);
@@ -72,6 +85,10 @@ class ProgressRing extends HTMLElement {
     this.circleElement.setAttribute('r', normalizedRadius);
     this.circleElement.setAttribute('cx', radius);
     this.circleElement.setAttribute('cy', radius);
+
+    this.baseCircleElement.setAttribute('r', normalizedRadius);
+    this.baseCircleElement.setAttribute('cx', radius);
+    this.baseCircleElement.setAttribute('cy', radius);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
