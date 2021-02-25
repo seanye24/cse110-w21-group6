@@ -1,5 +1,16 @@
+/**
+ * @file task-item web component
+ */
+
 import { createElement } from '../utils';
 
+/**
+ * Custom web component representing a task item.
+ * @extends HTMLElement
+ * @param {number} name - name of task
+ * @param {number} estimated-pomodoros - estimated number of pomodoros needed
+ * @param {number} used-pomodoros - pomodoros used so far
+ */
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
     return ['title', 'description'];

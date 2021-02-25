@@ -1,5 +1,13 @@
+/**
+ * @file task-list web component
+ */
+
 import { createElement } from '../utils';
 
+/**
+ * Custom web component representing a task list.
+ * @extends HTMLElement
+ */
 class TaskList extends HTMLElement {
   constructor() {
     super();

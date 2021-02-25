@@ -3,15 +3,15 @@
  */
 
 import { initializeTaskList } from './taskList';
-import { initializeProgressRing, startRing } from './progressRing';
+import { initializeProgressRing, startProgressRing } from './progressRing';
 
 window.addEventListener('DOMContentLoaded', () => {
   initializeProgressRing(
     document.body,
-    Math.min(window.innerWidth / 2, window.innerHeight / 2),
+    Math.min(window.innerWidth / 3, window.innerHeight / 3),
     10,
     100,
   );
-  startRing(0.5, 60);
+  startProgressRing(0.5, 60);
   initializeTaskList(document.body);
 });
