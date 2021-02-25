@@ -1,5 +1,6 @@
 // testing tasklist, crud operations
 
+import '../components/TaskList';
 import {
   initializeTaskList,
   addTask,
@@ -9,17 +10,25 @@ import {
   incrementPomodoro,
   selectPomodoro,
 } from '../scripts/taskList';
+import { createElement } from '../utils';
 
 describe('testing tasklist', () => {
   const tasks = [
     { name: 'task1', usedPomodoros: 0, estimatedPomodoros: 2, selected: false },
     { name: 'task2', usedPomodoros: 0, estimatedPomodoros: 2, selected: false },
   ];
+
   beforeEach(() => {
     window.localStorage.clear();
     window.localStorage.setItem('tasks', JSON.stringify(tasks));
-    initializeTaskList(document.body);
+    const taskListElement = createElement('task-list', {
+      className: 'task-list',
+    });
+    document.body.innerHTML = '';
+    document.body.appendChild(taskListElement);
+    initializeTaskList(taskListElement);
   });
+
   test('retrieves tasks from localStorage', () => {
     expect(getTasks()).toStrictEqual(tasks);
   });

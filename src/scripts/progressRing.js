@@ -2,29 +2,14 @@
  * @file Manage progress ring for page
  */
 
-import { createElement } from '../utils';
-
-let progressRingElement = document.querySelector('.progress-ring');
+let progressRingElement;
 
 /**
- * Set progress ring size, attach to DOM
- * @param {HTMLElement} container - progress ring container
- * @param {number} radius - ring radius
- * @param {number} stroke - ring width
- * @param {number} progress - initial progress
+ * Set progress ring
+ * @param {HTMLElement} element - progress ring element
  */
-const initializeProgressRing = (
-  container,
-  radius = 0,
-  stroke = 0,
-  progress = 0,
-) => {
-  progressRingElement = createElement('progress-ring', {
-    radius,
-    stroke,
-    progress,
-  });
-  container.appendChild(progressRingElement);
+const initializeProgressRing = (element) => {
+  progressRingElement = element;
 };
 
 /**
