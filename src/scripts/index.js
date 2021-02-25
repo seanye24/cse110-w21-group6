@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initializeProgressRing(document.querySelector('.progress-ring'));
   initializeTaskList(document.querySelector('.task-list'));
 
-  setRadiusStroke(Math.min(window.innerWidth / 4), 8);
+  setRadiusStroke(180, 8);
   startProgressRing(0.5, 60);
   setTimeout(() => {
     setProgress(50);

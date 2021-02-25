@@ -16,7 +16,6 @@ class TaskList extends HTMLElement {
     this.styleElement = document.createElement('style');
     this.styleElement.innerText = `
       .container {
-        margin: 1em;
         padding: 1em;
         font: normal 1rem 'Source Sans Pro', sans-serif;
         border-radius: 5px;
@@ -24,6 +23,7 @@ class TaskList extends HTMLElement {
         height: 100%;
         display: flex;
         flex-direction: column;
+        box-sizing: border-box;
       }
 
       .task-item-container {
