@@ -10,7 +10,7 @@ Up until now, there has been no consideration for whether or not the user should
 ## Considered Options
 
 * Do not allow the user to see how many pomodoros are left
-* Implement an indicator in the top-right of the site (with circles) that show how many pomodoros need to be completed before a long break
+* Implement an indicator on the site (with circles) that show how many pomodoros need to be completed before a long break
 
 ## Pros and Cons of the Options 
 
