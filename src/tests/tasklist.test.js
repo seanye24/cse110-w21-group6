@@ -1,45 +1,69 @@
 // testing tasklist, crud operations
 
-const {
+import '../components/TaskList';
+import {
   initializeTaskList,
   addTask,
   getTasks,
   updateTask,
   deleteTask,
-} = require('../scripts/taskList');
+  incrementPomodoro,
+  selectPomodoro,
+} from '../scripts/taskList';
+import { createElement } from '../utils';
 
-let tasks = [
-  { title: 'task1', description: 'description1' },
-  { title: 'task2', description: 'description2' },
-];
-window.localStorage.setItem('tasks', JSON.stringify(tasks));
+describe('testing tasklist', () => {
+  const tasks = [
+    { name: 'task1', usedPomodoros: 0, estimatedPomodoros: 2, selected: false },
+    { name: 'task2', usedPomodoros: 0, estimatedPomodoros: 2, selected: false },
+  ];
 
-test('retrieves tasks from localStorage', () => {
-  initializeTaskList(document.body);
-  expect(getTasks()).toStrictEqual(tasks);
-});
+  beforeEach(() => {
+    window.localStorage.clear();
+    window.localStorage.setItem('tasks', JSON.stringify(tasks));
+    const taskListElement = createElement('task-list', {
+      className: 'task-list',
+    });
+    document.body.innerHTML = '';
+    document.body.appendChild(taskListElement);
+    initializeTaskList(taskListElement);
+  });
 
-test('add new task', () => {
-  const newTask = { title: 'task3', description: 'description3' };
-  addTask(newTask);
-  tasks.push(newTask);
-  expect(getTasks()).toStrictEqual(tasks);
-});
+  test('retrieves tasks from localStorage', () => {
+    expect(getTasks()).toStrictEqual(tasks);
+  });
 
-test('update existing task', () => {
-  const existingTask = tasks[1];
-  const newTask = {
-    title: 'task2modified',
-    description: 'description2modified',
-  };
-  updateTask(existingTask, newTask);
-  tasks[1] = newTask;
-  expect(getTasks()).toStrictEqual(tasks);
-});
+  test('add new task', () => {
+    const newTask = { title: 'task3', description: 'description3' };
+    addTask(newTask);
+    expect(getTasks()).toStrictEqual([...tasks, newTask]);
+  });
 
-test('delete existing task', () => {
-  const existingTask = tasks[1];
-  deleteTask(existingTask);
-  tasks = [tasks[0], tasks[2]];
-  expect(getTasks()).toStrictEqual(tasks);
+  test('update existing task', () => {
+    const newTask = {
+      title: 'task2modified',
+      description: 'description2modified',
+    };
+    updateTask(tasks[1], newTask);
+    expect(getTasks()).toStrictEqual([tasks[0], newTask]);
+  });
+
+  test('delete existing task', () => {
+    deleteTask(tasks[1]);
+    expect(getTasks()).toStrictEqual([tasks[0]]);
+  });
+
+  test('increment task pomodoro', () => {
+    incrementPomodoro(tasks[1]);
+    expect(getTasks()[1].usedPomodoros).toBe(tasks[1].usedPomodoros + 1);
+  });
+
+  test('select pomodoro', () => {
+    selectPomodoro(tasks[1]);
+    expect(getTasks()[0].selected).toBe(false);
+    expect(getTasks()[1].selected).toBe(true);
+    selectPomodoro(tasks[0]);
+    expect(getTasks()[0].selected).toBe(true);
+    expect(getTasks()[1].selected).toBe(false);
+  });
 });
