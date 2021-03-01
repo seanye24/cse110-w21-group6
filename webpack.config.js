@@ -1,6 +1,7 @@
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const path = require('path');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = (env, argv) => {
   const config = {
@@ -9,21 +10,31 @@ module.exports = (env, argv) => {
     output: {
       filename: 'main.js',
       path: path.resolve(__dirname, 'dist'),
+      assetModuleFilename: 'images/[hash][ext][query]',
+    },
+    module: {
+      rules: [
+        {
+          test: /\.css$/i,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        },
+        {
+          test: /\.(jpe?g|png|gif|svg)$/i,
+          type: 'asset/resource',
+        },
+      ],
     },
     plugins: [
       new HtmlWebpackPlugin({
         inject: true,
-        template: './src/index.html',
+        template: 'src/index.html',
+        favicon: './src/assets/favicon.ico',
       }),
       new MiniCssExtractPlugin(),
     ],
-    module: {
-      rules: [
-        {
-          test: /\.css$/,
-          use: [MiniCssExtractPlugin.loader, 'css-loader'],
-        },
-      ],
+    optimization: {
+      minimize: true,
+      minimizer: [`...`, new CssMinimizerPlugin()],
     },
     devServer: {
       contentBase: path.join(__dirname, 'dist'),
@@ -31,6 +42,5 @@ module.exports = (env, argv) => {
     },
     devtool: 'inline-source-map',
   };
-  console.log('running in', config.mode, 'mode');
   return config;
 };
