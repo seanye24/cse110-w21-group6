@@ -1,7 +1,7 @@
 # Should there be an extra list of tasks that have been completed?
 
 * Deciders: Dillan Merchant, Baban Hamesalh, Fernando Bracamonte, Sash Gollamudi, Sean Ye, Sharon Lei, Sijie Wang
-* Date: February 21st, 2021 
+* Date: February 25th, 2021 
 
 ## Context and Problem Statement
 
@@ -9,21 +9,21 @@ When a task is completed, where should it go? Should it disappear or be present 
 
 ## Considered Options
 
-* Option 1: Remove the task completely from the site
+* Option 1: Keep the task on the same list but crossed off
 * Option 2: Move the task to a separate list that exists solely to hold completed tasks
 
 ## Pros and Cons of the Options 
 
-### Option 1: Remove task
+### Option 1: Task Crossed Off
 
-* Good, because it increases the minimalistic aspects of the site
-* Bad, because the user won't be able to look at the tasks they've completed
+* Good, because it increases the minimalistic aspects of the site by having fewer buttons
+* Bad, the list may be more cluttered
 
 ### Option 2: Move task to new list
 
-* Good, because user will be able to track all of the tasks they've completed
+* Good, because user will be able to track all of the tasks they've completed in a separate list
 * Bad, because it decreases the minimalistic aspects of the site
 
 ## Decision Outcome
 
-Chosen option: Option 2 (Move Task), because it is far more important for the user to see all the tasks they've completed than maintaining a level of minimalism for the site.
+Chosen option: Option 1 (Task Crossed Off), because having an extra button to switch over to a different lists acts against minimalism and also is a distractor.
