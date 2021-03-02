@@ -34,7 +34,7 @@ let countdown; // variable used to clear the time Interval if needed
 
 /**
  * @param {number} seconds variable that contains seconds left in the timer
- * @function displayTimeLeft 
+ * @function displayTimeLeft
  * @description Helper function that takes seconds left and displays it
  * into minutes and seconds left, as 00:00.
  */
@@ -51,7 +51,7 @@ function displayTimeLeft(seconds) {
 }
 
 /**
- * @function updateSession 
+ * @function updateSession
  * @description Helper function that updates to the correct pomodoro sessison
  * @example If current session is 'work session', then we must either change it to
  * 'long break' or 'short break' depending on how many pomodoros have been completed
@@ -80,7 +80,7 @@ function updateSession() {
 /**
  *
  * @param {number} seconds
- * @function timer 
+ * @function timer
  * @description Function that handles the updating of the time, second by second
  */
 function timer(seconds) {
@@ -114,7 +114,7 @@ function timer(seconds) {
 }
 
 /**
- * @function loopTimer 
+ * @function loopTimer
  * @description Helper function that basically creates an infinite loop,
  * where after each session, it determines which session would be the next and
  * calls the timer function
@@ -134,8 +134,8 @@ function loopTimer() {
 }
 
 /**
- * @function startTimer 
- * @description Function that is called when the timer button is clicked. 
+ * @function startTimer
+ * @description Function that is called when the timer button is clicked.
  * It handles the different scenarios of whether to disable button, or end timer, etc.
  */
 function startTimer() {
@@ -156,7 +156,7 @@ function startTimer() {
 }
 
 /**
- * @function deleteTask 
+ * @function deleteTask
  * @description Function that deletes first task added to the "queue"
  */
 // function deleteTask() {}
