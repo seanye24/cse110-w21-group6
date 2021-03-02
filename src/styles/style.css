@@ -38,6 +38,8 @@ body {
 
 .links > li {
   margin: 1em;
+  font: 1.1rem 'Duru Sans', sans-serif;
+  color: #fff;
 }
 
 .link {
@@ -97,4 +99,14 @@ body {
 .instructions-note {
   font: 1rem 'Duru Sans', sans-serif;
   color: #888;
+}
+
+footer {
+  background-color: #48cae4;
+  color: white;
+  font: 1.1rem 'Duru Sans', sans-serif;
+  font-size: 1em;
+  padding: 10px;
+  text-align: center;
+  margin-top: 3.5em;
 }
