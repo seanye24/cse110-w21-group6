@@ -17,6 +17,7 @@ export const NEW_SELECT_TASK_ANNOUNCEMENT = 'Select another task.';
 export const CONTINUING_SELECT_TASK_ANNOUNCEMENT =
   'Select another task if you would like.';
 export const TASK_COMPLETION_QUESTION = 'Did you finish the task?';
+export const END_OF_SESSION_ANNOUNCEMENT = 'Good work today!';
 
 // interval names
 export const POMODORO_INTERVAL = 'pomodoroInterval';
