@@ -63,11 +63,14 @@ class ProgressRing extends HTMLElement {
   }
 
   /** Updates component view */
+  // 1. Center the progress bar on the website page
+  // 2. Make the color of the progress bar match the wireframe
+  // 3. Make the size of the progress bar match the wireframe
+  // 4. Make the thickness of the progress bar match the wireframe
   updateComponent(radius, stroke, progress) {
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
 
-    // update styling
     this.styleElement.innerText = `
       .svg {
         overflow: hidden;
@@ -79,6 +82,7 @@ class ProgressRing extends HTMLElement {
         stroke: #fff;
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: 0;
+        stroke-stroke-linecap: round;
         stroke-width: ${stroke};
         fill: #48cae4;
       }
@@ -88,6 +92,7 @@ class ProgressRing extends HTMLElement {
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: ${(1 - progress / 100) * circumference};
         stroke-width: ${stroke + 2};
+        stroke-stroke-linecap: round;
         fill: transparent;
         transition: stroke-dashoffset 0.5s;
         transform: rotate(-90deg);
