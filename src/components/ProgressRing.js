@@ -40,26 +40,32 @@ class ProgressRing extends HTMLElement {
       { namespace: svgNamespace },
     );
 
+    this.foreignObjectElement = createElement(
+      'foreignObject',
+      { class: 'foreign-object' },
+      { namespace: svgNamespace },
+    );
+    this.foreignObjectContainer = createElement('div', {
+      class: 'foreign-object-container',
+    });
+    this.timerComponent = createElement('timer-component', {
+      className: 'timer',
+      time: 0,
+    });
+
+    this.root.append(this.styleElement, this.svgElement);
+    this.svgElement.append(
+      this.baseCircleElement,
+      this.circleElement,
+      this.foreignObjectElement,
+    );
+    this.foreignObjectElement.appendChild(this.foreignObjectContainer);
+    this.foreignObjectContainer.append(this.timerComponent);
+
     this._radius = 0;
     this._stroke = 0;
     this._progress = 0;
     this.updateComponent(this._radius, this._stroke, this._progress);
-
-    this.root.append(this.styleElement, this.svgElement);
-    this.svgElement.append(this.baseCircleElement, this.circleElement);
-    this.h1Container = createElement(
-      'foreignObject',
-      { x: 91, y: 91, width: 182, height: 182 },
-      { namespace: svgNamespace },
-    );
-    this.h1Container.appendChild(
-      createElement(
-        'h1',
-        { innerHTML: 'hello' },
-        { namespace: 'http://www.w3.org/1999/xhtml' },
-      ),
-    );
-    this.svgElement.appendChild(this.h1Container);
   }
 
   /** Updates component view */
@@ -93,6 +99,19 @@ class ProgressRing extends HTMLElement {
         transform: rotate(-90deg);
         transform-origin: 50% 50%;
       }
+
+      .foreign-object {
+        width: ${2 * radius}px;
+        height: ${2 * radius}px;
+      }
+
+      .foreign-object-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
     `;
 
     this.circleElement.setAttribute('r', normalizedRadius);
@@ -102,6 +121,8 @@ class ProgressRing extends HTMLElement {
     this.baseCircleElement.setAttribute('r', normalizedRadius);
     this.baseCircleElement.setAttribute('cx', radius);
     this.baseCircleElement.setAttribute('cy', radius);
+
+    this.timerComponent.containerRadius = radius;
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -159,5 +180,4 @@ class ProgressRing extends HTMLElement {
 }
 
 customElements.define('progress-ring', ProgressRing);
-
 export default ProgressRing;
