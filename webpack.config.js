@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, argv) => {
   const config = {
@@ -22,15 +24,33 @@ module.exports = (env, argv) => {
           test: /\.(jpe?g|png|gif|svg)$/i,
           type: 'asset/resource',
         },
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+            },
+          },
+        },
       ],
     },
     plugins: [
+      new CleanWebpackPlugin(),
       new HtmlWebpackPlugin({
         inject: true,
         template: 'src/index.html',
-        favicon: './src/assets/favicon.ico',
       }),
       new MiniCssExtractPlugin(),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: 'src/assets',
+            to: 'assets',
+          },
+        ],
+      }),
     ],
     optimization: {
       minimize: true,

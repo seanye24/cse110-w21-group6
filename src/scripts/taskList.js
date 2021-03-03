@@ -102,6 +102,7 @@ const addTaskToDom = (newTask) => {
   // buttons.finish.addEventListener('click', () => deleteTask(newTask));
   buttons.delete.addEventListener('click', () => deleteTask(newTask));
   buttons.edit.addEventListener('click', () => {
+    // TODO: Add edit functionality
     console.log('editing task!');
   });
   taskListItemContainer.append(taskItem);
