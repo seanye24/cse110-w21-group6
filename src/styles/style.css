@@ -1,3 +1,8 @@
+*:focus {
+  outline: none;
+  box-shadow: 0 0 0 2pt #00b4d8;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -28,6 +33,12 @@ body {
   height: 5vh;
   background: #48cae4;
   z-index: 2;
+}
+
+.title {
+  color: #fff;
+  font-size: 3rem;
+  margin-top: 0;
 }
 
 .links {
@@ -64,9 +75,26 @@ body {
   background-color: #ddd;
 }
 
-.title {
-  color: #fff;
-  font-size: 3rem;
+.progress-ring {
+  margin-bottom: 1em;
+}
+
+.session-button {
+  font: 2rem 'Duru Sans', sans-serif;
+  color: #00b4d8;
+  border-radius: 5px;
+  border: none;
+  padding: 0.25em 1em;
+}
+
+.session-button:hover {
+  cursor: pointer;
+  background: #ddd;
+}
+
+.session-button:focus {
+  box-shadow: 0 0 0 2pt #00b4d8;
+  outline: none;
 }
 
 .announcement {
