@@ -2,7 +2,7 @@
  * @file progress-ring web component
  */
 
-import { createElement, validateNumber } from '../utils';
+import { createElement, validateNumber } from '../utils/utils';
 
 /**
  * Custom web component representing a progress ring.
@@ -158,4 +158,6 @@ class ProgressRing extends HTMLElement {
   }
 }
 
-window.customElements.define('progress-ring', ProgressRing);
+customElements.define('progress-ring', ProgressRing);
+
+export default ProgressRing;
