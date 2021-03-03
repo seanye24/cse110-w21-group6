@@ -64,5 +64,4 @@ class TaskList extends HTMLElement {
 }
 
 customElements.define('task-list', TaskList);
-
 export default TaskList;

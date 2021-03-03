@@ -183,5 +183,4 @@ class TaskItemForm extends HTMLElement {
 }
 
 customElements.define('task-item-form', TaskItemForm);
-
 export default TaskItemForm;
