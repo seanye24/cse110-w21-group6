@@ -29,15 +29,23 @@
         <li><a class="link" href="#main">TIMER</a></li>
         <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
       </ul>
-      <h1 class="group-name">
-        <a href="https://github.com/seanye24/cse110-w21-group6"
-          ><img src="assets/github-icon.png" alt="github" class="github-icon"
-        /></a>
-      </h1>
+      <a
+        href="https://github.com/seanye24/cse110-w21-group6"
+        target="_blank"
+        rel="noreferrer noopener"
+        ><img src="assets/github-icon.png" alt="github" class="github-icon"
+      /></a>
     </nav>
     <div id="main">
       <h1 class="title">Pomodoro</h1>
-      <progress-ring progress="100" class="progress-ring"></progress-ring>
+      <p class="timer">00 : 00</p>
+      <progress-ring
+        progress="100"
+        radius="100"
+        stroke="5"
+        class="progress-ring"
+      ></progress-ring>
+      <button class="start-button">Start</button>
       <h2 class="announcement">Work on your tasks!</h2>
       <task-list class="task-list"></task-list>
     </div>
