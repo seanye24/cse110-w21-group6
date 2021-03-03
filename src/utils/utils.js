@@ -38,6 +38,15 @@ export const validateNumber = (value) => {
 };
 
 /**
+ * Checks if time is valid for timer
+ * @param {number} time - time to be checked (in seconds)
+ */
+export const checkIfTimeValid = (time) => {
+  const secondsInAnHour = 60 * 60;
+  return time >= 0 && time < secondsInAnHour;
+};
+
+/**
  * Use promises to tick by specified tickLength
  * @param {number} duration - duration of tick (in seconds)
  * @return {Promise<void>} - promise that resolves after tick duration
@@ -48,10 +57,14 @@ export const tick = async (duration) =>
 /**
  * Converts seconds into MM : SS
  * @param {string} seconds - seconds to convert
- * @return {[number, number]} - [minutes, seconds]
+ * @return {string} - time in format MM:SS
  */
-export const getMinutesAndSeconds = (seconds) => {
-  return [Math.floor(seconds / 60), Math.floor(seconds % 60)];
+export const getMinutesAndSeconds = (totalSeconds) => {
+  const [minutes, seconds] = [
+    Math.floor(totalSeconds / 60),
+    Math.floor(totalSeconds % 60),
+  ].map((t) => (t < 10 ? `0${t}` : t)); // left time unit with 0 if necessary
+  return `${minutes}:${seconds}`;
 };
 
 /**
