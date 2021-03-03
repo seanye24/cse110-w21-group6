@@ -82,7 +82,7 @@ class ProgressRing extends HTMLElement {
         stroke: #fff;
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: 0;
-        stroke-stroke-linecap: round;
+        stroke-linecap: round;
         stroke-width: ${stroke};
         fill: #48cae4;
       }
@@ -92,7 +92,7 @@ class ProgressRing extends HTMLElement {
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: ${(1 - progress / 100) * circumference};
         stroke-width: ${stroke + 2};
-        stroke-stroke-linecap: round;
+        stroke-linecap: round;
         fill: transparent;
         transition: stroke-dashoffset 0.5s;
         transform: rotate(-90deg);
