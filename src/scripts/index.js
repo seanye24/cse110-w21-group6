@@ -60,7 +60,7 @@ const {
 const startSession = async (announcementElement) => {
   let currInterval = '';
   let numPomodoros = 0;
-  let selectedTask = '';
+  const selectedTask = '';
 
   // continue looping if session has not been ended
   while (isSessionOngoing) {
@@ -118,10 +118,12 @@ window.addEventListener('DOMContentLoaded', () => {
       isSessionOngoing = true;
       startSession(announcementElement);
       e.target.innerText = 'End';
+      e.target.className = 'session-button in-session';
     } else {
       isSessionOngoing = false;
       setAnnouncement(announcementElement, END_OF_SESSION_ANNOUNCEMENT);
       e.target.innerText = 'Start';
+      e.target.className = 'session-button';
       // TODO: stop session
       // TODO: display metrics
     }
