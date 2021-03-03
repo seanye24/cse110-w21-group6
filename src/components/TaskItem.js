@@ -2,7 +2,7 @@
  * @file task-item web component
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 /**
  * Custom web component representing a task item.
@@ -191,3 +191,5 @@ class TaskItem extends HTMLElement {
 }
 
 customElements.define('task-item', TaskItem);
+
+export default TaskItem;

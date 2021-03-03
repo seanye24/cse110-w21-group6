@@ -2,7 +2,7 @@
  * @file task-list web component
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 /**
  * Custom web component representing a task list.
@@ -64,3 +64,5 @@ class TaskList extends HTMLElement {
 }
 
 customElements.define('task-list', TaskList);
+
+export default TaskList;

@@ -2,7 +2,7 @@
  * @file task-item-form web component
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 /**
  * Custom web component representing a task item form.
@@ -183,3 +183,5 @@ class TaskItemForm extends HTMLElement {
 }
 
 customElements.define('task-item-form', TaskItemForm);
+
+export default TaskItemForm;
