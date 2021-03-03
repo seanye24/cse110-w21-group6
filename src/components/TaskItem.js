@@ -86,10 +86,16 @@ class TaskItem extends HTMLElement {
         color: #fff;
       }
 
-      .task-button:hover {
+      .item-container[selected="true"] .task-button:hover {
         border-radius: 50%;
         background: rgba(0, 180, 216, 0.25);
         color: #00b4d8;
+        cursor: pointer;
+      }
+
+      .task-button:hover {
+        border-radius: 50%;
+        color: #ddd;
         cursor: pointer;
       }
 
