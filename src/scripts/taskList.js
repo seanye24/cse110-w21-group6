@@ -41,28 +41,25 @@ const setRoot = (root) => {
 
 /**
  * Retrieve task from tasks and DOM
- * @param {string} name - name of task
- * @return {{taskIndex: number, element: HTMLElement}}
+ * @param {Task} task - task
+ * @return {{taskIndex: number, taskElement: HTMLElement}}
  */
-const getTask = (name) => ({
+const getTask = ({ name }) => ({
   taskIndex: tasks.findIndex((task) => task.name === name),
   taskElement: taskListItemContainer.querySelector(`[name="${name}"]`),
 });
 
 /**
  * Get button elements from task-item element
- * @param {Task} task - task-item element
- * @return {{finish: HTMLButtonElement, delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
+ * @param {HTMLElement} taskElement - task-item element
+ * @return {{delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
  */
-const getTaskItemButtons = (task) => {
+const getTaskItemButtons = (taskElement) => {
   const buttons = Array.from(
-    task.shadowRoot
-      .querySelector('.item-container')
-      .querySelectorAll('.task-button'),
+    taskElement.shadowRoot.querySelectorAll('.task-button'),
   );
 
   return {
-    finish: buttons.find((btn) => btn.getAttribute('id') === 'finish-button'),
     delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
     edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
   };
@@ -73,10 +70,8 @@ const getTaskItemButtons = (task) => {
  * @param {Task} taskToDelete - task to be deleted
  */
 const deleteTask = (taskToDelete) => {
-  const { name } = taskToDelete;
-
   // update localStorage
-  const { taskIndex, taskElement } = getTask(name);
+  const { taskIndex, taskElement } = getTask(taskToDelete);
   tasks.splice(taskIndex, 1);
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
 
@@ -96,10 +91,9 @@ const addTaskToDom = (newTask) => {
     name,
     'used-pomodoros': usedPomodoros,
     'estimated-pomodoros': estimatedPomodoros,
-    selected: true,
+    selected: false,
   });
   const buttons = getTaskItemButtons(taskItem);
-  // buttons.finish.addEventListener('click', () => deleteTask(newTask));
   buttons.delete.addEventListener('click', () => deleteTask(newTask));
   buttons.edit.addEventListener('click', () => {
     // TODO: Add edit functionality
@@ -125,14 +119,13 @@ const addTask = (newTask) => {
  * @param {Task} nextTask - updated task
  */
 const updateTask = (prevTask, nextTask) => {
-  const { name: prevName } = prevTask;
   const {
     name: nextName,
     usedPomodoros,
     estimatedPomodoros,
     selected,
   } = nextTask;
-  const { taskIndex, taskElement } = getTask(prevName);
+  const { taskIndex, taskElement } = getTask(prevTask);
 
   // update localStorage
   tasks[taskIndex] = nextTask;
@@ -160,10 +153,10 @@ const getTasks = () => {
 const handleTaskFormSubmit = (e) => {
   e.preventDefault(); // prevent page reload
 
-  const {
-    name: { value: name },
-    pomodoro: { value: pomodoro },
-  } = taskItemFormInputs;
+  const { name: nameInput, pomodoro: pomodoroInput } = taskItemFormInputs;
+  const { value: name } = nameInput;
+  const { value: pomodoro } = pomodoroInput;
+
   const trimmedName = name.trim();
 
   // check if fields are non-empty
@@ -181,6 +174,8 @@ const handleTaskFormSubmit = (e) => {
     console.error({ name: trimmedName }, ' already defined');
     return;
   }
+
+  nameInput.focus();
 
   addTask({
     name: trimmedName,
@@ -234,6 +229,26 @@ const selectPomodoro = (task) => {
   updateTask(task, { ...task, selected: true });
 };
 
+/**
+ * Automatically select first task in the task list
+ */
+const selectFirstTask = () => {
+  if (tasks.length > 0) selectPomodoro(tasks[0]);
+};
+
+/**
+ * Disable task list
+ * @param {boolean} shouldTasklistBeUsable - whether task list should be usable
+ */
+const setTasklistUsability = (shouldTasklistBeUsable) => {
+  tasks.forEach((task) => {
+    const buttons = getTaskItemButtons(getTask(task).taskElement);
+    Object.values(buttons).forEach((btn) => {
+      btn.disabled = !shouldTasklistBeUsable;
+    });
+  });
+};
+
 export {
   initializeTaskList,
   addTask,
@@ -242,4 +257,6 @@ export {
   deleteTask,
   incrementPomodoro,
   selectPomodoro,
+  selectFirstTask,
+  setTasklistUsability,
 };
