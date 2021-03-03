@@ -1,3 +1,7 @@
+/**
+ * @file Various utility methods
+ */
+
 import {
   DEFAULT_POMODORO_INTERVAL,
   DEFAULT_SHORT_BREAK_INTERVAL,
@@ -12,7 +16,7 @@ import {
  * @param {{option: string}} options - element options such as namespace
  * @return element - new HTMLElement created
  */
-export const createElement = (elementType, props = {}, options = {}) => {
+const createElement = (elementType, props = {}, options = {}) => {
   const { namespace } = options;
   let element;
   if (namespace) element = document.createElementNS(namespace, elementType);
@@ -32,7 +36,7 @@ export const createElement = (elementType, props = {}, options = {}) => {
  * @param {any} value - to be converted to number
  * @return {number | null} - number if successful, null otherwise
  */
-export const validateNumber = (value) => {
+const validateNumber = (value) => {
   const num = parseInt(value, 10);
   return Number.isNaN(num) ? null : num;
 };
@@ -41,7 +45,7 @@ export const validateNumber = (value) => {
  * Checks if time is valid for timer
  * @param {number} time - time to be checked (in seconds)
  */
-export const checkIfTimeValid = (time) => {
+const checkIfTimeValid = (time) => {
   const secondsInAnHour = 60 * 60;
   return time >= 0 && time < secondsInAnHour;
 };
@@ -51,7 +55,7 @@ export const checkIfTimeValid = (time) => {
  * @param {number} duration - duration of tick (in seconds)
  * @return {Promise<void>} - promise that resolves after tick duration
  */
-export const tick = async (duration) =>
+const tick = async (duration) =>
   new Promise((res) => setTimeout(res, 1000 * duration));
 
 /**
@@ -59,7 +63,7 @@ export const tick = async (duration) =>
  * @param {string} seconds - seconds to convert
  * @return {string} - time in format MM:SS
  */
-export const getMinutesAndSeconds = (totalSeconds) => {
+const getMinutesAndSeconds = (totalSeconds) => {
   const [minutes, seconds] = [
     Math.floor(totalSeconds / 60),
     Math.floor(totalSeconds % 60),
@@ -72,7 +76,7 @@ export const getMinutesAndSeconds = (totalSeconds) => {
  * @param {HTMLElement} element - announcement element
  * @param {string} str - announcement to set
  */
-export const setAnnouncement = (element, str) => {
+const setAnnouncement = (element, str) => {
   element.innerText = str;
 };
 
@@ -80,7 +84,7 @@ export const setAnnouncement = (element, str) => {
  * Initialize interval lengths, retrieve from localStorage if possible
  * @return {{pomodoroLength: number, shortBreakLength: number, longBreakLength: number}} - lengths of intervals
  */
-export const initializeIntervalLengths = () => {
+const initializeIntervalLengths = () => {
   let pomodoroLength = window.localStorage.getItem('pomodoroLength');
   let shortBreakLength = window.localStorage.getItem('shortBreakLength');
   let longBreakLength = window.localStorage.getItem('longBreakLength');
@@ -97,4 +101,14 @@ export const initializeIntervalLengths = () => {
     window.localStorage.setItem('longBreakLength', longBreakLength);
   }
   return { pomodoroLength, shortBreakLength, longBreakLength };
+};
+
+export {
+  createElement,
+  initializeIntervalLengths,
+  setAnnouncement,
+  getMinutesAndSeconds,
+  tick,
+  checkIfTimeValid,
+  validateNumber,
 };
