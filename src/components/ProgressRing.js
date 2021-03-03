@@ -67,6 +67,7 @@ class ProgressRing extends HTMLElement {
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
 
+    // update styling
     this.styleElement.innerText = `
       .svg {
         overflow: hidden;
@@ -78,22 +79,20 @@ class ProgressRing extends HTMLElement {
         stroke: #fff;
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: 0;
-        fill: #48cae4;
         stroke-width: ${stroke};
+        fill: #48cae4;
       }
 
       .circle {
         stroke: #0095b3;
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: ${(1 - progress / 100) * circumference};
-        fill: transparent;
         stroke-width: ${stroke + 2};
-
+        fill: transparent;
         transition: stroke-dashoffset 0.5s;
         transform: rotate(-90deg);
         transform-origin: 50% 50%;
-      }
-    `;
+      }`;
 
     this.circleElement.setAttribute('r', normalizedRadius);
     this.circleElement.setAttribute('cx', radius);
