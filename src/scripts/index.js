@@ -5,7 +5,11 @@
 
 import '../styles/style.css';
 import { Timer, ProgressRing, TaskList } from '../components';
-import { initializeTaskList } from './taskList';
+import {
+  initializeTaskList,
+  selectFirstTask,
+  setTasklistUsability,
+} from './taskList';
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
 import {
@@ -79,6 +83,8 @@ const startSession = async (announcementElement) => {
       }
     } else {
       currInterval = POMODORO_INTERVAL;
+      selectFirstTask();
+      setTasklistUsability(false);
       setAnnouncement(announcementElement, POMODORO_ANNOUNCEMENT);
     }
 
@@ -95,6 +101,7 @@ const startSession = async (announcementElement) => {
         break;
       default:
     }
+    setTasklistUsability(true);
 
     // reset progress and give it time to reset (progress-ring transition is 35s)
     setProgress(100);
