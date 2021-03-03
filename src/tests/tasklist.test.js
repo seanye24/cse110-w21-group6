@@ -10,7 +10,7 @@ import {
   incrementPomodoro,
   selectPomodoro,
 } from '../scripts/taskList';
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 describe('testing tasklist', () => {
   const tasks = [
