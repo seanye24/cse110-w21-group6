@@ -78,7 +78,7 @@ export const setAnnouncement = (element, str) => {
 
 /**
  * Initialize interval lengths, retrieve from localStorage if possible
- * @return {pomodoroLength: number, shortBreakLength: number, longBreakLength: number} - lengths of intervals
+ * @return {{pomodoroLength: number, shortBreakLength: number, longBreakLength: number}} - lengths of intervals
  */
 export const initializeIntervalLengths = () => {
   let pomodoroLength = window.localStorage.getItem('pomodoroLength');
