@@ -12,7 +12,7 @@
  * @property {boolean} selected           - whether task is selected
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 import '../components/TaskItem';
 import '../components/TaskItemForm';
 import '../components/TaskList';
