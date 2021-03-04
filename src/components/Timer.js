@@ -84,5 +84,4 @@ class Timer extends HTMLElement {
   }
 }
 
-customElements.define('timer-component', Timer);
 export default Timer;

@@ -179,5 +179,4 @@ class ProgressRing extends HTMLElement {
   }
 }
 
-customElements.define('progress-ring', ProgressRing);
 export default ProgressRing;

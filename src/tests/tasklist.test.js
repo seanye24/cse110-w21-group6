@@ -1,6 +1,6 @@
 // testing tasklist, crud operations
 
-import '../components/TaskList';
+import { TaskList } from '../components';
 import {
   initializeTaskList,
   addTask,
@@ -11,6 +11,8 @@ import {
   selectPomodoro,
 } from '../scripts/taskList';
 import { createElement } from '../utils/utils';
+
+customElements.define('task-list', TaskList);
 
 describe('testing tasklist', () => {
   const tasks = [

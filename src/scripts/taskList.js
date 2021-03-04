@@ -178,7 +178,6 @@ const createTaskElement = (newTask) => {
   buttons.delete.addEventListener('click', () => deleteTask(newTask));
   buttons.edit.addEventListener('click', () => {
     // TODO: Add edit functionality
-    console.log('editing task!');
   });
   return newTaskElement;
 };

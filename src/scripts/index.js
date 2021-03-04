@@ -30,6 +30,10 @@ import {
   tick,
 } from '../utils/utils';
 
+customElements.define('timer-component', Timer);
+customElements.define('progress-ring', ProgressRing);
+customElements.define('task-list', TaskList);
+
 let isSessionOngoing = false;
 
 /**
