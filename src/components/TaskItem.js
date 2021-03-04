@@ -166,7 +166,7 @@ class TaskItem extends HTMLElement {
     this.pomodoroLabel = createElement('label', {
       className: 'pomodoro-label',
       for: 'pomodoro',
-      innerText: 'Progress',
+      innerText: 'Pomodoros',
     });
     this.pomodoroElement = createElement('p', {
       className: 'pomodoro',
