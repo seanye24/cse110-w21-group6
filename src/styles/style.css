@@ -189,6 +189,7 @@ footer {
   font: 1.1rem 'Duru Sans', sans-serif;
   border: none;
   text-align: center;
+  margin-left: 0.5em;
 }
 
 .content .form-input {
@@ -219,6 +220,13 @@ footer {
   display: block;
   width: 75%;
   cursor: pointer;
+}
+
+.content .error {
+  color: red;
+  position: absolute;
+  margin-top: 50px;
+  visibility: hidden;
 }
 
 #overlay {

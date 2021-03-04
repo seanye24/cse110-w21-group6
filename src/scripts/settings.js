@@ -9,6 +9,7 @@ const closePopups = document.querySelectorAll('[data-save-button]');
 const overlay = document.getElementById('overlay');
 const shortBreakInput = document.getElementById('short-number');
 const longBreakInput = document.getElementById('long-number');
+const errorMessages = document.querySelectorAll('.error');
 
 /**
  * @function openPopup
@@ -21,6 +22,9 @@ function openPopup(popup) {
   }
   popup.classList.add('active');
   overlay.classList.add('active');
+  errorMessages.forEach((message) => {
+    message.style.visibility = 'hidden';
+  });
   shortBreakInput.value = JSON.parse(localStorage.getItem('shortbreak'));
   longBreakInput.value = JSON.parse(localStorage.getItem('longbreak'));
 }
@@ -34,16 +38,28 @@ function closePopup(popup) {
   if (popup == null) {
     return;
   }
+
   if (Number(shortBreakInput.value) < 3 || Number(shortBreakInput.value) > 5) {
-    alert('Please enter valid short break entry (3 min - 5 min)');
-    shortBreakInput.value = 5;
-  } else if (
-    Number(longBreakInput.value) < 15 ||
-    Number(longBreakInput.value) > 30
-  ) {
-    alert('Please enter valid long break entry (15 min - 30 min)');
-    longBreakInput.value = 30;
+    errorMessages[0].style.visibility = 'visible';
   } else {
+    errorMessages[0].style.visibility = 'hidden';
+  }
+
+  if (Number(longBreakInput.value) < 15 || Number(longBreakInput.value) > 30) {
+    errorMessages[1].style.visibility = 'visible';
+  } else {
+    errorMessages[1].style.visibility = 'hidden';
+  }
+
+  if (
+    Number(shortBreakInput.value) >= 3 &&
+    Number(shortBreakInput.value) <= 5 &&
+    Number(longBreakInput.value) >= 15 &&
+    Number(longBreakInput.value) <= 30
+  ) {
+    errorMessages.forEach((message) => {
+        message.style.visibility = 'hidden';
+    });
     localStorage.setItem('shortbreak', shortBreakInput.value);
     localStorage.setItem('longbreak', longBreakInput.value);
     popup.classList.remove('active');
@@ -71,7 +87,7 @@ function getLongBreakLength() {
 
 // Adds an event listener for each popup button
 openPopups.forEach((li) => {
-  li.addEventListener('click', function () {
+  li.addEventListener('click', () => {
     const popup = document.querySelector(li.dataset.popupTarget);
     openPopup(popup);
   });
@@ -79,7 +95,7 @@ openPopups.forEach((li) => {
 
 // Adds an event listener to all buttons that close popups (Save button)
 closePopups.forEach((button) => {
-  button.addEventListener('click', function () {
+  button.addEventListener('click', () => {
     const popup = button.closest('.popup');
     closePopup(popup);
   });
