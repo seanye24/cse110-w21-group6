@@ -73,15 +73,6 @@ const getMinutesAndSeconds = (totalSeconds) => {
 };
 
 /**
- * Set text of announcement element
- * @param {HTMLElement} element - announcement element
- * @param {string} str - announcement to set
- */
-const setAnnouncement = (element, str) => {
-  element.innerText = str;
-};
-
-/**
  * Initialize interval lengths, retrieve from localStorage if possible
  * @return {{pomodoroLength: number, shortBreakLength: number, longBreakLength: number}} - lengths of intervals
  */
@@ -107,7 +98,6 @@ const initializeIntervalLengths = () => {
 export {
   createElement,
   initializeIntervalLengths,
-  setAnnouncement,
   getMinutesAndSeconds,
   tick,
   checkIfTimeValid,
