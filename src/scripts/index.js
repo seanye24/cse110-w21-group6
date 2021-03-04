@@ -6,6 +6,7 @@
 import '../styles/style.css';
 import { Timer, ProgressRing, TaskList } from '../components';
 import {
+  deselectAllTasks,
   initializeTaskList,
   selectFirstTask,
   setTasklistUsability,
@@ -129,6 +130,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } else {
       isSessionOngoing = false;
       setAnnouncement(announcementElement, END_OF_SESSION_ANNOUNCEMENT);
+      deselectAllTasks();
       e.target.innerText = 'Start';
       e.target.className = 'session-button';
       // TODO: stop session
