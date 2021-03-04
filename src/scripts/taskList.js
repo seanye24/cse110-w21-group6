@@ -76,12 +76,18 @@ const getTaskItemButtons = (taskElement) => {
 /**
  * Add task object to DOM, add event listeners to task-item
  * @param {HTMLElement} newTaskElement - new task element to be added
- * @param {'start' | 'end'} position - position in list to append
+ * @param {'start' | 'end' | HTMLElement} position - position in list to append
  * @return {HTMLElement} - new task element added to DOM
  */
 const addTaskToDom = (newTaskElement, position = 'end') => {
-  if (position === 'end') taskListItemContainer.append(newTaskElement);
-  else if (position === 'start') taskListItemContainer.prepend(newTaskElement);
+  if (position !== 'end' && position !== 'start') {
+    const { taskElement } = getTask(position);
+    taskElement.before(newTaskElement);
+  } else if (position === 'end') {
+    taskListItemContainer.append(newTaskElement);
+  } else if (position === 'start') {
+    taskListItemContainer.prepend(newTaskElement);
+  }
   return newTaskElement;
 };
 
@@ -145,6 +151,7 @@ const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
 /**
  * Select a task
  * @param {Task} task - task to be selected
+ * @return {Task} - selected task
  */
 const selectTask = (task) => {
   const prevSelectedTask = getCurrentlySelectedTask();
@@ -161,7 +168,7 @@ const selectTask = (task) => {
   tasks.unshift(task);
 
   // update selected property of task
-  updateTask(task, { ...task, selected: true });
+  return updateTask(task, { ...task, selected: true });
 };
 
 /**
@@ -195,10 +202,16 @@ const createTaskElement = (newTask) => {
  */
 const addTask = (newTask) => {
   // update localStorage
-  tasks.push(newTask);
-  saveTasks();
   const newTaskElement = createTaskElement(newTask);
-  addTaskToDom(newTaskElement);
+  const indexOfFirstCompleted = tasks.findIndex((t) => t.completed);
+  if (indexOfFirstCompleted !== -1) {
+    tasks.splice(indexOfFirstCompleted, 0, newTask);
+    addTaskToDom(newTaskElement, tasks[indexOfFirstCompleted + 1]);
+  } else {
+    tasks.push(newTask);
+    addTaskToDom(newTaskElement);
+  }
+  saveTasks();
 };
 
 /**
@@ -284,10 +297,11 @@ const incrementPomodoro = (task) => {
 
 /**
  * Automatically select first task in the task list
+ * @return {Task | null} returns first available task, if there are none, return null
  */
 const selectFirstTask = () => {
-  if (tasks.length > 0) selectTask(tasks[0]);
-  return tasks[0];
+  if (tasks.length > 0 && !tasks[0].completed) return selectTask(tasks[0]);
+  return null;
 };
 
 /**
