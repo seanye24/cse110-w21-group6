@@ -93,7 +93,7 @@ body {
   background: #ddd;
 }
 
-.session-button.in-session:hover {
+.session-button.in-session {
   cursor: pointer;
   background: #f4978e;
   color: #fff;
