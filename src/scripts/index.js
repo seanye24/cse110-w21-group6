@@ -6,6 +6,7 @@
 import '../styles/style.css';
 import { Timer, ProgressRing, TaskList } from '../components';
 import {
+  completeTask,
   deselectAllTasks,
   getCurrentlySelectedTask,
   incrementPomodoro,
@@ -95,6 +96,8 @@ const startSession = async (announcementElement) => {
       currSelectedTask = getCurrentlySelectedTask();
       if (!currSelectedTask) currSelectedTask = selectFirstTask();
 
+      if (!currSelectedTask) return;
+
       setTasklistUsability(false);
       setAnnouncement(announcementElement, POMODORO_ANNOUNCEMENT);
     }
@@ -102,8 +105,10 @@ const startSession = async (announcementElement) => {
     // pick interval to start
     switch (currInterval) {
       case POMODORO_INTERVAL:
-        if (await startInterval(pomodoroLength))
-          incrementPomodoro(currSelectedTask);
+        if (await startInterval(pomodoroLength)) {
+          currSelectedTask = incrementPomodoro(currSelectedTask);
+          completeTask(currSelectedTask);
+        }
         break;
       case SHORT_BREAK_INTERVAL:
         await startInterval(shortBreakLength);
@@ -121,6 +126,21 @@ const startSession = async (announcementElement) => {
   }
 };
 
+/**
+ * Handle end of session
+ * @param {HTMLElement} announcementElement - element for announcements
+ * @param {HTMLElement} sessionButton - session button element
+ */
+const endSession = (announcementElement, sessionButton) => {
+  isSessionOngoing = false;
+  setAnnouncement(announcementElement, END_OF_SESSION_ANNOUNCEMENT);
+  deselectAllTasks();
+  sessionButton.innerText = 'Start';
+  sessionButton.className = 'session-button';
+  // TODO: stop session
+  // TODO: display metrics
+};
+
 window.addEventListener('DOMContentLoaded', () => {
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
@@ -133,20 +153,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // start session when start button is clicked
   const startButton = document.querySelector('.session-button');
-  startButton.addEventListener('click', (e) => {
+  startButton.onmousedown = (e) => {
+    e.preventDefault();
+  };
+  startButton.addEventListener('click', async (e) => {
     if (e.target.innerText === 'Start') {
       isSessionOngoing = true;
-      startSession(announcementElement);
       e.target.innerText = 'End';
       e.target.className = 'session-button in-session';
+      await startSession(announcementElement);
+      endSession(announcementElement, e.target);
     } else {
-      isSessionOngoing = false;
-      setAnnouncement(announcementElement, END_OF_SESSION_ANNOUNCEMENT);
-      deselectAllTasks();
-      e.target.innerText = 'Start';
-      e.target.className = 'session-button';
-      // TODO: stop session
-      // TODO: display metrics
+      endSession(announcementElement, e.target);
     }
   });
 });
