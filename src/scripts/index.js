@@ -44,7 +44,7 @@ const startInterval = async (intervalLength) => {
       setProgress(0);
       return;
     }
-    const currProgress = Math.round((100 * currTime) / intervalLength);
+    const currProgress = (100 * currTime) / intervalLength;
     setTimer(currTime);
     setProgress(currProgress);
     await tick(1);
@@ -117,6 +117,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
   initializeTaskList(document.querySelector('.task-list'));
+  deselectAllTasks();
 
   // start session when start button is clicked
   const startButton = document.querySelector('.session-button');

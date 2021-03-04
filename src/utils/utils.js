@@ -37,7 +37,7 @@ const createElement = (elementType, props = {}, options = {}) => {
  * @return {number | null} - number if successful, null otherwise
  */
 const validateNumber = (value) => {
-  const num = parseInt(value, 10);
+  const num = parseFloat(value, 10);
   return Number.isNaN(num) ? null : num;
 };
 
