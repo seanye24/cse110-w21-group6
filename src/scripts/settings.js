@@ -58,7 +58,7 @@ function closePopup(popup) {
     Number(longBreakInput.value) <= 30
   ) {
     errorMessages.forEach((message) => {
-        message.style.visibility = 'hidden';
+      message.style.visibility = 'hidden';
     });
     localStorage.setItem('shortbreak', shortBreakInput.value);
     localStorage.setItem('longbreak', longBreakInput.value);
