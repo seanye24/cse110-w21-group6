@@ -1,6 +1,6 @@
 // testing tasklist, crud operations
 
-import '../components/TaskList';
+import { TaskList } from '../components';
 import {
   initializeTaskList,
   addTask,
@@ -10,7 +10,9 @@ import {
   incrementPomodoro,
   selectPomodoro,
 } from '../scripts/taskList';
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
+
+customElements.define('task-list', TaskList);
 
 describe('testing tasklist', () => {
   const tasks = [
@@ -60,10 +62,11 @@ describe('testing tasklist', () => {
 
   test('select pomodoro', () => {
     selectPomodoro(tasks[1]);
-    expect(getTasks()[0].selected).toBe(false);
-    expect(getTasks()[1].selected).toBe(true);
+    let newTasks = [{ ...tasks[1], selected: true }, tasks[0]];
+    expect(getTasks()).toStrictEqual(newTasks);
+
+    newTasks = [{ ...tasks[0], selected: true }, tasks[1]];
     selectPomodoro(tasks[0]);
-    expect(getTasks()[0].selected).toBe(true);
-    expect(getTasks()[1].selected).toBe(false);
+    expect(getTasks()).toStrictEqual(newTasks);
   });
 });

@@ -2,7 +2,7 @@
  * @file task-item web component
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 /**
  * Custom web component representing a task item.
@@ -34,6 +34,10 @@ class TaskItem extends HTMLElement {
         border-radius: 5px;
         position: relative;
         cursor: pointer;
+      }
+
+      .item-container:focus {
+        outline: none;
       }
 
       .selected {
@@ -79,24 +83,46 @@ class TaskItem extends HTMLElement {
       }
 
       .task-button {
-        display: none;
+        opacity: 0;
         position: absolute;
+        border: none;
         padding: 0.25em;
-        font-size: 1.2rem;
         color: #fff;
+        background: transparent;
+        border-radius: 50%;
       }
 
-      .task-button:hover {
-        border-radius: 50%;
+      .task-button:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 1pt #48cae4;
+        z-index: 1;
+        position: absolute;
+      }
+
+      .item-container:hover > .task-button,
+      .task-button:focus {
+        opacity: 1;
+      }
+
+      .item-container[selected="true"] .task-button:hover {
         background: rgba(0, 180, 216, 0.25);
         color: #00b4d8;
         cursor: pointer;
       }
 
-      .item-container:hover > .task-button {
-        display: initial;
+      .task-button:disabled {
+        opacity: 0 !important;
       }
 
+      .task-button:hover {
+        border-radius: 50%;
+        color: #ddd;
+        cursor: pointer;
+      }
+
+      .task-button-icon {
+        font-size: 1.2rem;
+      }
 
       #edit-button {
         top: 0;
@@ -136,21 +162,33 @@ class TaskItem extends HTMLElement {
       id: 'pomodoro',
     });
 
-    this.editTaskButton = createElement('span', {
-      className: 'material-icons task-button',
+    this.editTaskButton = createElement('button', {
+      className: 'task-button',
       id: 'edit-button',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
+    });
+    this.editTaskIcon = createElement('span', {
+      className: 'material-icons task-button-icon',
       innerText: 'mode',
     });
 
-    this.finishTaskButton = createElement('span', {
-      className: 'material-icons task-button',
-      id: 'finish-button',
-      innerText: 'done',
-    });
-
-    this.deleteTaskButton = createElement('span', {
-      className: 'material-icons task-button',
+    this.deleteTaskButton = createElement('button', {
+      className: 'task-button',
       id: 'delete-button',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
+    });
+    this.deleteTaskIcon = createElement('span', {
+      className: 'material-icons task-button-icon',
       innerText: 'delete',
     });
 
@@ -164,6 +202,8 @@ class TaskItem extends HTMLElement {
       this.editTaskButton,
       this.deleteTaskButton,
     );
+    this.editTaskButton.appendChild(this.editTaskIcon);
+    this.deleteTaskButton.appendChild(this.deleteTaskIcon);
     this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
     this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
   }
@@ -191,3 +231,4 @@ class TaskItem extends HTMLElement {
 }
 
 customElements.define('task-item', TaskItem);
+export default TaskItem;

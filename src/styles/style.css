@@ -1,3 +1,8 @@
+*:focus {
+  outline: none;
+  box-shadow: 0 0 0 2pt #00b4d8;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -30,6 +35,12 @@ body {
   z-index: 2;
 }
 
+.title {
+  color: #fff;
+  font-size: 3rem;
+  margin-top: 0;
+}
+
 .links {
   list-style: none;
   display: flex;
@@ -38,6 +49,13 @@ body {
 
 .links > li {
   margin: 1em;
+  font: 1.1rem 'Duru Sans', sans-serif;
+  color: #fff;
+}
+
+.links > li > a:hover {
+  text-decoration: underline;
+  color: #eee;
 }
 
 .link {
@@ -49,11 +67,41 @@ body {
 .github-icon {
   width: 1.25em;
   height: 1.25em;
+  background-color: #fff;
+  border-radius: 50%;
 }
 
-.title {
+.github-icon:hover {
+  background-color: #ddd;
+}
+
+.progress-ring {
+  margin-bottom: 1em;
+}
+
+.session-button {
+  font: 2rem 'Duru Sans', sans-serif;
+  color: #00b4d8;
+  border-radius: 5px;
+  border: none;
+  padding: 0.25em 0.25em;
+  width: 4em;
+}
+
+.session-button:hover {
+  cursor: pointer;
+  background: #ddd;
+}
+
+.session-button.in-session:hover {
+  cursor: pointer;
+  background: #f4978e;
   color: #fff;
-  font-size: 3rem;
+}
+
+.session-button:focus {
+  box-shadow: 0 0 0 2pt #00b4d8;
+  outline: none;
 }
 
 .announcement {

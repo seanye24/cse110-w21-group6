@@ -12,6 +12,7 @@
     />
     <meta name="author" content="Group 6" />
 
+    <link rel="icon" href="assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Open+Sans&family=Roboto&family=Source+Sans+Pro&display=swap"
@@ -29,18 +30,22 @@
         <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
         <li data-popup-target="#popup">SETTINGS</li>
       </ul>
-      <h1 class="group-name">
-        <a href="https://github.com/seanye24/cse110-w21-group6"
-          ><img
-            src="<%= require('./assets/github-icon.png') %>"
-            alt="github"
-            class="github-icon"
-        /></a>
-      </h1>
+      <a
+        href="https://github.com/seanye24/cse110-w21-group6"
+        target="_blank"
+        rel="noreferrer noopener"
+        ><img src="assets/github-icon.png" alt="github" class="github-icon"
+      /></a>
     </nav>
     <div id="main">
       <h1 class="title">Pomodoro</h1>
-      <progress-ring progress="100" class="progress-ring"></progress-ring>
+      <progress-ring
+        progress="100"
+        radius="150"
+        stroke="5"
+        class="progress-ring"
+      ></progress-ring>
+      <button class="session-button">Start</button>
       <h2 class="announcement">Work on your tasks!</h2>
       <task-list class="task-list"></task-list>
     </div>
@@ -71,8 +76,6 @@
         your long break reward
       </p>
     </div>
-<<<<<<< Updated upstream
-=======
 
     <div class="popup" id="popup">
       <div class="content">
@@ -96,6 +99,5 @@
     <footer>
       <p>Created by Pomodo Dragons © 2021</p>
     </footer>
->>>>>>> Stashed changes
   </body>
 </html>
