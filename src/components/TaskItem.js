@@ -11,10 +11,17 @@ import { createElement } from '../utils/utils';
  * @param {number} estimated-pomodoros - estimated number of pomodoros needed
  * @param {number} used-pomodoros - pomodoros used so far
  * @param {boolean} selected - indicates if the current task is selected
+ * @param {boolean} completed - indicates if the current task is completed
  */
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
-    return ['name', 'estimated-pomodoros', 'used-pomodoros', 'selected'];
+    return [
+      'name',
+      'estimated-pomodoros',
+      'used-pomodoros',
+      'selected',
+      'completed',
+    ];
   }
 
   constructor() {
@@ -55,6 +62,10 @@ class TaskItem extends HTMLElement {
         align-items: center;
       }
       
+      .completed .name {
+        text-decoration: line-through;
+      }
+
       .name {
         width: 80%;
         display: inline-block;
@@ -224,6 +235,10 @@ class TaskItem extends HTMLElement {
       case 'selected':
         this.itemContainerElement.className =
           newValue === 'true' ? 'item-container selected' : 'item-container';
+        break;
+      case 'completed':
+        this.itemContainerElement.className =
+          newValue === 'true' ? 'item-container completed' : 'item-container';
         break;
       default:
     }
