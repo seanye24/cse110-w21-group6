@@ -17,6 +17,13 @@ import {
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
 import {
+  initializeAnnouncement,
+  setAnnouncement,
+  setYesButtonCallback,
+  setNoButtonCallback,
+  setButtonVisibility,
+} from './announcement';
+import {
   POMODORO_ANNOUNCEMENT,
   SHORT_BREAK_ANNOUNCEMENT,
   LONG_BREAK_ANNOUNCEMENT,
@@ -24,12 +31,10 @@ import {
   SHORT_BREAK_INTERVAL,
   LONG_BREAK_INTERVAL,
   END_OF_SESSION_ANNOUNCEMENT,
+  TASK_COMPLETION_QUESTION,
+  NO_TASKS_ANNOUNCEMENT,
 } from '../utils/constants';
-import {
-  initializeIntervalLengths,
-  setAnnouncement,
-  tick,
-} from '../utils/utils';
+import { initializeIntervalLengths, tick } from '../utils/utils';
 
 customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);
@@ -68,72 +73,101 @@ const {
 
 /**
  * Handles pomodoro app, dispatches actions to components depending on the current interval
- * @param {HTMLElement} announcementElement - element for announcements
+ * @param {Function} changeSessionButton - changes session button from start to end
+ * @return {Promise<number>} - number of pomodoros completed during session
  */
-const startSession = async (announcementElement) => {
+const startSession = async (changeSessionButton) => {
   let numPomodoros = 0;
-  let currInterval = null;
+  let currInterval = POMODORO_INTERVAL;
   let currSelectedTask = null;
 
   // continue looping if session has not been ended
   while (isSessionOngoing) {
-    // set next interval and announcements
     if (currInterval === POMODORO_INTERVAL) {
-      numPomodoros++;
-
-      // check if break should be short or long
-      const shouldBeLongBreak = numPomodoros > 0 && numPomodoros % 4 === 0;
-      if (shouldBeLongBreak) {
-        currInterval = LONG_BREAK_INTERVAL;
-        setAnnouncement(announcementElement, LONG_BREAK_ANNOUNCEMENT);
-      } else {
-        currInterval = SHORT_BREAK_INTERVAL;
-        setAnnouncement(announcementElement, SHORT_BREAK_ANNOUNCEMENT);
-      }
-    } else {
-      currInterval = POMODORO_INTERVAL;
-
+      // use previous currTask or next available
+      // stop if no tasks are available
       currSelectedTask = getCurrentlySelectedTask();
       if (!currSelectedTask) currSelectedTask = selectFirstTask();
+      if (!currSelectedTask) return numPomodoros === 0 ? -1 : numPomodoros;
 
-      if (!currSelectedTask) return;
+      if (numPomodoros === 0) changeSessionButton();
 
+      // disable tasklist
       setTasklistUsability(false);
-      setAnnouncement(announcementElement, POMODORO_ANNOUNCEMENT);
-    }
+      setAnnouncement(POMODORO_ANNOUNCEMENT);
 
-    // pick interval to start
-    switch (currInterval) {
-      case POMODORO_INTERVAL:
-        if (await startInterval(pomodoroLength)) {
-          currSelectedTask = incrementPomodoro(currSelectedTask);
-          completeTask(currSelectedTask);
-        }
-        break;
-      case SHORT_BREAK_INTERVAL:
-        await startInterval(shortBreakLength);
-        break;
-      case LONG_BREAK_INTERVAL:
-        await startInterval(longBreakLength);
-        break;
-      default:
+      // start pomodoro
+      if (!(await startInterval(pomodoroLength))) return numPomodoros;
+
+      currSelectedTask = incrementPomodoro(currSelectedTask); // increment task if pomo is fully completed
+
+      // check if break should be short or long
+      numPomodoros++;
+      const shouldBeLongBreak = numPomodoros > 0 && numPomodoros % 4 === 0;
+      currInterval = shouldBeLongBreak
+        ? LONG_BREAK_INTERVAL
+        : SHORT_BREAK_INTERVAL;
+
+      // reenable task list
+      setTasklistUsability(true);
+    } else {
+      // prompt user
+      setButtonVisibility('visible');
+      setAnnouncement(TASK_COMPLETION_QUESTION);
+
+      // copy curr selected task due to weird loop closures
+      const currSelectedTaskCopy = currSelectedTask;
+      const currAnnouncement =
+        currInterval === LONG_BREAK_ANNOUNCEMENT
+          ? LONG_BREAK_ANNOUNCEMENT
+          : SHORT_BREAK_ANNOUNCEMENT;
+
+      let wasButtonClicked = false;
+      setYesButtonCallback(() => {
+        completeTask(currSelectedTaskCopy);
+        selectFirstTask();
+        setAnnouncement(currAnnouncement);
+        setButtonVisibility('hidden');
+        wasButtonClicked = true;
+      });
+      setNoButtonCallback(() => {
+        setAnnouncement(currAnnouncement);
+        setButtonVisibility('hidden');
+        wasButtonClicked = true;
+      });
+
+      if (
+        !(await startInterval(
+          currInterval === LONG_BREAK_INTERVAL
+            ? longBreakLength
+            : shortBreakLength,
+        ))
+      ) {
+        return numPomodoros;
+      }
+
+      if (!wasButtonClicked) {
+        setButtonVisibility('hidden');
+      }
+      currInterval = POMODORO_INTERVAL;
     }
-    setTasklistUsability(true);
 
     // reset progress and give it time to reset (progress-ring transition is 35s)
     setProgress(100);
     await tick(0.25);
   }
+  return numPomodoros;
 };
 
 /**
  * Handle end of session
- * @param {HTMLElement} announcementElement - element for announcements
  * @param {HTMLElement} sessionButton - session button element
+ * @param {number} numPomodoros - number of pomodoros completed during the session
  */
-const endSession = (announcementElement, sessionButton) => {
-  isSessionOngoing = false;
-  setAnnouncement(announcementElement, END_OF_SESSION_ANNOUNCEMENT);
+const endSession = (sessionButton, numPomodoros) => {
+  setAnnouncement(
+    numPomodoros === -1 ? NO_TASKS_ANNOUNCEMENT : END_OF_SESSION_ANNOUNCEMENT,
+  );
   deselectAllTasks();
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
@@ -144,10 +178,13 @@ const endSession = (announcementElement, sessionButton) => {
 window.addEventListener('DOMContentLoaded', () => {
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
-  const announcementElement = document.querySelector('.announcement');
+  const announcementElement = document.querySelector('.announcement-container');
+
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
   initializeTaskList(document.querySelector('.task-list'));
+  initializeAnnouncement(announcementElement);
+
   deselectAllTasks();
   setTimer(pomodoroLength);
 
@@ -159,12 +196,19 @@ window.addEventListener('DOMContentLoaded', () => {
   startButton.addEventListener('click', async (e) => {
     if (e.target.innerText === 'Start') {
       isSessionOngoing = true;
-      e.target.innerText = 'End';
-      e.target.className = 'session-button in-session';
-      await startSession(announcementElement);
-      endSession(announcementElement, e.target);
+      const changeSessionButton = () => {
+        e.target.innerText = 'End';
+        e.target.className = 'session-button in-session';
+      };
+      const numPomodoros = await startSession(changeSessionButton);
+      // reset progress and give it time to reset (progress-ring transition is 35s)
+      setProgress(100);
+      await tick(0.25);
+      setTasklistUsability(true);
+      endSession(e.target, numPomodoros);
+      setButtonVisibility('hidden');
     } else {
-      endSession(announcementElement, e.target);
+      isSessionOngoing = false;
     }
   });
 });
