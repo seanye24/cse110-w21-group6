@@ -233,12 +233,14 @@ class TaskItem extends HTMLElement {
         this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
         break;
       case 'selected':
-        this.itemContainerElement.className =
-          newValue === 'true' ? 'item-container selected' : 'item-container';
+        if (newValue === 'true')
+          this.itemContainerElement.classList.add('selected');
+        else this.itemContainerElement.classList.remove('selected');
         break;
       case 'completed':
-        this.itemContainerElement.className =
-          newValue === 'true' ? 'item-container completed' : 'item-container';
+        if (newValue === 'true')
+          this.itemContainerElement.classList.add('completed');
+        else this.itemContainerElement.classList.remove('completed');
         break;
       default:
     }

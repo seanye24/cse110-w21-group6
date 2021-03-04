@@ -100,6 +100,7 @@ const removeTaskFromDom = (taskToRemove) => {
  * Update existing task
  * @param {Task} prevTask - task to be updated
  * @param {Task} nextTask - updated task
+ * @return {Task} - updated task
  */
 const updateTask = (prevTask, nextTask) => {
   const {
@@ -107,6 +108,7 @@ const updateTask = (prevTask, nextTask) => {
     usedPomodoros,
     estimatedPomodoros,
     selected,
+    completed,
   } = nextTask;
   const { taskIndex, taskElement } = getTask(prevTask);
 
@@ -119,6 +121,8 @@ const updateTask = (prevTask, nextTask) => {
   taskElement.setAttribute('used-pomodoros', usedPomodoros);
   taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
   taskElement.setAttribute('selected', selected);
+  taskElement.setAttribute('completed', completed);
+  return nextTask;
 };
 
 /**
@@ -160,10 +164,6 @@ const selectTask = (task) => {
   updateTask(task, { ...task, selected: true });
 };
 
-function selectCallback() {
-  selectTask(this);
-}
-
 /**
  * Create a task element from a task object
  * @param {Task} newTask - task to be created
@@ -178,9 +178,9 @@ const createTaskElement = (newTask) => {
     'estimated-pomodoros': estimatedPomodoros,
     selected,
   });
-  newTaskElement.shadowRoot
-    .querySelector('.text-container')
-    .addEventListener('click', selectCallback.bind(newTask));
+  newTaskElement.shadowRoot.querySelector('.text-container').onclick = () => {
+    selectTask(newTask);
+  };
   const buttons = getTaskItemButtons(newTaskElement);
   buttons.delete.addEventListener('click', () => deleteTask(newTask));
   buttons.edit.addEventListener('click', () => {
@@ -275,10 +275,11 @@ const initializeTaskList = (element) => {
 /**
  * Increment the usedPomodoros for one task
  * @param {Task} task - task to be incremented
+ * @return {Task} - incremented task
  */
 const incrementPomodoro = (task) => {
   const { usedPomodoros } = task;
-  updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
+  return updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
 };
 
 /**
@@ -304,6 +305,14 @@ const deselectAllTasks = () => {
  */
 const setTasklistUsability = (shouldTasklistBeUsable) => {
   tasks.forEach((task) => {
+    const { taskElement } = getTask(task);
+    taskElement.shadowRoot.querySelector(
+      '.text-container',
+    ).onclick = shouldTasklistBeUsable
+      ? () => {
+          selectTask(task);
+        }
+      : null;
     const buttons = getTaskItemButtons(getTask(task).taskElement);
     Object.values(buttons).forEach((btn) => {
       btn.disabled = !shouldTasklistBeUsable;
@@ -323,9 +332,7 @@ const completeTask = (completedTask) => {
   addTaskToDom(taskElement, 'end');
   taskElement.setAttribute('selected', false);
   taskElement.setAttribute('completed', true);
-  taskElement.shadowRoot
-    .querySelector('.text-container')
-    .removeEventListener('click', selectCallback);
+  taskElement.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array
   tasks.splice(taskIndex, 1);
