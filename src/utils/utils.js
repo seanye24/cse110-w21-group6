@@ -52,6 +52,7 @@ const checkIfTimeValid = (time) => {
 
 /**
  * Use promises to tick by specified tickLength
+ * NOTE: ticks may be slightly longer than the duration due the single threaded nature of JavaScript
  * @param {number} duration - duration of tick (in seconds)
  * @return {Promise<void>} - promise that resolves after tick duration
  */
