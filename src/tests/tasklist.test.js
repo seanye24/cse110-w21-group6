@@ -60,10 +60,11 @@ describe('testing tasklist', () => {
 
   test('select pomodoro', () => {
     selectPomodoro(tasks[1]);
-    expect(getTasks()[0].selected).toBe(false);
-    expect(getTasks()[1].selected).toBe(true);
+    let newTasks = [{ ...tasks[1], selected: true }, tasks[0]];
+    expect(getTasks()).toStrictEqual(newTasks);
+
+    newTasks = [{ ...tasks[0], selected: true }, tasks[1]];
     selectPomodoro(tasks[0]);
-    expect(getTasks()[0].selected).toBe(true);
-    expect(getTasks()[1].selected).toBe(false);
+    expect(getTasks()).toStrictEqual(newTasks);
   });
 });
