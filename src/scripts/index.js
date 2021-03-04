@@ -12,10 +12,12 @@ import {
   setRadiusStroke,
   startProgressRing,
 } from './progressRing';
+import { initializeBreakLengths } from './settings';
 
 window.addEventListener('DOMContentLoaded', () => {
   initializeProgressRing(document.querySelector('.progress-ring'));
   initializeTaskList(document.querySelector('.task-list'));
+  initializeBreakLengths();
 
   setRadiusStroke(180, 8);
   startProgressRing(0.5, 60);
