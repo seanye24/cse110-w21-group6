@@ -279,6 +279,7 @@ const incrementPomodoro = (task) => {
  */
 const selectFirstTask = () => {
   if (tasks.length > 0) selectPomodoro(tasks[0]);
+  return tasks[0];
 };
 
 /**
