@@ -23,7 +23,7 @@ const getProgress = () => progressRingElement.progress;
  * @param {number} progress - progress to set
  */
 const setProgress = (progress) => {
-  progressRingElement.progress = progress;
+  progressRingElement.progress = JSON.stringify(progress);
 };
 
 /**

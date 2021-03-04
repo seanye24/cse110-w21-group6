@@ -6,6 +6,9 @@
 import '../styles/style.css';
 import { Timer, ProgressRing, TaskList } from '../components';
 import {
+  deselectAllTasks,
+  getCurrentlySelectedTask,
+  incrementPomodoro,
   initializeTaskList,
   selectFirstTask,
   setTasklistUsability,
@@ -27,6 +30,10 @@ import {
   tick,
 } from '../utils/utils';
 
+customElements.define('timer-component', Timer);
+customElements.define('progress-ring', ProgressRing);
+customElements.define('task-list', TaskList);
+
 let isSessionOngoing = false;
 
 /**
@@ -41,14 +48,15 @@ const startInterval = async (intervalLength) => {
     if (!isSessionOngoing) {
       setTimer(0);
       setProgress(0);
-      return;
+      return false;
     }
-    const currProgress = Math.round((100 * currTime) / intervalLength);
+    const currProgress = (100 * currTime) / intervalLength;
     setTimer(currTime);
     setProgress(currProgress);
     await tick(1);
     currTime--;
   }
+  return true;
 };
 
 const {
@@ -62,9 +70,9 @@ const {
  * @param {HTMLElement} announcementElement - element for announcements
  */
 const startSession = async (announcementElement) => {
-  let currInterval = '';
   let numPomodoros = 0;
-  const selectedTask = '';
+  let currInterval = null;
+  let currSelectedTask = null;
 
   // continue looping if session has not been ended
   while (isSessionOngoing) {
@@ -83,7 +91,10 @@ const startSession = async (announcementElement) => {
       }
     } else {
       currInterval = POMODORO_INTERVAL;
-      selectFirstTask();
+
+      currSelectedTask = getCurrentlySelectedTask();
+      if (!currSelectedTask) currSelectedTask = selectFirstTask();
+
       setTasklistUsability(false);
       setAnnouncement(announcementElement, POMODORO_ANNOUNCEMENT);
     }
@@ -91,7 +102,8 @@ const startSession = async (announcementElement) => {
     // pick interval to start
     switch (currInterval) {
       case POMODORO_INTERVAL:
-        await startInterval(pomodoroLength);
+        if (await startInterval(pomodoroLength))
+          incrementPomodoro(currSelectedTask);
         break;
       case SHORT_BREAK_INTERVAL:
         await startInterval(shortBreakLength);
@@ -105,7 +117,7 @@ const startSession = async (announcementElement) => {
 
     // reset progress and give it time to reset (progress-ring transition is 35s)
     setProgress(100);
-    await tick(1);
+    await tick(0.25);
   }
 };
 
@@ -116,12 +128,13 @@ window.addEventListener('DOMContentLoaded', () => {
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
   initializeTaskList(document.querySelector('.task-list'));
+  deselectAllTasks();
+  setTimer(pomodoroLength);
 
   // start session when start button is clicked
   const startButton = document.querySelector('.session-button');
   startButton.addEventListener('click', (e) => {
     if (e.target.innerText === 'Start') {
-      timerElement.radius = 50;
       isSessionOngoing = true;
       startSession(announcementElement);
       e.target.innerText = 'End';
@@ -129,6 +142,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } else {
       isSessionOngoing = false;
       setAnnouncement(announcementElement, END_OF_SESSION_ANNOUNCEMENT);
+      deselectAllTasks();
       e.target.innerText = 'Start';
       e.target.className = 'session-button';
       // TODO: stop session

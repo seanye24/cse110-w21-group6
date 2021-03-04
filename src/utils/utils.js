@@ -37,7 +37,7 @@ const createElement = (elementType, props = {}, options = {}) => {
  * @return {number | null} - number if successful, null otherwise
  */
 const validateNumber = (value) => {
-  const num = parseInt(value, 10);
+  const num = parseFloat(value, 10);
   return Number.isNaN(num) ? null : num;
 };
 
@@ -52,6 +52,7 @@ const checkIfTimeValid = (time) => {
 
 /**
  * Use promises to tick by specified tickLength
+ * NOTE: ticks may be slightly longer than the duration due the single threaded nature of JavaScript
  * @param {number} duration - duration of tick (in seconds)
  * @return {Promise<void>} - promise that resolves after tick duration
  */

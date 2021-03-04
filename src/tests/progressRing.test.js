@@ -1,10 +1,12 @@
-import '../components/ProgressRing';
+import { ProgressRing } from '../components';
 import { createElement } from '../utils/utils';
 import {
   getProgress,
   initializeProgressRing,
   setProgress,
 } from '../scripts/progressRing';
+
+customElements.define('progress-ring', ProgressRing);
 
 describe('testing progress ring', () => {
   // initialize progress ring before each test
