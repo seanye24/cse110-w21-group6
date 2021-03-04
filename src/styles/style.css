@@ -104,9 +104,35 @@ body {
   outline: none;
 }
 
+.announcement-container {
+  display: flex;
+  align-items: center;
+}
+
 .announcement {
   color: #fff;
   font-size: 2.5rem;
+  margin-right: 0.5em;
+}
+
+.announcement-button {
+  font-size: 2rem;
+  color: #fff;
+  background: #777;
+  border: none;
+  margin: 0.5em;
+  padding: 0.25em 0.5em;
+  border-radius: 5px;
+}
+
+.announcement-button.hidden {
+  display: none;
+}
+
+.announcement-button:hover {
+  cursor: pointer;
+  color: #eee;
+  background: #666;
 }
 
 .task-list {
