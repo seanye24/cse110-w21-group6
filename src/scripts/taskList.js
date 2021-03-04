@@ -320,13 +320,12 @@ const deselectAllTasks = () => {
 const setTasklistUsability = (shouldTasklistBeUsable) => {
   tasks.forEach((task) => {
     const { taskElement } = getTask(task);
-    taskElement.shadowRoot.querySelector(
-      '.text-container',
-    ).onclick = shouldTasklistBeUsable
-      ? () => {
-          selectTask(task);
-        }
-      : null;
+    taskElement.shadowRoot.querySelector('.text-container').onclick =
+      shouldTasklistBeUsable && !task.completed
+        ? () => {
+            selectTask(task);
+          }
+        : null;
     const buttons = getTaskItemButtons(getTask(task).taskElement);
     Object.values(buttons).forEach((btn) => {
       btn.disabled = !shouldTasklistBeUsable;
