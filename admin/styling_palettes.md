@@ -49,19 +49,19 @@
 
 | Section | Color |
 |   ----  | ----  | 
-| Timer Background | #  |  
-| Timer Nav Bar | 0095B3 | 
-| Tasks Section | 00B4D8 | 
-| Add Task Button | 48CAE4 | 
-| Task Cancel/Save Button | 48CAE4 | 
-| Task Selection Color | 90E0EF | 
-| Instructions Line | 00B4D8 | 
+| Timer Background | #24BFDE  |  
+| Timer Nav Bar | #0095B3 | 
+| Tasks Section | #00B4D8 | 
+| Add Task Button | #48CAE4 | 
+| Task Cancel/Save Button | #48CAE4 | 
+| Task Selection Color | #90E0EF | 
+| Instructions Line | #00B4D8 | 
 
 ## Short Break Page (Green)
 
 | Section | Color |
 |   ----  |  ----  | 
-| Short Break Background  | # | 
+| Short Break Background  | #69DA00 | 
 | Short Break Nav Bar | #4AB717 | 
 | “Did you finish task” Yes/No Button | #54C800 | 
 | Tasks Section | #4AB717 | 
@@ -74,7 +74,7 @@
 
 | Section | Color |
 |   ----  | ----  | 
-| Long Break Background  | # | 
+| Long Break Background  | #F97F38 | 
 | Long Break Nav Bar | #F76926 | 
 | “Did you finish task” Yes/No Button | #F87335 | 
 | Tasks Section | #F87335 | 
