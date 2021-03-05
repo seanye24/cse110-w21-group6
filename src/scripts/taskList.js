@@ -10,9 +10,10 @@
  * @property {number} usedPomodoros       - pomodoros used so far
  * @property {number} estimatedPomodoros  - estimated number of pomos needed
  * @property {boolean} selected           - whether task is selected
+ * @property {boolean} completed          - whether task is completed
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 import '../components/TaskItem';
 import '../components/TaskItemForm';
 import '../components/TaskList';
@@ -40,32 +41,94 @@ const setRoot = (root) => {
 };
 
 /**
- * Retrieve task from tasks and DOM
- * @param {string} name - name of task
- * @return {{taskIndex: number, element: HTMLElement}}
+ * Save current tasks to localStorage
  */
-const getTask = (name) => ({
+const saveTasks = () => {
+  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+};
+
+/**
+ * Retrieve task from tasks and DOM
+ * @param {Task} task - task
+ * @return {{taskIndex: number, taskElement: HTMLElement}}
+ */
+const getTask = ({ name }) => ({
   taskIndex: tasks.findIndex((task) => task.name === name),
   taskElement: taskListItemContainer.querySelector(`[name="${name}"]`),
 });
 
 /**
  * Get button elements from task-item element
- * @param {Task} task - task-item element
- * @return {{finish: HTMLButtonElement, delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
+ * @param {HTMLElement} taskElement - task-item element
+ * @return {{delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
  */
-const getTaskItemButtons = (task) => {
+const getTaskItemButtons = (taskElement) => {
   const buttons = Array.from(
-    task.shadowRoot
-      .querySelector('.item-container')
-      .querySelectorAll('.task-button'),
+    taskElement.shadowRoot.querySelectorAll('.task-button'),
   );
 
   return {
-    finish: buttons.find((btn) => btn.getAttribute('id') === 'finish-button'),
     delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
     edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
   };
+};
+
+/**
+ * Add task object to DOM, add event listeners to task-item
+ * @param {HTMLElement} newTaskElement - new task element to be added
+ * @param {'start' | 'end' | HTMLElement} position - position in list to append
+ * @return {HTMLElement} - new task element added to DOM
+ */
+const addTaskToDom = (newTaskElement, position = 'end') => {
+  if (position !== 'end' && position !== 'start') {
+    const { taskElement } = getTask(position);
+    taskElement.before(newTaskElement);
+  } else if (position === 'end') {
+    taskListItemContainer.append(newTaskElement);
+  } else if (position === 'start') {
+    taskListItemContainer.prepend(newTaskElement);
+  }
+  return newTaskElement;
+};
+
+/**
+ * Remove task object from DOM
+ * @param {Task} taskToRemove - task to be removed
+ * @return {HTMLElement} - task element removed from DOM
+ */
+const removeTaskFromDom = (taskToRemove) => {
+  const { taskElement } = getTask(taskToRemove);
+  taskElement.remove();
+  return taskElement;
+};
+
+/**
+ * Update existing task
+ * @param {Task} prevTask - task to be updated
+ * @param {Task} nextTask - updated task
+ * @return {Task} - updated task
+ */
+const updateTask = (prevTask, nextTask) => {
+  const {
+    name: nextName,
+    usedPomodoros,
+    estimatedPomodoros,
+    selected,
+    completed,
+  } = nextTask;
+  const { taskIndex, taskElement } = getTask(prevTask);
+
+  // update localStorage
+  tasks[taskIndex] = nextTask;
+  saveTasks();
+
+  // update task in dom
+  taskElement.setAttribute('name', nextName);
+  taskElement.setAttribute('used-pomodoros', usedPomodoros);
+  taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
+  taskElement.setAttribute('selected', selected);
+  taskElement.setAttribute('completed', completed);
+  return nextTask;
 };
 
 /**
@@ -73,75 +136,82 @@ const getTaskItemButtons = (task) => {
  * @param {Task} taskToDelete - task to be deleted
  */
 const deleteTask = (taskToDelete) => {
-  const { name } = taskToDelete;
-
   // update localStorage
-  const { taskIndex, taskElement } = getTask(name);
+  const { taskIndex } = getTask(taskToDelete);
   tasks.splice(taskIndex, 1);
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // remove task from dom
-  taskElement.remove();
+  removeTaskFromDom(taskToDelete);
 };
 
 /**
- * Add task object to DOM, add event listeners to task-item
- * @param {Task} newTask - new task to be added
+ * Get currently selected task
  */
-const addTaskToDom = (newTask) => {
-  const { name, usedPomodoros, estimatedPomodoros } = newTask;
+const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
+
+/**
+ * Select a task
+ * @param {Task} task - task to be selected
+ * @return {Task} - selected task
+ */
+const selectTask = (task) => {
+  const prevSelectedTask = getCurrentlySelectedTask();
+  if (prevSelectedTask)
+    updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
+
+  const { taskElement, taskIndex } = getTask(task);
+  // move task to front of DOM list
+  removeTaskFromDom(task);
+  addTaskToDom(taskElement, 'start');
+
+  // move task to front of tasks array
+  tasks.splice(taskIndex, 1);
+  tasks.unshift(task);
+
+  // update selected property of task
+  return updateTask(task, { ...task, selected: true });
+};
+
+/**
+ * Create a task element from a task object
+ * @param {Task} newTask - task to be created
+ */
+const createTaskElement = (newTask) => {
+  const { name, usedPomodoros, estimatedPomodoros, selected } = newTask;
 
   // add task to dom
-  const taskItem = createElement('task-item', {
+  const newTaskElement = createElement('task-item', {
     name,
     'used-pomodoros': usedPomodoros,
     'estimated-pomodoros': estimatedPomodoros,
-    selected: true,
+    selected,
   });
-  const buttons = getTaskItemButtons(taskItem);
-  // buttons.finish.addEventListener('click', () => deleteTask(newTask));
+  newTaskElement.shadowRoot.querySelector('.text-container').onclick = () => {
+    selectTask(newTask);
+  };
+  const buttons = getTaskItemButtons(newTaskElement);
   buttons.delete.addEventListener('click', () => deleteTask(newTask));
   buttons.edit.addEventListener('click', () => {
-    console.log('editing task!');
+    // TODO: Add edit functionality
   });
-  taskListItemContainer.append(taskItem);
+  return newTaskElement;
 };
 
 /**
- * Add new task to localStorage
+ * Add new task to localStorage, append to DOM
  * @param {Task} newTask - new task to be added
  */
 const addTask = (newTask) => {
   // update localStorage
-  tasks.push(newTask);
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-  addTaskToDom(newTask);
-};
-
-/**
- * Update existing task
- * @param {Task} prevTask - task to be updated
- * @param {Task} nextTask - updated task
- */
-const updateTask = (prevTask, nextTask) => {
-  const { name: prevName } = prevTask;
-  const {
-    name: nextName,
-    usedPomodoros,
-    estimatedPomodoros,
-    selected,
-  } = nextTask;
-  const { taskIndex, taskElement } = getTask(prevName);
-
-  // update localStorage
-  tasks[taskIndex] = nextTask;
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // update task in dom
-  taskElement.setAttribute('name', nextName);
-  taskElement.setAttribute('used-pomodoros', usedPomodoros);
-  taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
-  taskElement.setAttribute('selected', selected);
+  const newTaskElement = createTaskElement(newTask);
+  const indexOfFirstCompleted = tasks.findIndex((t) => t.completed);
+  if (indexOfFirstCompleted !== -1) {
+    tasks.splice(indexOfFirstCompleted, 0, newTask);
+    addTaskToDom(newTaskElement, tasks[indexOfFirstCompleted + 1]);
+  } else {
+    tasks.push(newTask);
+    addTaskToDom(newTaskElement);
+  }
+  saveTasks();
 };
 
 /**
@@ -159,33 +229,36 @@ const getTasks = () => {
 const handleTaskFormSubmit = (e) => {
   e.preventDefault(); // prevent page reload
 
-  const {
-    name: { value: name },
-    pomodoro: { value: pomodoro },
-  } = taskItemFormInputs;
+  const { name: nameInput, pomodoro: pomodoroInput } = taskItemFormInputs;
+  const { value: name } = nameInput;
+  const { value: pomodoro } = pomodoroInput;
+
   const trimmedName = name.trim();
 
   // check if fields are non-empty
   if (!trimmedName) {
-    console.error('task name cannot be empty');
+    // TODO: Update name label
     return;
   }
   if (!pomodoro) {
-    console.error('task pomodoros cannot be empty');
+    // TODO: Update pomodoro label
     return;
   }
 
   // check if task already exists
   if (tasks.some((task) => task.name === trimmedName)) {
-    console.error({ name: trimmedName }, ' already defined');
+    // TODO: Update name label
     return;
   }
+
+  nameInput.focus();
 
   addTask({
     name: trimmedName,
     estimatedPomodoros: pomodoro,
     usedPomodoros: 0,
     selected: false,
+    completed: false,
   });
   Object.values(taskItemFormInputs).forEach((input) => {
     input.value = '';
@@ -196,11 +269,11 @@ const handleTaskFormSubmit = (e) => {
  * Retrieve tasks from localStorage
  */
 const restoreTasks = () => {
-  if (!window.localStorage.getItem('tasks')) {
+  if (!JSON.parse(window.localStorage.getItem('tasks'))) {
     window.localStorage.setItem('tasks', JSON.stringify([]));
   }
   tasks = JSON.parse(window.localStorage.getItem('tasks'));
-  tasks.forEach((task) => addTaskToDom(task));
+  tasks.forEach((task) => addTaskToDom(createTaskElement(task)));
 };
 
 /**
@@ -215,22 +288,75 @@ const initializeTaskList = (element) => {
 /**
  * Increment the usedPomodoros for one task
  * @param {Task} task - task to be incremented
+ * @return {Task} - incremented task
  */
 const incrementPomodoro = (task) => {
   const { usedPomodoros } = task;
-  updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
+  return updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
 };
 
 /**
- * Select a task
- * @param {Task} task - task to be selected
+ * Automatically select first task in the task list
+ * @return {Task | null} returns first available task, if there are none, return null
  */
-const selectPomodoro = (task) => {
-  const prevSelectedTask = tasks.find((t) => t.selected);
-  if (prevSelectedTask) {
-    updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
-  }
-  updateTask(task, { ...task, selected: true });
+const selectFirstTask = () => {
+  if (tasks.length > 0 && !tasks[0].completed) return selectTask(tasks[0]);
+  return null;
+};
+
+/**
+ * Deselect all tasks
+ */
+const deselectAllTasks = () => {
+  tasks.forEach((task) => {
+    updateTask(task, { ...task, selected: false });
+  });
+};
+
+/**
+ * Disable task list
+ * @param {boolean} shouldTasklistBeUsable - whether task list should be usable
+ */
+const setTasklistUsability = (shouldTasklistBeUsable) => {
+  tasks.forEach((task) => {
+    const { taskElement } = getTask(task);
+    taskElement.shadowRoot.querySelector('.text-container').onclick =
+      shouldTasklistBeUsable && !task.completed
+        ? () => {
+            selectTask(task);
+          }
+        : null;
+    const buttons = getTaskItemButtons(getTask(task).taskElement);
+    Object.values(buttons).forEach((btn) => {
+      btn.disabled = !shouldTasklistBeUsable;
+    });
+  });
+};
+
+/**
+ * Mark task as complete
+ * @param {Task} completedTask - task that has been completed
+ */
+const completeTask = (completedTask) => {
+  const { taskIndex, taskElement } = getTask(completedTask);
+
+  // mark task as completed and move it to end of DOM list
+  removeTaskFromDom(completedTask);
+  addTaskToDom(taskElement, 'end');
+  taskElement.setAttribute('selected', false);
+  taskElement.setAttribute('completed', true);
+  taskElement.shadowRoot.querySelector('.text-container').onclick = null;
+
+  // move task to end of tasks array
+  tasks.splice(taskIndex, 1);
+  tasks.push(completedTask);
+
+  // update selected property of task
+  updateTask(completedTask, {
+    ...completedTask,
+    selected: false,
+    completed: true,
+  });
 };
 
 export {
@@ -240,5 +366,10 @@ export {
   updateTask,
   deleteTask,
   incrementPomodoro,
-  selectPomodoro,
+  selectTask,
+  selectFirstTask,
+  deselectAllTasks,
+  getCurrentlySelectedTask,
+  setTasklistUsability,
+  completeTask,
 };

@@ -23,19 +23,7 @@ const getProgress = () => progressRingElement.progress;
  * @param {number} progress - progress to set
  */
 const setProgress = (progress) => {
-  progressRingElement.progress = progress;
-};
-
-/**
- * Start the progress bar
- * @param {number} tickLength - amount of progress to decrease
- * @param {number} tickFrequency - how often to decrease progress (in ms)
- */
-const startProgressRing = (tickLength, tickFrequency) => {
-  const ticker = setInterval(() => {
-    if (progressRingElement.progress <= 0) clearInterval(ticker);
-    setProgress(progressRingElement.progress - tickLength);
-  }, tickFrequency);
+  progressRingElement.progress = JSON.stringify(progress);
 };
 
 /**
@@ -47,10 +35,4 @@ const setRadiusStroke = (radius, stroke) => {
   progressRingElement.stroke = stroke;
 };
 
-export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  startProgressRing,
-  setRadiusStroke,
-};
+export { initializeProgressRing, getProgress, setProgress, setRadiusStroke };

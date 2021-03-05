@@ -13,6 +13,8 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'import/prefer-default-export': 'warn',
+    'no-unused-vars': 'warn',
+    'prefer-const': 'warn',
     'no-underscore-dangle': 'off',
     'no-plusplus': 'off',
     'no-param-reassign': 'off',

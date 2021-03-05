@@ -2,7 +2,7 @@
  * @file task-item web component
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 /**
  * Custom web component representing a task item.
@@ -11,10 +11,17 @@ import { createElement } from '../utils';
  * @param {number} estimated-pomodoros - estimated number of pomodoros needed
  * @param {number} used-pomodoros - pomodoros used so far
  * @param {boolean} selected - indicates if the current task is selected
+ * @param {boolean} completed - indicates if the current task is completed
  */
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
-    return ['name', 'estimated-pomodoros', 'used-pomodoros', 'selected'];
+    return [
+      'name',
+      'estimated-pomodoros',
+      'used-pomodoros',
+      'selected',
+      'completed',
+    ];
   }
 
   constructor() {
@@ -36,6 +43,10 @@ class TaskItem extends HTMLElement {
         cursor: pointer;
       }
 
+      .item-container:focus {
+        outline: none;
+      }
+
       .selected {
         background: #90e0ef;
       }
@@ -51,6 +62,10 @@ class TaskItem extends HTMLElement {
         align-items: center;
       }
       
+      .completed .name {
+        text-decoration: line-through;
+      }
+
       .name {
         width: 80%;
         display: inline-block;
@@ -79,24 +94,46 @@ class TaskItem extends HTMLElement {
       }
 
       .task-button {
-        display: none;
+        opacity: 0;
         position: absolute;
+        border: none;
         padding: 0.25em;
-        font-size: 1.2rem;
         color: #fff;
+        background: transparent;
+        border-radius: 50%;
       }
 
-      .task-button:hover {
-        border-radius: 50%;
+      .task-button:focus {
+        outline: none;
+        box-shadow: inset 0 0 0 1pt #48cae4;
+        z-index: 1;
+        position: absolute;
+      }
+
+      .item-container:hover > .task-button,
+      .task-button:focus {
+        opacity: 1;
+      }
+
+      .item-container[selected="true"] .task-button:hover {
         background: rgba(0, 180, 216, 0.25);
         color: #00b4d8;
         cursor: pointer;
       }
 
-      .item-container:hover > .task-button {
-        display: initial;
+      .task-button:disabled {
+        opacity: 0 !important;
       }
 
+      .task-button:hover {
+        border-radius: 50%;
+        color: #ddd;
+        cursor: pointer;
+      }
+
+      .task-button-icon {
+        font-size: 1.2rem;
+      }
 
       #edit-button {
         top: 0;
@@ -129,28 +166,40 @@ class TaskItem extends HTMLElement {
     this.pomodoroLabel = createElement('label', {
       className: 'pomodoro-label',
       for: 'pomodoro',
-      innerText: 'Progress',
+      innerText: 'Pomodoros',
     });
     this.pomodoroElement = createElement('p', {
       className: 'pomodoro',
       id: 'pomodoro',
     });
 
-    this.editTaskButton = createElement('span', {
-      className: 'material-icons task-button',
+    this.editTaskButton = createElement('button', {
+      className: 'task-button',
       id: 'edit-button',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
+    });
+    this.editTaskIcon = createElement('span', {
+      className: 'material-icons task-button-icon',
       innerText: 'mode',
     });
 
-    this.finishTaskButton = createElement('span', {
-      className: 'material-icons task-button',
-      id: 'finish-button',
-      innerText: 'done',
-    });
-
-    this.deleteTaskButton = createElement('span', {
-      className: 'material-icons task-button',
+    this.deleteTaskButton = createElement('button', {
+      className: 'task-button',
       id: 'delete-button',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
+    });
+    this.deleteTaskIcon = createElement('span', {
+      className: 'material-icons task-button-icon',
       innerText: 'delete',
     });
 
@@ -164,6 +213,8 @@ class TaskItem extends HTMLElement {
       this.editTaskButton,
       this.deleteTaskButton,
     );
+    this.editTaskButton.appendChild(this.editTaskIcon);
+    this.deleteTaskButton.appendChild(this.deleteTaskIcon);
     this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
     this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
   }
@@ -182,8 +233,14 @@ class TaskItem extends HTMLElement {
         this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
         break;
       case 'selected':
-        this.itemContainerElement.className =
-          newValue === 'true' ? 'item-container selected' : 'item-container';
+        if (newValue === 'true')
+          this.itemContainerElement.classList.add('selected');
+        else this.itemContainerElement.classList.remove('selected');
+        break;
+      case 'completed':
+        if (newValue === 'true')
+          this.itemContainerElement.classList.add('completed');
+        else this.itemContainerElement.classList.remove('completed');
         break;
       default:
     }
@@ -191,3 +248,4 @@ class TaskItem extends HTMLElement {
 }
 
 customElements.define('task-item', TaskItem);
+export default TaskItem;
