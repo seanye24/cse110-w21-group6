@@ -21,6 +21,10 @@ const setTimer = (time) => {
   timerElement.time = time;
 };
 
+/**
+ * Get time of timer component
+ * @return {number} - current time of timer (in seconds)
+ */
 const getTime = () => timerElement.time;
 
 export { initializeTimer, setTimer, getTime };
