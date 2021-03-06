@@ -23,5 +23,4 @@ const setTimer = (time) => {
 
 const getTime = () => timerElement.time;
 
-
 export { initializeTimer, setTimer, getTime };
