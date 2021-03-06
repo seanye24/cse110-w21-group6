@@ -2,6 +2,8 @@ import {
   initializeIntervalLengths,
   tick,
   validateNumber,
+  getMinutesAndSeconds,
+  checkIfTimeValid,
 } from '../utils/utils';
 
 describe('test intervals', () => {
@@ -32,7 +34,7 @@ describe('test intervals', () => {
   });
 });
 
-describe('valid number', () => {
+describe('valid time and number', () => {
   test('validate number', () => {
     expect(validateNumber(5)).toBe(5);
     expect(validateNumber(1555)).toBe(1555);
@@ -44,21 +46,46 @@ describe('valid number', () => {
     expect(validateNumber('#')).toBe(null);
   });
 
-  describe('test ticking', () => {
-    beforeEach(() => {
-      jest.useFakeTimers();
-    });
+  test('check if valid time', () => {
+    expect(checkIfTimeValid(5)).toBe(true);
+    expect(checkIfTimeValid(1500)).toBe(true);
+    expect(checkIfTimeValid(59)).toBe(true);
+    expect(checkIfTimeValid(569)).toBe(true);
+    expect(checkIfTimeValid('5')).toBe(true);
+    expect(checkIfTimeValid(-5)).toBe(false);
+    expect(checkIfTimeValid(-1)).toBe(false);
+    expect(checkIfTimeValid('p')).toBe(false);
+    expect(checkIfTimeValid('#')).toBe(false);
+  });
 
-    test('called once, lasts 1 second', () => {
-      tick(1);
-      expect(setTimeout).toHaveBeenCalledTimes(1);
-      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 1000);
-    });
-
-    test('called once, lasts 10 seconds', () => {
-      tick(10);
-      expect(setTimeout).toHaveBeenCalledTimes(1);
-      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 10000);
-    });
+  test('test for correct time string', () => {
+    expect(getMinutesAndSeconds(0)).toBe('00:00');
+    expect(getMinutesAndSeconds(25)).toBe('00:25');
+    expect(getMinutesAndSeconds(60)).toBe('01:00');
+    expect(getMinutesAndSeconds(1000)).toBe('16:40');
+    expect(getMinutesAndSeconds(7)).toBe('00:07');
+    expect(getMinutesAndSeconds(1499)).toBe('24:59');
   });
 });
+
+describe('test ticking', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  test('called once, lasts 1 second', () => {
+    tick(1);
+    expect(setTimeout).toHaveBeenCalledTimes(1);
+    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 1000);
+  });
+
+  test('called once, lasts 10 seconds', () => {
+    tick(10);
+    expect(setTimeout).toHaveBeenCalledTimes(1);
+    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 10000);
+  });
+});
+
+// TODO: add more tests for tick using await/.then()
+
+// TODO: add tests for createElement
