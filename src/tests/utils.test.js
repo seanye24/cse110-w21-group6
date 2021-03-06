@@ -1,4 +1,3 @@
-// import { initializeTimer } from '../scripts/timer';
 import {
   initializeIntervalLengths,
   tick,
