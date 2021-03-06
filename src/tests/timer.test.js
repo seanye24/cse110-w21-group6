@@ -34,4 +34,5 @@ describe('testing timer', () => {
     setTimer(1499);
     expect(getTime()).toBe(1499);
   });
+  
 });
