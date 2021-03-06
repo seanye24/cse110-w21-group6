@@ -49,8 +49,10 @@ class PomodoroCircles extends HTMLElement {
         if (isNumber === false) {
           if (newValue >= 1 && newValue <= 4) {
             this._circleCount = newValue;
-            this.counterContainer.innerText = 4 - this._circleCount;
+          } else {
+            this._circleCount = 0;
           }
+          this.counterContainer.innerText = 4 - this._circleCount;
         }
         break;
       default:
