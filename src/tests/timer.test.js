@@ -1,22 +1,16 @@
 import { Timer } from '../components';
-import { createElement } from '../utils/utils';
 import {
-  initializeTimer,
-  setTimer,
-  getTime,
-} from '../scripts/timer';
-import{
+  createElement,
   getMinutesAndSeconds,
   checkIfTimeValid,
 } from '../utils/utils';
-
+import { initializeTimer, setTimer, getTime } from '../scripts/timer';
 
 customElements.define('timer-component', Timer);
 
 describe('testing timer', () => {
   // initialize progress ring before each test
   beforeEach(() => {
-    
     const timerElement = createElement('timer', {
       time: 1500,
       containerRadius: 10,
@@ -61,8 +55,5 @@ describe('testing timer', () => {
     expect(checkIfTimeValid(-1)).toBe(false);
     expect(checkIfTimeValid('p')).toBe(false);
     expect(checkIfTimeValid('#')).toBe(false);
-    
   });
 });
-
-
