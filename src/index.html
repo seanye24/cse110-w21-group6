@@ -80,6 +80,27 @@
       </p>
     </div>
 
+    <div class="popup" id="popup">
+      <div class="content">
+        <h1 class="instructions-title">END SESSION</h1>
+        <hr class="settings-hr"/>
+        <div class="form-input">
+          <p>Short Break: </p>
+          <input id="short-number" name="short-number" type="number" min="3" max="5" value="5">
+          <p class="bounds">3 - 5 minutes</p><br>
+          <p class="error">Please enter valid entry</p>
+        </div>
+        <div class="form-input">
+          <p>Long Break: </p>
+          <input id="long-number" name="long-number" type="number" min="15" max="30" value="30">
+          <p class="bounds">15 - 30 minutes</p><br>
+          <p class="error">Please enter valid entry</p>
+        </div>
+        <button data-save-button="save-button">SAVE</button>
+      </div>
+    </div>
+    <div id="overlay"></div>
+
     <footer>
       <p>Created by Pomodo Dragons © 2021</p>
     </footer>
