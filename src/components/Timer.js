@@ -44,6 +44,9 @@ class Timer extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     const newVal = parseInt(newValue, 10);
+    if (Number.isNaN(newVal)) {
+      return;
+    }
     switch (name) {
       case 'time': {
         const isTimeValid = checkIfTimeValid(newValue);
