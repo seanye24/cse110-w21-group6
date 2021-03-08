@@ -43,16 +43,21 @@ class Timer extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    const isTimeValid = checkIfTimeValid(newValue);
+    const newVal = parseInt(newValue, 10);
+    if (Number.isNaN(newVal)) {
+      return;
+    }
     switch (name) {
-      case 'time':
+      case 'time': {
+        const isTimeValid = checkIfTimeValid(newValue);
         if (isTimeValid) {
-          this._time = newValue;
+          this._time = newVal;
           this.timerContainer.innerText = getMinutesAndSeconds(this._time);
         }
         break;
-      case 'container-radius':
-        this._containerRadius = newValue;
+      }
+      case 'container-radius': {
+        this._containerRadius = newVal;
         // scale font relative to progress ring radius
         this.styleElement.innerText = `
             .container {
@@ -61,6 +66,7 @@ class Timer extends HTMLElement {
             }
           `;
         break;
+      }
       default:
     }
   }

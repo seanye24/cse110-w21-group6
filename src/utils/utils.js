@@ -42,7 +42,7 @@ const validateNumber = (value) => {
 };
 
 /**
- * Checks if time is valid for timer
+ * Checks if time is valid for timer, between 0 seconds and 1 hour
  * @param {number} time - time to be checked (in seconds)
  */
 const checkIfTimeValid = (time) => {
@@ -89,15 +89,6 @@ const getMinutesAndSeconds = (totalSeconds) => {
 };
 
 /**
- * Set text of announcement element
- * @param {HTMLElement} element - announcement element
- * @param {string} str - announcement to set
- */
-const setAnnouncement = (element, str) => {
-  element.innerText = str;
-};
-
-/**
  * Initialize interval lengths, retrieve from localStorage if possible
  * @return {{pomodoroLength: number, shortBreakLength: number, longBreakLength: number}} - lengths of intervals
  */
@@ -125,7 +116,6 @@ export {
   initializeIntervalLengths,
   checkIfShortInputValid,
   checkIfLongInputValid,
-  setAnnouncement,
   getMinutesAndSeconds,
   tick,
   checkIfTimeValid,
