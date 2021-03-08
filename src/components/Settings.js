@@ -196,24 +196,29 @@ class Settings extends HTMLElement {
       id: 'overlay',
     });
 
-    // Forming the HTML structure with appending
-    this.inputContainerShort.appendChild(this.inputLabelShort);
-    this.inputContainerShort.appendChild(this.inputBoxShort);
-    this.inputContainerShort.appendChild(this.inputBoundShort);
-    this.inputContainerShort.appendChild(this.inputErrorShort);
+    this.inputContainerShort.append(
+      this.inputLabelShort,
+      this.inputBoxShort,
+      this.inputBoundShort,
+      this.inputErrorShort,
+    );
 
-    this.inputContainerLong.appendChild(this.inputLabelLong);
-    this.inputContainerLong.appendChild(this.inputBoxLong);
-    this.inputContainerLong.appendChild(this.inputBoundLong);
-    this.inputContainerLong.appendChild(this.inputErrorLong);
+    this.inputContainerLong.append(
+      this.inputLabelLong,
+      this.inputBoxLong,
+      this.inputBoundLong,
+      this.inputErrorLong,
+    );
 
-    this.contentContainer.appendChild(this.popupTitle);
-    this.contentContainer.appendChild(this.popupTitleLine);
-    this.contentContainer.appendChild(this.inputContainerShort);
-    this.contentContainer.appendChild(this.inputContainerLong);
-    this.contentContainer.appendChild(this.saveButton);
+    this.contentContainer.append(
+      this.popupTitle,
+      this.popupTitleLine,
+      this.inputContainerShort,
+      this.inputContainerLong,
+      this.saveButton,
+    );
 
-    this.popupContainer.appendChild(this.contentContainer);
+    this.popupContainer.append(this.contentContainer);
 
     this.shadow.append(this.styleElement, this.popupContainer, this.overlayEl);
   }
