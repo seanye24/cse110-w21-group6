@@ -8,7 +8,7 @@ import {
   updateTask,
   deleteTask,
   incrementPomodoro,
-  selectPomodoro,
+  selectTask,
 } from '../scripts/taskList';
 import { createElement } from '../utils/utils';
 
@@ -61,12 +61,12 @@ describe('testing tasklist', () => {
   });
 
   test('select pomodoro', () => {
-    selectPomodoro(tasks[1]);
+    selectTask(tasks[1]);
     let newTasks = [{ ...tasks[1], selected: true }, tasks[0]];
     expect(getTasks()).toStrictEqual(newTasks);
 
     newTasks = [{ ...tasks[0], selected: true }, tasks[1]];
-    selectPomodoro(tasks[0]);
+    selectTask(tasks[0]);
     expect(getTasks()).toStrictEqual(newTasks);
   });
 });

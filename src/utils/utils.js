@@ -42,7 +42,7 @@ const validateNumber = (value) => {
 };
 
 /**
- * Checks if time is valid for timer
+ * Checks if time is valid for timer, between 0 seconds and 1 hour
  * @param {number} time - time to be checked (in seconds)
  */
 const checkIfTimeValid = (time) => {
@@ -86,15 +86,6 @@ const getMinutesAndSeconds = (totalSeconds) => {
     Math.floor(totalSeconds % 60),
   ].map((t) => (t < 10 ? `0${t}` : t)); // left time unit with 0 if necessary
   return `${minutes}:${seconds}`;
-};
-
-/**
- * Set text of announcement element
- * @param {HTMLElement} element - announcement element
- * @param {string} str - announcement to set
- */
-const setAnnouncement = (element, str) => {
-  element.innerText = str;
 };
 
 /**
