@@ -50,10 +50,18 @@ const checkIfTimeValid = (time) => {
   return time >= 0 && time < secondsInAnHour;
 };
 
+/**
+ * Checks if short break length is valid
+ * @param {number} input - short break input to be checked (in minutes)
+ */
 const checkIfShortInputValid = (input) => {
   return input >= 3 && input <= 5;
 };
 
+/**
+ * Checks if long break length is valid
+ * @param {number} input - long break input to be checked (in minutes)
+ */
 const checkIfLongInputValid = (input) => {
   return input >= 15 && input <= 30;
 };
