@@ -5,24 +5,25 @@
 let pomodoroCirclesElement;
 
 /**
- * TODO: update documention
+ * Set pomodoro circles
+ * @param {HTMLElement} element - pomodoro circles element
  */
-const initializeCircleCount = (element) => {
+const initializePomodoroCircles = (element) => {
   pomodoroCirclesElement = element;
 };
 
 /**
- * // usually just for testing
- * TODO: update documentation
+ * Get number of filled pomodoro circles
+ * @return {number} - amount of filled pomodoro circles
  */
 const getCircleCount = () => pomodoroCirclesElement.circleCount;
 
 /**
- * TODO: update documentation
+ * Set number of filled pomodoro circles
+ * @param {number} progress - amount of filled pomodoro circles to set
  */
 const setCircleCount = (circleCount) => {
-  // update component
   pomodoroCirclesElement.circleCount = circleCount;
 };
 
-export { initializeCircleCount, getCircleCount, setCircleCount };
+export { initializePomodoroCircles, getCircleCount, setCircleCount };
