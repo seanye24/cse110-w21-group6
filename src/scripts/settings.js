@@ -3,123 +3,143 @@
  * @author Dillan Merchant
  */
 
-// HTML Elements needed including the popups and elements within the popups
-const openPopups = document.querySelectorAll('[data-popup-target]');
-const closePopups = document.querySelectorAll('[data-save-button]');
-const overlay = document.getElementById('overlay');
-const shortBreakInput = document.getElementById('short-number');
-const longBreakInput = document.getElementById('long-number');
-const errorMessages = document.querySelectorAll('.error');
+import {
+  initializeIntervalLengths,
+  checkIfShortInputValid,
+  checkIfLongInputValid,
+} from '../utils/utils';
+
+let settingsElement;
+
+let settingsButton;
+let popupEl;
+let saveButton;
+let overlay;
+let shortBreakInput;
+let longBreakInput;
+let errorMessages;
+
+/**
+ * @description Access all the shadow root elements and set the settings element
+ * @param {HTMLElement} root - the settings element
+ */
+const setRoot = (root) => {
+  settingsElement = root;
+  settingsButton = document.getElementById('open-popup');
+  popupEl = settingsElement.shadowRoot.querySelector('.popup');
+  saveButton = settingsElement.shadowRoot.querySelector('.save-button');
+  overlay = settingsElement.shadowRoot.querySelector('#overlay');
+  shortBreakInput = settingsElement.shadowRoot.querySelector('#short-number');
+  longBreakInput = settingsElement.shadowRoot.querySelector('#long-number');
+  errorMessages = settingsElement.shadowRoot.querySelectorAll('.error');
+};
+
+/**
+ * Get short break length
+ * @return {number} - short break length
+ */
+const getShortBreak = () => settingsElement.getAttribute('shortBreakLength');
+
+/**
+ * Get long break length
+ * @return {number} - long break length
+ */
+const getLongBreak = () => settingsElement.getAttribute('longBreakLength');
+
+/**
+ * Set short break length
+ * @param {number} input - length to set the short break length
+ */
+const setShort = (input) => {
+  settingsElement.setAttribute('shortBreakLength', input);
+};
+
+/**
+ * Set long break length
+ * @param {number} input - length to set the long break length
+ */
+const setLong = (input) => {
+  settingsElement.setAttribute('longBreakLength', input);
+};
 
 /**
  * @function openPopup
  * @description Open the popup with the correct saved settings
- * @param {HTMLElement} popup - popup element
  */
-function openPopup(popup) {
-  if (popup == null) {
+function openPopup() {
+  if (popupEl == null) {
     return;
   }
-  popup.classList.add('active');
+  popupEl.classList.add('active');
   overlay.classList.add('active');
-  errorMessages.forEach((message) => {
-    message.style.visibility = 'hidden';
-  });
-  shortBreakInput.value = JSON.parse(localStorage.getItem('shortbreak'));
-  longBreakInput.value = JSON.parse(localStorage.getItem('longbreak'));
+  shortBreakInput.value = getShortBreak() / 60;
+  longBreakInput.value = getLongBreak() / 60;
 }
 
 /**
- * @function closePopup
- * @description Close the popup while saving any changes into the local storage
- * @param {HTMLElement} popup - popup element
+ * @function saveAndClose
+ * @description Close the popup while saving any changes into the
+ * local storage and show error messages when needed
  */
-function closePopup(popup) {
-  if (popup == null) {
+function saveAndClose() {
+  if (popupEl == null) {
     return;
   }
-
-  if (Number(shortBreakInput.value) < 3 || Number(shortBreakInput.value) > 5) {
+  if (!checkIfShortInputValid(shortBreakInput.value)) {
     errorMessages[0].style.visibility = 'visible';
   } else {
     errorMessages[0].style.visibility = 'hidden';
   }
-
-  if (Number(longBreakInput.value) < 15 || Number(longBreakInput.value) > 30) {
+  if (!checkIfLongInputValid(longBreakInput.value)) {
     errorMessages[1].style.visibility = 'visible';
   } else {
     errorMessages[1].style.visibility = 'hidden';
   }
-
   if (
-    Number(shortBreakInput.value) >= 3 &&
-    Number(shortBreakInput.value) <= 5 &&
-    Number(longBreakInput.value) >= 15 &&
-    Number(longBreakInput.value) <= 30
+    checkIfShortInputValid(shortBreakInput.value) &&
+    checkIfLongInputValid(longBreakInput.value)
   ) {
     errorMessages.forEach((message) => {
       message.style.visibility = 'hidden';
     });
-    localStorage.setItem('shortbreak', shortBreakInput.value);
-    localStorage.setItem('longbreak', longBreakInput.value);
-    popup.classList.remove('active');
+    const newShort = shortBreakInput.value * 60;
+    const newLong = longBreakInput.value * 60;
+    setShort(newShort);
+    setLong(newLong);
+    localStorage.setItem('shortBreakLength', newShort);
+    localStorage.setItem('longBreakLength', newLong);
+    popupEl.classList.remove('active');
     overlay.classList.remove('active');
   }
 }
 
 /**
- * @function getShortBreakLength
- * @description Gets the current value of the short break
- * @return {number} - current short break value
+ * Set the initial settings element
+ * @param {HTMLElement} element - settings element
  */
-function getShortBreakLength() {
-  return JSON.parse(localStorage.getItem('shortbreak'));
-}
-
-/**
- * @function getLongBreakLength
- * @description Gets the current value of the long break
- * @return {number} - current long break value
- */
-function getLongBreakLength() {
-  return JSON.parse(localStorage.getItem('longbreak'));
-}
-
-// Adds an event listener for each popup button
-openPopups.forEach((li) => {
-  li.addEventListener('click', () => {
-    const popup = document.querySelector(li.dataset.popupTarget);
-    openPopup(popup);
+const initializeSettings = (element) => {
+  setRoot(element);
+  saveButton.addEventListener('click', () => {
+    saveAndClose();
   });
-});
-
-// Adds an event listener to all buttons that close popups (Save button)
-closePopups.forEach((button) => {
-  button.addEventListener('click', () => {
-    const popup = button.closest('.popup');
-    closePopup(popup);
+  settingsButton.addEventListener('click', () => {
+    openPopup();
   });
-});
-
-/**
- * @function initializeBreakLengths
- * @description If the local storage does not have a saved short or long break
- * length, set it to default
- */
-function initializeBreakLengths() {
-  if (
-    localStorage.getItem('shortbreak') == null ||
-    localStorage.getItem('longbreak') == null
-  ) {
-    localStorage.setItem('shortbreak', JSON.stringify(5));
-    localStorage.setItem('longbreak', JSON.stringify(30));
-  }
-}
+  const {
+    pomodoroLength,
+    shortBreakLength,
+    longBreakLength,
+  } = initializeIntervalLengths();
+  settingsElement.setAttribute('shortBreakLength', shortBreakLength);
+  settingsElement.setAttribute('longBreakLength', longBreakLength);
+};
 
 export {
-  initializeBreakLengths,
-  getShortBreakLength,
-  getLongBreakLength,
+  initializeSettings,
+  getShortBreak,
+  getLongBreak,
+  setShort,
+  setLong,
   openPopup,
-  closePopup,
+  saveAndClose,
 };

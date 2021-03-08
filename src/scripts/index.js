@@ -4,7 +4,7 @@
  */
 
 import '../styles/style.css';
-import { Timer, ProgressRing, TaskList } from '../components';
+import { Timer, ProgressRing, TaskList, Settings } from '../components';
 import {
   deselectAllTasks,
   getCurrentlySelectedTask,
@@ -15,6 +15,7 @@ import {
 } from './taskList';
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
+import { initializeSettings } from './settings';
 import {
   POMODORO_ANNOUNCEMENT,
   SHORT_BREAK_ANNOUNCEMENT,
@@ -29,11 +30,11 @@ import {
   setAnnouncement,
   tick,
 } from '../utils/utils';
-import { initializeBreakLengths } from './settings';
 
 customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);
 customElements.define('task-list', TaskList);
+customElements.define('settings-component', Settings);
 
 let isSessionOngoing = false;
 
@@ -126,12 +127,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
   const announcementElement = document.querySelector('.announcement');
+  const settingsElement = document.querySelector('.settings');
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
+  initializeSettings(settingsElement);
   initializeTaskList(document.querySelector('.task-list'));
   deselectAllTasks();
   setTimer(pomodoroLength);
-  initializeBreakLengths();
 
   // start session when start button is clicked
   const startButton = document.querySelector('.session-button');
