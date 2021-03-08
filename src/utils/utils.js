@@ -19,13 +19,19 @@ import {
 const createElement = (elementType, props = {}, options = {}) => {
   const { namespace } = options;
   let element;
-  if (namespace) element = document.createElementNS(namespace, elementType);
-  else element = document.createElement(elementType); // create element
+  if (namespace) {
+    element = document.createElementNS(namespace, elementType);
+  } else {
+    element = document.createElement(elementType);
+  } // create element
 
   // set attributes/properties
   Object.entries(props).forEach(([key, value]) => {
-    if (namespace || !(key in element)) element.setAttribute(key, value);
-    else element[key] = value;
+    if (namespace || !(key in element)) {
+      element.setAttribute(key, value);
+    } else {
+      element[key] = value;
+    }
   });
 
   return element;

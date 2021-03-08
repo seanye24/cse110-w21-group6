@@ -129,19 +129,28 @@ class ProgressRing extends HTMLElement {
     const newValueNumber = validateNumber(newValue);
 
     // check if attribute value is number
-    if (newValueNumber === null) return;
+    if (newValueNumber === null) {
+      return;
+    }
 
     // validate attribute ranges
     switch (name) {
       case 'radius':
-        if (newValueNumber < 0) return;
+        if (newValueNumber < 0) {
+          return;
+        }
         break;
       case 'stroke':
-        if (newValueNumber < 0) return;
+        if (newValueNumber < 0) {
+          return;
+        }
         break;
       case 'progress':
-        if (name === 'progress')
-          if (newValueNumber < 0 || newValueNumber > 100) return;
+        if (name === 'progress') {
+          if (newValueNumber < 0 || newValueNumber > 100) {
+            return;
+          }
+        }
         break;
       default:
         return;

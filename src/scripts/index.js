@@ -87,17 +87,25 @@ const startSession = async (changeSessionButton) => {
       // use previous currTask or next available
       // stop if no tasks are available
       currSelectedTask = getCurrentlySelectedTask();
-      if (!currSelectedTask) currSelectedTask = selectFirstTask();
-      if (!currSelectedTask) return numPomodoros === 0 ? -1 : numPomodoros;
+      if (!currSelectedTask) {
+        currSelectedTask = selectFirstTask();
+      }
+      if (!currSelectedTask) {
+        return numPomodoros === 0 ? -1 : numPomodoros;
+      }
 
-      if (numPomodoros === 0) changeSessionButton();
+      if (numPomodoros === 0) {
+        changeSessionButton();
+      }
 
       // disable tasklist
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
       // start pomodoro
-      if (!(await startInterval(pomodoroLength))) return numPomodoros;
+      if (!(await startInterval(pomodoroLength))) {
+        return numPomodoros;
+      }
 
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task if pomo is fully completed
 
