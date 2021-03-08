@@ -116,7 +116,6 @@ export {
   initializeIntervalLengths,
   checkIfShortInputValid,
   checkIfLongInputValid,
-  setAnnouncement,
   getMinutesAndSeconds,
   tick,
   checkIfTimeValid,
