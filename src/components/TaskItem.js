@@ -103,7 +103,7 @@ class TaskItem extends HTMLElement {
         border-radius: 50%;
       }
 
-      .item-container:hover > .task-button,
+      .item-container:hover:not(.disabled) > .task-button,
       .task-button:focus {
         opacity: 1;
       }
@@ -122,7 +122,7 @@ class TaskItem extends HTMLElement {
       }
 
       .task-button:disabled {
-        opacity: 0 !important;
+        opacity: 0;
       }
 
       .task-button-icon {

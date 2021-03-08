@@ -136,6 +136,7 @@ class TaskItemForm extends HTMLElement {
       type: 'text',
       name: 'name',
       placeholder: 'Task Description...',
+      required: true,
     });
 
     this.pomodoroInputContainer = createElement('div', {
@@ -156,6 +157,7 @@ class TaskItemForm extends HTMLElement {
       name: 'pomodoro',
       placeholder: '#',
       min: '1',
+      required: true,
     });
 
     this.submitInputElement = createElement('input', {
