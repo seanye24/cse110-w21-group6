@@ -2,7 +2,7 @@ import { PomodoroCircles } from '../components';
 import { createElement } from '../utils/utils';
 import {
   getCircleCount,
-  initializeCircleCount,
+  initializePomodoroCircles,
   setCircleCount,
 } from '../scripts/pomodoroCircles';
 
@@ -17,11 +17,13 @@ describe('testing pomodoro circles', () => {
     });
     document.body.innerHTML = '';
     document.body.appendChild(pomodoroCirclesElement);
-    initializeCircleCount(pomodoroCirclesElement);
+    initializePomodoroCircles(pomodoroCirclesElement);
     jest.useFakeTimers();
   });
 
   test('setCircleCount sets circleCount correctly', () => {
+    setCircleCount(0);
+    expect(getCircleCount()).toBe(0);
     setCircleCount(1);
     expect(getCircleCount()).toBe(1);
     setCircleCount(2);
@@ -30,5 +32,8 @@ describe('testing pomodoro circles', () => {
     expect(getCircleCount()).toBe(3);
     setCircleCount(4);
     expect(getCircleCount()).toBe(4);
+    setCircleCount(5);
+    expect(getCircleCount()).toBe(5);
   });
 });
+
