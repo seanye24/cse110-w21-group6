@@ -42,7 +42,7 @@ const validateNumber = (value) => {
 };
 
 /**
- * Checks if time is valid for timer
+ * Checks if time is valid for timer, between 0 seconds and 1 hour
  * @param {number} time - time to be checked (in seconds)
  */
 const checkIfTimeValid = (time) => {

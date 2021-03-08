@@ -20,7 +20,18 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/i,
           include: [path.join(__dirname, 'src')],
-          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: ['postcss-preset-env'],
+                },
+              },
+            },
+          ],
         },
         {
           test: /\.(jpe?g|png|gif|svg)$/i,
@@ -30,12 +41,7 @@ module.exports = (env, argv) => {
         {
           test: /\.js$/,
           include: [path.join(__dirname, 'src')],
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env'],
-            },
-          },
+          use: ['babel-loader'],
         },
       ],
     },
