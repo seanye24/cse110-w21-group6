@@ -5,9 +5,8 @@
 import { createElement } from '../utils/utils';
 
 /**
- * Custom web component representing a progress ring.
+ * Custom web component representing pomodoro circles.
  * @extends HTMLElement
- * TODO: add documentation
  */
 class PomodoroCircles extends HTMLElement {
   static get observedAttributes() {
@@ -21,10 +20,34 @@ class PomodoroCircles extends HTMLElement {
 
     this.styleElement = createElement('style', {
       innerText: `
-        .container {
-          font: initial 'Duru-Sans', sans-serif;
-          color: #fff;
-        }
+      .circle1 {
+        height: 10px;
+        width: 10px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .circle2 {
+        height: 10px;
+        width: 10px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .circle3 {
+        height: 10px;
+        width: 10px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .circle4 {
+        height: 10px;
+        width: 10px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+      }
       `,
     });
 
@@ -41,18 +64,174 @@ class PomodoroCircles extends HTMLElement {
     // TODO: validate newValue
     // make sure newValue is a number
     // make sure newValue >= 1 && newValue <= 4
-    const isNumber = newValue.isNaN();
 
     switch (name) {
       case 'circle-count':
         // TODO: circle count changes behavior
-        if (isNumber === false) {
+        if (newValue.isNaN === false) {
           if (newValue >= 1 && newValue <= 4) {
             this._circleCount = newValue;
           } else {
             this._circleCount = 0;
           }
-          this.counterContainer.innerText = 4 - this._circleCount;
+          /*
+          if (this._circleCount === 0) {
+            this.styleElement.innerText = `
+            .circle1 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle2 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle3 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle4 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            `;
+          } else if (this._circleCount === 1) {
+            this.styleElement.innerText = `
+            .circle1 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle2 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle3 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle4 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            `;
+          } else if (this._circleCount === 2) {
+            this.styleElement.innerText = `
+            .circle1 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle2 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle3 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle4 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            `;
+          } else if (this._circleCount === 3) {
+            this.styleElement.innerText = `
+            .circle1 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle2 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle3 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle4 {
+              height: 10px;
+              width: 10px;
+              background-color: #bbb;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            `;
+          } else if (this._circleCount === 4) {
+            this.styleElement.innerText = `
+            .circle1 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle2 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle3 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            .circle4 {
+              height: 10px;
+              width: 10px;
+              background-color: #000;
+              border-radius: 50%;
+              display: inline-block;
+            }
+            `;
+          }
+          */
         }
         break;
       default:
