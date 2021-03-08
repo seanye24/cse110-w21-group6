@@ -10,7 +10,6 @@ import {
   getLongBreak,
   setShort,
   setLong,
-  openPopup,
 } from '../scripts/settings';
 
 customElements.define('settings-component', Settings);
@@ -23,7 +22,7 @@ describe('testing settings values', () => {
     });
     const settingsButton = createElement('button', {
       id: 'open-popup',
-    })
+    });
     document.body.appendChild(settingsElement);
     document.body.appendChild(settingsButton);
     initializeSettings(settingsElement);
@@ -43,12 +42,12 @@ describe('testing settings values', () => {
 
   test('invalid entries are captured', () => {
     setShort(120);
-    expect(checkIfShortInputValid(Number(getShortBreak())/60)).toBe(false);
+    expect(checkIfShortInputValid(Number(getShortBreak()) / 60)).toBe(false);
     setShort(360);
-    expect(checkIfShortInputValid(Number(getShortBreak())/60)).toBe(false);
+    expect(checkIfShortInputValid(Number(getShortBreak()) / 60)).toBe(false);
     setLong(1860);
-    expect(checkIfLongInputValid(Number(getLongBreak())/60)).toBe(false);
+    expect(checkIfLongInputValid(Number(getLongBreak()) / 60)).toBe(false);
     setLong(840);
-    expect(checkIfLongInputValid(Number(getLongBreak())/60)).toBe(false);
+    expect(checkIfLongInputValid(Number(getLongBreak()) / 60)).toBe(false);
   });
 });
