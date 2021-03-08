@@ -66,7 +66,7 @@ class Timer extends HTMLElement {
   }
 
   get time() {
-    return this._time;
+    return parseInt(this._time, 10);
   }
 
   set time(time) {
