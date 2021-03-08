@@ -34,6 +34,7 @@ class TaskList extends HTMLElement {
       .title {
         text-align: center;
         color: #fff;
+        margin-top: 0;
       }
     `;
 
