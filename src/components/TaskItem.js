@@ -98,9 +98,14 @@ class TaskItem extends HTMLElement {
         position: absolute;
         border: none;
         padding: 0.25em;
-        color: #fff;
+        color: rgba(255, 255, 255, 1); 
         background: transparent;
         border-radius: 50%;
+      }
+
+      .item-container:hover > .task-button,
+      .task-button:focus {
+        opacity: 1;
       }
 
       .task-button:focus {
@@ -110,25 +115,14 @@ class TaskItem extends HTMLElement {
         position: absolute;
       }
 
-      .item-container:hover > .task-button,
-      .task-button:focus {
-        opacity: 1;
-      }
-
-      .item-container[selected="true"] .task-button:hover {
-        background: rgba(0, 180, 216, 0.25);
-        color: #00b4d8;
+      .task-button:hover {
+        border-radius: 50%;
+        color: rgba(255, 255, 255, 0.3); 
         cursor: pointer;
       }
 
       .task-button:disabled {
         opacity: 0 !important;
-      }
-
-      .task-button:hover {
-        border-radius: 50%;
-        color: #ddd;
-        cursor: pointer;
       }
 
       .task-button-icon {
