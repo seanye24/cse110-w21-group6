@@ -57,6 +57,22 @@ const checkIfTimeValid = (time) => {
 };
 
 /**
+ * Checks if short break length is valid
+ * @param {number} input - short break input to be checked (in minutes)
+ */
+const checkIfShortInputValid = (input) => {
+  return input >= 3 && input <= 5;
+};
+
+/**
+ * Checks if long break length is valid
+ * @param {number} input - long break input to be checked (in minutes)
+ */
+const checkIfLongInputValid = (input) => {
+  return input >= 15 && input <= 30;
+};
+
+/**
  * Use promises to tick by specified tickLength
  * NOTE: ticks may be slightly longer than the duration due the single threaded nature of JavaScript
  * @param {number} duration - duration of tick (in seconds)
@@ -104,6 +120,8 @@ const initializeIntervalLengths = () => {
 export {
   createElement,
   initializeIntervalLengths,
+  checkIfShortInputValid,
+  checkIfLongInputValid,
   getMinutesAndSeconds,
   tick,
   checkIfTimeValid,

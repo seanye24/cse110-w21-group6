@@ -69,16 +69,23 @@ body {
   text-decoration: none;
 }
 
+.navbar .nav-right {
+  position: relative;
+}
+
 .github-icon {
-  width: 1.25em;
-  height: 1.25em;
-  background-color: #fff;
+  width: 1.75em;
+  height: 1.75em;
   border-radius: 50%;
   vertical-align: bottom;
 }
 
-.github-icon:hover {
-  background-color: #ddd;
+.settings-icon {
+  width: 2em;
+  height: 2em;
+  margin-left: 1em;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .progress-ring {
