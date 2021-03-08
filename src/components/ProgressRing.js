@@ -101,8 +101,6 @@ class ProgressRing extends HTMLElement {
       }
 
       .foreign-object {
-        width: ${2 * radius}px;
-        height: ${2 * radius}px;
       }
 
       .foreign-object-container {
@@ -114,6 +112,8 @@ class ProgressRing extends HTMLElement {
       }
     `;
 
+    this.foreignObjectElement.setAttribute('width', 2 * radius);
+    this.foreignObjectElement.setAttribute('height', 2 * radius);
     this.circleElement.setAttribute('r', normalizedRadius);
     this.circleElement.setAttribute('cx', radius);
     this.circleElement.setAttribute('cy', radius);
