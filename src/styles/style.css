@@ -97,14 +97,14 @@ body {
 
 .session-button:hover {
   cursor: pointer;
-  background: #ddd;
+  background: #e2e6ea;
+  border-color: #f8f9fa;
 }
 
+/*
 .session-button.in-session {
-  cursor: pointer;
-  background: #f4978e;
-  color: #fff;
 }
+*/
 
 .session-button:focus {
   box-shadow: 0 0 0 2pt #00b4d8;
