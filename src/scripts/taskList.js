@@ -60,7 +60,7 @@ const getTask = ({ name }) => ({
 /**
  * Get button elements from task-item element
  * @param {HTMLElement} taskElement - task-item element
- * @return {{delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
+ * @return {{delete: HTMLButtonElement}} - button elements object
  */
 const getTaskItemButtons = (taskElement) => {
   const buttons = Array.from(
@@ -69,7 +69,6 @@ const getTaskItemButtons = (taskElement) => {
 
   return {
     delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
-    edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
   };
 };
 
@@ -177,23 +176,31 @@ const selectTask = (task) => {
  * @param {Task} newTask - task to be created
  */
 const createTaskElement = (newTask) => {
-  const { name, usedPomodoros, estimatedPomodoros, selected } = newTask;
+  const {
+    name,
+    usedPomodoros,
+    estimatedPomodoros,
+    selected,
+    completed,
+  } = newTask;
 
-  // add task to dom
+  // create html element
   const newTaskElement = createElement('task-item', {
     name,
     'used-pomodoros': usedPomodoros,
     'estimated-pomodoros': estimatedPomodoros,
     selected,
   });
-  newTaskElement.shadowRoot.querySelector('.text-container').onclick = () => {
-    selectTask(newTask);
-  };
-  const buttons = getTaskItemButtons(newTaskElement);
-  buttons.delete.addEventListener('click', () => deleteTask(newTask));
-  buttons.edit.addEventListener('click', () => {
-    // TODO: Add edit functionality
-  });
+
+  // add event listeners
+  const textContainer = newTaskElement.shadowRoot.querySelector(
+    '.text-container',
+  );
+  const { delete: deleteButton } = getTaskItemButtons(newTaskElement);
+  if (!completed) {
+    textContainer.onclick = () => selectTask(newTask);
+  }
+  deleteButton.onclick = () => deleteTask(newTask);
   return newTaskElement;
 };
 
