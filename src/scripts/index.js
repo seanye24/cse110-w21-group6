@@ -196,6 +196,16 @@ window.addEventListener('DOMContentLoaded', () => {
   deselectAllTasks();
   setTimer(pomodoroLength);
 
+  // adjust nav bar color
+  const navBar = document.querySelector('.navbar');
+  window.onscroll = () => {
+    if (window.scrollY === 0) {
+      navBar.classList.remove('scrolled');
+    } else {
+      navBar.classList.add('scrolled');
+    }
+  };
+
   // start session when start button is clicked
   const startButton = document.querySelector('.session-button');
   startButton.onmousedown = (e) => {
