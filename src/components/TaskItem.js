@@ -47,19 +47,36 @@ class TaskItem extends HTMLElement {
         outline: none;
       }
 
-      .selected {
+      .item-container.selected {
         background: #90e0ef;
       }
 
       .text-container {
-        background: #fff;
+        background: rgba(255, 255, 255, 1);
         color: #555;
         position: relative;
         padding: 0.5em;
         border-radius: 5px;
-        font-size: 1rem;
+        width: 100%;
+        text-align: left;
+        font: 1rem Source Sans Pro, sans-serif;
+        border: none;
+        cursor: pointer;
         display: flex;
         align-items: center;
+      }
+
+      .item-container:not(.disabled):not(.selected) > .text-container:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .text-container:focus {
+        outline: none;
+        box-shadow: 0 0 0 2pt #90e0ef;
+      }
+
+      .item-container.selected > .text-container:focus {
+        box-shadow: 0 0 0 2pt #00b4d8;
       }
       
       .completed .name {
@@ -110,15 +127,28 @@ class TaskItem extends HTMLElement {
 
       .task-button:focus {
         outline: none;
-        box-shadow: inset 0 0 0 1pt #48cae4;
         z-index: 1;
         position: absolute;
       }
 
+      .task-button:focus {
+        box-shadow: inset 0 0 0 2pt #90e0ef;
+      }
+
+      .item-container.selected > .task-button:focus {
+        box-shadow: inset 0 0 0 2pt #00b4d8;
+      }
+
       .task-button:hover {
         border-radius: 50%;
-        color: rgba(255, 255, 255, 0.3); 
+        color: rgba(255, 255, 255, 0.8); 
         cursor: pointer;
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .item-container.selected > .task-button,
+      .item-container.selected > .task-button:hover {
+        color: rgba(0, 0, 0, 0.54);
       }
 
       .task-button:disabled {
@@ -141,11 +171,17 @@ class TaskItem extends HTMLElement {
       href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
     });
 
-    this.textContainerElement = createElement('div', {
-      className: 'text-container',
-    });
     this.itemContainerElement = createElement('div', {
       className: 'item-container',
+    });
+    this.textContainerElement = createElement('button', {
+      className: 'text-container',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
     });
     this.nameElement = createElement('p', {
       className: 'name',
