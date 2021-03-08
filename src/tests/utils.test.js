@@ -4,6 +4,7 @@ import {
   validateNumber,
   getMinutesAndSeconds,
   checkIfTimeValid,
+  createElement,
 } from '../utils/utils';
 
 describe('test intervals', () => {
@@ -84,8 +85,52 @@ describe('test ticking', () => {
     expect(setTimeout).toHaveBeenCalledTimes(1);
     expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 10000);
   });
+
+  test('call tick multiple times', () => {
+    for (let i = 1; i < 11; i++) {
+      tick(i);
+      expect(setTimeout).toHaveBeenLastCalledWith(
+        expect.any(Function),
+        i * 1000,
+      );
+    }
+    expect(setTimeout).toHaveBeenCalledTimes(10);
+  });
+
+  // TODO: add more tests for tick using await/.then()
 });
 
-// TODO: add more tests for tick using await/.then()
+describe('test createElement', () => {
+  test('create progress ring element', () => {
+    const progressRingElement = createElement('progress-ring', {
+      radius: 100,
+      stroke: 10,
+      progress: 0,
+      className: 'progress-ring',
+    });
 
-// TODO: add tests for createElement
+    expect(progressRingElement.getAttribute('radius')).toBe('100');
+    expect(progressRingElement.getAttribute('stroke')).toBe('10');
+    expect(progressRingElement.getAttribute('progress')).toBe('0');
+    expect(progressRingElement.className).toBe('progress-ring');
+  });
+
+  test('create timer element', () => {
+    const timerElement = createElement('progress-ring', {
+      time: 1500,
+      containerRadius: 30,
+      className: 'timer-element',
+    });
+
+    expect(timerElement.getAttribute('time')).toBe('1500');
+    expect(timerElement.getAttribute('containerRadius')).toBe('30');
+    expect(timerElement.className).toBe('timer-element');
+
+    // change its attributes
+    timerElement.setAttribute('time', 1001);
+    timerElement.setAttribute('containerRadius', 10);
+
+    expect(timerElement.getAttribute('time')).toBe('1001');
+    expect(timerElement.getAttribute('containerRadius')).toBe('10');
+  });
+});
