@@ -129,14 +129,10 @@ class TaskItem extends HTMLElement {
         font-size: 1.2rem;
       }
 
-      #edit-button {
-        top: 0;
-        right: 0;
-      }
-
       #delete-button {
-        bottom: 0;
+        top: 50%;
         right: 0;
+        transform: translate(0, -50%);
       }
     `;
 
@@ -167,21 +163,6 @@ class TaskItem extends HTMLElement {
       id: 'pomodoro',
     });
 
-    this.editTaskButton = createElement('button', {
-      className: 'task-button',
-      id: 'edit-button',
-      onmouseout: (e) => {
-        e.target.blur();
-      },
-      onmousedown: (e) => {
-        e.preventDefault();
-      },
-    });
-    this.editTaskIcon = createElement('span', {
-      className: 'material-icons task-button-icon',
-      innerText: 'mode',
-    });
-
     this.deleteTaskButton = createElement('button', {
       className: 'task-button',
       id: 'delete-button',
@@ -204,10 +185,8 @@ class TaskItem extends HTMLElement {
     );
     this.itemContainerElement.append(
       this.textContainerElement,
-      this.editTaskButton,
       this.deleteTaskButton,
     );
-    this.editTaskButton.appendChild(this.editTaskIcon);
     this.deleteTaskButton.appendChild(this.deleteTaskIcon);
     this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
     this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
