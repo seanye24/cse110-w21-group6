@@ -19,13 +19,19 @@ import {
 const createElement = (elementType, props = {}, options = {}) => {
   const { namespace } = options;
   let element;
-  if (namespace) element = document.createElementNS(namespace, elementType);
-  else element = document.createElement(elementType); // create element
+  if (namespace) {
+    element = document.createElementNS(namespace, elementType);
+  } else {
+    element = document.createElement(elementType);
+  } // create element
 
   // set attributes/properties
   Object.entries(props).forEach(([key, value]) => {
-    if (namespace || !(key in element)) element.setAttribute(key, value);
-    else element[key] = value;
+    if (namespace || !(key in element)) {
+      element.setAttribute(key, value);
+    } else {
+      element[key] = value;
+    }
   });
 
   return element;
@@ -42,12 +48,28 @@ const validateNumber = (value) => {
 };
 
 /**
- * Checks if time is valid for timer
+ * Checks if time is valid for timer, between 0 seconds and 1 hour
  * @param {number} time - time to be checked (in seconds)
  */
 const checkIfTimeValid = (time) => {
   const secondsInAnHour = 60 * 60;
   return time >= 0 && time < secondsInAnHour;
+};
+
+/**
+ * Checks if short break length is valid
+ * @param {number} input - short break input to be checked (in minutes)
+ */
+const checkIfShortInputValid = (input) => {
+  return input >= 3 && input <= 5;
+};
+
+/**
+ * Checks if long break length is valid
+ * @param {number} input - long break input to be checked (in minutes)
+ */
+const checkIfLongInputValid = (input) => {
+  return input >= 15 && input <= 30;
 };
 
 /**
@@ -98,6 +120,8 @@ const initializeIntervalLengths = () => {
 export {
   createElement,
   initializeIntervalLengths,
+  checkIfShortInputValid,
+  checkIfLongInputValid,
   getMinutesAndSeconds,
   tick,
   checkIfTimeValid,

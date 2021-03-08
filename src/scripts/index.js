@@ -4,7 +4,7 @@
  */
 
 import '../styles/style.css';
-import { Timer, ProgressRing, TaskList } from '../components';
+import { Timer, ProgressRing, TaskList, Settings } from '../components';
 import {
   completeTask,
   deselectAllTasks,
@@ -16,6 +16,7 @@ import {
 } from './taskList';
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
+import { initializeSettings } from './settings';
 import {
   initializeAnnouncement,
   setAnnouncement,
@@ -39,6 +40,7 @@ import { initializeIntervalLengths, tick } from '../utils/utils';
 customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);
 customElements.define('task-list', TaskList);
+customElements.define('settings-component', Settings);
 
 let isSessionOngoing = false;
 
@@ -87,17 +89,25 @@ const startSession = async (changeSessionButton) => {
       // use previous currTask or next available
       // stop if no tasks are available
       currSelectedTask = getCurrentlySelectedTask();
-      if (!currSelectedTask) currSelectedTask = selectFirstTask();
-      if (!currSelectedTask) return numPomodoros === 0 ? -1 : numPomodoros;
+      if (!currSelectedTask) {
+        currSelectedTask = selectFirstTask();
+      }
+      if (!currSelectedTask) {
+        return numPomodoros === 0 ? -1 : numPomodoros;
+      }
 
-      if (numPomodoros === 0) changeSessionButton();
+      if (numPomodoros === 0) {
+        changeSessionButton();
+      }
 
       // disable tasklist
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
       // start pomodoro
-      if (!(await startInterval(pomodoroLength))) return numPomodoros;
+      if (!(await startInterval(pomodoroLength))) {
+        return numPomodoros;
+      }
 
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task if pomo is fully completed
 
@@ -178,15 +188,27 @@ const endSession = (sessionButton, numPomodoros) => {
 window.addEventListener('DOMContentLoaded', () => {
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
-  const announcementElement = document.querySelector('.announcement-container');
+  const announcementElement = document.querySelector('.announcement');
+  const settingsElement = document.querySelector('.settings');
 
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
+  initializeSettings(settingsElement);
   initializeTaskList(document.querySelector('.task-list'));
   initializeAnnouncement(announcementElement);
 
   deselectAllTasks();
   setTimer(pomodoroLength);
+
+  // adjust nav bar color
+  const navBar = document.querySelector('.navbar');
+  window.onscroll = () => {
+    if (window.scrollY === 0) {
+      navBar.classList.remove('scrolled');
+    } else {
+      navBar.classList.add('scrolled');
+    }
+  };
 
   // start session when start button is clicked
   const startButton = document.querySelector('.session-button');
