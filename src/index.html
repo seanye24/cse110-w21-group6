@@ -43,7 +43,7 @@
         stroke="5"
         class="progress-ring"
       ></progress-ring>
-      <button class="session-button">Start</button>
+      <button class="session-button" id="session-button">Start</button>
       <div class="announcement-container">
         <h2 class="announcement">Work on your tasks!</h2>
         <button class="announcement-button yes-button hidden">Yes</button>
@@ -79,11 +79,10 @@
       </p>
     </div>
 
-    <button data-popup-target="#end-session">END SESSION</button>
-    <div class="popup" id="end-session">    
+    <div class="popup" id="confirmation-popup">    
       <p>Do you want to end session?</p>
-      <button data-save-button="#end-session" class="close-button">No</button>
-      <button data-popup-target="#summary">Yes</button>
+      <button id="no-button">No</button>
+      <button id="yes-button">Yes</button>
     </div>
     <div id="overlay"></div>
 

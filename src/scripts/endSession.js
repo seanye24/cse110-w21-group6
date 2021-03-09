@@ -1,49 +1,65 @@
-// HTML Elements needed including the popups and elements within the popups
-const openPopups = document.querySelectorAll('[data-popup-target]');
-const closePopups = document.querySelectorAll('[data-save-button]');
-const overlay = document.getElementById('overlay');
+let confirmationElement;
+
+let sessionButton;
+let confirmationPopup;
+let noButton;
+let yesButton;
+let overlay;
+
+let onAcceptFunction;
+let onRejectFunction;
 
 /**
- * @function openPopup
- * @description Open the popup with the correct saved settings
- * @param {HTMLElement} popup - popup element
+ * @description Access all the shadow root elements and set the confirmation element
+ * @param {HTMLElement} root - the settings element
  */
-function openPopup(popup) {
-  if (popup == null) {
+const setRoot = (root) => {
+  confirmationElement = root;
+  sessionButton = document.getElementById('session-button');
+  confirmationPopup = confirmationElement.shadowRoot.querySelector(
+    '#confirmation-popup',
+  );
+  noButton = confirmationElement.shadowRoot.querySelector('#no-button');
+  yesButton = confirmationElement.shadowRoot.querySelector('#yes-button');
+  overlay = confirmationElement.shadowRoot.querySelector('#overlay');
+};
+
+/**
+ * Set the initial confirmation element
+ * @param {HTMLElement} element - confirmation element
+ * @param {Function} onAccept - function for when user accepts confirmation
+ * @param {Function} onReject - function for when user reject confirmation
+ */
+const initializeConfirmation = (element, onAccept, onReject) => {
+  setRoot(element);
+  onAcceptFunction = onAccept;
+  onRejectFunction = onReject;
+  yesButton.addEventListener('click', onAcceptFunction);
+  noButton.addEventListener('click', onRejectFunction);
+};
+
+/**
+ * @function openConfirmation
+ * @description Open the confirmation popup
+ */
+function openConfirmation() {
+  if (confirmationPopup == null) {
     return;
   }
-  popup.classList.add('active');
+  confirmationPopup.classList.add('active');
   overlay.classList.add('active');
 }
 
 /**
- * @function closePopup
- * @description Close the popup while saving any changes into the local storage
- * @param {HTMLElement} popup - popup element
+ * @function closeConfirmation
+ * @description Close the confirmation popup
  */
-function closePopup(popup) {
-  if (popup == null) {
+function closeConfirmation() {
+  if (confirmationPopup == null) {
     return;
   }
-  popup.classList.remove('active');
+  confirmationPopup.classList.remove('active');
   overlay.classList.remove('active');
-  if (popup.id === 'end') {
-    openPopup(popup);
-  }
 }
 
-// Adds an event listener for each popup button
-openPopups.forEach((button) => {
-  button.addEventListener('click', () => {
-    const popup = document.querySelector(button.dataset.popupTarget);
-    openPopup(popup);
-  });
-});
-
-// Adds an event listener to all buttons that close popups (Save button)
-closePopups.forEach((button) => {
-  button.addEventListener('click', () => {
-    const popup = button.closest('.popup');
-    closePopup(popup);
-  });
-});
+export { initializeConfirmation, openConfirmation, closeConfirmation };
