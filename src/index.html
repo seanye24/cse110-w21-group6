@@ -80,12 +80,10 @@
     </div>
 
     <button data-popup-target="#end-session">END SESSION</button>
-    <div class="popup" id="end-session">
-       <div class="popup-body">
-          <p>Do you want to end session?</p>
-          <button data-save-button class="close-button">No</button>
-          <button>Yes</button>
-        </div>
+    <div class="popup" id="end-session">    
+      <p>Do you want to end session?</p>
+      <button data-save-button="#end-session" class="close-button">No</button>
+      <button data-popup-target="#summary">Yes</button>
     </div>
     <div id="overlay"></div>
 

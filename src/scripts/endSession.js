@@ -27,13 +27,13 @@ function closePopup(popup) {
   }
   popup.classList.remove('active');
   overlay.classList.remove('active');
-  if (popup.id == "end") {
-      openPopup(sum);
+  if (popup.id === 'end') {
+    openPopup(popup);
   }
 }
 
 // Adds an event listener for each popup button
-openPopups.forEach(button => {
+openPopups.forEach((button) => {
   button.addEventListener('click', () => {
     const popup = document.querySelector(button.dataset.popupTarget);
     openPopup(popup);

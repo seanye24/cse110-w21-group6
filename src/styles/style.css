@@ -198,7 +198,6 @@ footer {
   margin-top: 3.5em;
 }
 
-
 /* end session pop up */
 
 .popup {
@@ -240,10 +239,10 @@ footer {
   padding: 10px 15px;
   text-align: center;
   font: 0.8rem 'Duru Sans', sans-serif;
-  color: #000000;
+  color: #000;
   line-height: 14px;
- /* letter-spacing: 17px;*/
-  
+
+  /* letter-spacing: 17px; */
 }
 
 #overlay {
