@@ -30,6 +30,7 @@ const setRoot = (root) => {
   overlay = shadowRoot.querySelector('#overlay');
   shortBreakInput = shadowRoot.querySelector('#short-number');
   longBreakInput = shadowRoot.querySelector('#long-number');
+  soundInput = shadowRoot.querySelector('#sound');
   errorMessages = shadowRoot.querySelectorAll('.error');
 };
 
@@ -81,12 +82,11 @@ const setTimerAudio = (input) => {
 const openSettingsPopup = () => {
   popupEl.classList.add('active');
   overlay.classList.add('active');
-  
+
   shortBreakInput.value = getShortBreakLength();
   longBreakInput.value = getLongBreakLength();
-  soundInput.value = getTimerSound();
+  soundInput.value = getTimerAudio();
 };
-
 
 /**
  * Close settings popup
@@ -112,7 +112,7 @@ const saveSettings = () => {
     return null;
   }
 
-  setTimerSound(soundInput.value);
+  setTimerAudio(soundInput.value);
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
   localStorage.setItem('shortBreakLength', newShortBreakLength);
@@ -130,7 +130,7 @@ const initializeSettings = (element, saveSettingsCallback) => {
   setRoot(element);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
-  setTimerSound(soundInput.value); // TODO: pull from localstorage
+  setTimerAudio('assets/calm-alarm.mp3'); // TODO: pull from localstorage
 
   saveButton.addEventListener('click', () => {
     const newBreakLengths = saveSettings();
@@ -143,12 +143,13 @@ const initializeSettings = (element, saveSettingsCallback) => {
 
   soundInput.onchange = () => {
     const audio = new Audio(soundInput.value);
+    audio.volume = 0.2;
     audio.play();
   };
 };
 
 export {
-  initializeSettings, 
+  initializeSettings,
   getShortBreakLength,
   getLongBreakLength,
   setShortBreakLength,
