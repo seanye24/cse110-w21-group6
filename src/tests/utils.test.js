@@ -1,5 +1,7 @@
 import {
   initializeIntervalLengths,
+  checkIfShortInputValid ,
+  checkIfLongInputValid, 
   tick,
   validateNumber,
   getMinutesAndSeconds,
@@ -9,7 +11,6 @@ import {
 
 describe('test intervals', () => {
   beforeEach(() => {
-    localStorage.removeItem('pomodoroLength');
     localStorage.removeItem('shortBreakLength');
     localStorage.removeItem('longBreakLength');
   });
@@ -17,19 +18,16 @@ describe('test intervals', () => {
   test('default pomodoro intervals', () => {
     initializeIntervalLengths();
 
-    expect(window.localStorage.getItem('pomodoroLength')).toBe('1500'); // 25 minutes
     expect(window.localStorage.getItem('shortBreakLength')).toBe('300'); // 5 minutes
     expect(window.localStorage.getItem('longBreakLength')).toBe('900'); // 15 minutes
   });
 
   test('custum intervals', () => {
-    window.localStorage.setItem('pomodoroLength', 2100); // 35 minutes
     window.localStorage.setItem('shortBreakLength', 120); // 2 minutes
     window.localStorage.setItem('longBreakLength', 1800); // 30 minutes
 
     initializeIntervalLengths();
 
-    expect(window.localStorage.getItem('pomodoroLength')).toBe('2100'); // 35 minutes
     expect(window.localStorage.getItem('shortBreakLength')).toBe('120'); // 2 minutes
     expect(window.localStorage.getItem('longBreakLength')).toBe('1800'); // 30 minutes
   });
@@ -66,6 +64,28 @@ describe('valid time and number', () => {
     expect(getMinutesAndSeconds(1000)).toBe('16:40');
     expect(getMinutesAndSeconds(7)).toBe('00:07');
     expect(getMinutesAndSeconds(1499)).toBe('24:59');
+  });
+
+  test('check if long interval is valid', () => {
+    expect(checkIfLongInputValid(15)).toBe(true);
+    expect(checkIfLongInputValid(30)).toBe(true);
+    expect(checkIfLongInputValid(17)).toBe(true);
+    expect(checkIfLongInputValid(25)).toBe(true);
+    expect(checkIfLongInputValid(14)).toBe(false);
+    expect(checkIfLongInputValid(31)).toBe(false);
+    expect(checkIfLongInputValid(100)).toBe(false);
+    expect(checkIfLongInputValid(1)).toBe(false);
+  });
+
+  test('check if short interval is valid', () => {
+    expect(checkIfShortInputValid(3)).toBe(true);
+    expect(checkIfShortInputValid(4)).toBe(true);
+    expect(checkIfShortInputValid(5)).toBe(true);
+    expect(checkIfShortInputValid(0)).toBe(false);
+    expect(checkIfShortInputValid(1)).toBe(false);
+    expect(checkIfShortInputValid(2)).toBe(false);
+    expect(checkIfShortInputValid(6)).toBe(false);
+    expect(checkIfShortInputValid(7)).toBe(false);
   });
 });
 
