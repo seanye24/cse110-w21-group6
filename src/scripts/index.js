@@ -188,13 +188,14 @@ const endSession = (sessionButton, numPomodoros) => {
 window.addEventListener('DOMContentLoaded', () => {
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
-  const announcementElement = document.querySelector('.announcement');
+  const announcementElement = document.querySelector('.announcement-container');
   const settingsElement = document.querySelector('.settings');
+  const taskListElement = document.querySelector('.task-list');
 
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
   initializeSettings(settingsElement);
-  initializeTaskList(document.querySelector('.task-list'));
+  initializeTaskList(taskListElement);
   initializeAnnouncement(announcementElement);
 
   deselectAllTasks();
