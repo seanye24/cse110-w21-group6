@@ -3,6 +3,10 @@
  * @author Siddharth Nag
  */
 
+import {
+    createElement,
+} from '../utils/utils';
+
 let summaryElement;
 
 let summaryPopup;
@@ -12,6 +16,7 @@ let estimatedPomos;
 let closeSummaryButton;
 let overlay;
 
+let onCloseFunction;
 
 /**
  * @description Access all the shadow root elements and set the summary element
@@ -19,7 +24,7 @@ let overlay;
  */
 const setRoot = (root) => {
     summaryElement = root;
-    summaryPopup = summaryElement.shadowRoot.querySelector('#confirmation-popup');
+    summaryPopup = summaryElement.shadowRoot.querySelector('#summary-popup');
     summaryTasks = summaryElement.shadowRoot.querySelector('#summary-tasks');
     actualPomos = summaryElement.shadowRoot.querySelector('#summary-actual-pomos');
     estimatedPomos = summaryElement.shadowRoot.querySelector('#summary-estimated-pomos');
@@ -31,9 +36,10 @@ const setRoot = (root) => {
  * Set the initial confirmation element
  * @param {HTMLElement} element - summary element
  */
-const initializeSummary = (element) => {
+const initializeSummary = (element, onClose) => {
     setRoot(element);
-    closeSummaryButton.addEventListener('click', function);
+    onCloseFunction = onClose;
+    closeSummaryButton.addEventListener('click', onCloseFunction);
 };
 
 /**
@@ -54,6 +60,10 @@ function closeSummary() {
     overlay.classList.remove('active');
 }
 
+/**
+ * @function displaySummary
+ * @description Display the tasklist in the summary popup
+ */
 function displaySummary(tasklist) {
     if (tasklist == null) {
       return;
@@ -63,27 +73,27 @@ function displaySummary(tasklist) {
     });
   }
   
-function addTask(task) {
- /*   const {
+function addTask(newTask) {
+    const {
         name,
         usedPomodoros,
         estimatedPomodoros,
         completed,
-    } = task;*/
+    } = newTask;
   
     // create html element
-    const taskElement = createElement('task-item', {
-      'name': "HW",
-      'used-pomodoros': 2,
-      'estimated-pomodoros': 3,
-      'completed': 0,
+    const taskElement = createElement('task', {
+      name,
+      'used-pomodoros': usedPomodoros,
+      'estimated-pomodoros': estimatedPomodoros,
+      completed,
     });
   
- /*   if (completed) {
-      // set color to green
+    if (completed) {
+      taskElement.style.backgroundColor = green;
     } else {
-      // set color to red
-    }*/
+        taskElement.style.backgroundColor = red;
+    }
   
     return taskElement;
 }  
