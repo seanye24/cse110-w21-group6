@@ -74,18 +74,6 @@ describe('test ticking', () => {
     jest.useFakeTimers();
   });
 
-  test('called once, lasts 1 second', () => {
-    tick(1);
-    expect(setTimeout).toHaveBeenCalledTimes(1);
-    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 1000);
-  });
-
-  test('called once, lasts 10 seconds', () => {
-    tick(10);
-    expect(setTimeout).toHaveBeenCalledTimes(1);
-    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 10000);
-  });
-
   test('call tick multiple times', () => {
     for (let i = 1; i < 11; i++) {
       tick(i);
@@ -101,36 +89,43 @@ describe('test ticking', () => {
 });
 
 describe('test createElement', () => {
-  test('create progress ring element', () => {
-    const progressRingElement = createElement('progress-ring', {
-      radius: 100,
-      stroke: 10,
-      progress: 0,
-      className: 'progress-ring',
-    });
+  test('create paragraph Element', () => {
+    const pElement = createElement('p');
+    pElement.innerHTML = 'Pomodoro timer';
+    pElement.style.color = 'black';
 
-    expect(progressRingElement.getAttribute('radius')).toBe('100');
-    expect(progressRingElement.getAttribute('stroke')).toBe('10');
-    expect(progressRingElement.getAttribute('progress')).toBe('0');
-    expect(progressRingElement.className).toBe('progress-ring');
+    expect(pElement.innerHTML).toBe('Pomodoro timer');
+    expect(pElement.style.color).toBe('black');
   });
 
-  test('create timer element', () => {
-    const timerElement = createElement('progress-ring', {
-      time: 1500,
-      containerRadius: 30,
-      className: 'timer-element',
-    });
+  test('create div element', () => {
+    const divElement = createElement('div');
 
-    expect(timerElement.getAttribute('time')).toBe('1500');
-    expect(timerElement.getAttribute('containerRadius')).toBe('30');
-    expect(timerElement.className).toBe('timer-element');
+    divElement.style.width = '50px';
+    divElement.style.height = '50px';
+    divElement.style.background = 'red';
+    divElement.style.color = 'green';
+    divElement.innerHTML = 'Pomodoro timer';
 
-    // change its attributes
-    timerElement.setAttribute('time', 1001);
-    timerElement.setAttribute('containerRadius', 10);
+    expect(divElement.innerHTML).toBe('Pomodoro timer');
+    expect(divElement.style.height).toBe('50px');
+    expect(divElement.style.width).toBe('50px');
+    expect(divElement.style.background).toBe('red');
+    expect(divElement.style.color).toBe('green');
+  });
 
-    expect(timerElement.getAttribute('time')).toBe('1001');
-    expect(timerElement.getAttribute('containerRadius')).toBe('10');
+  test('create button element', () => {
+    const startBtnElement = createElement('Button');
+    startBtnElement.innerHTML = 'Start';
+    document.body.appendChild(startBtnElement);
+
+    expect(startBtnElement.innerHTML).toBe('Start');
+
+    const endBtnElement = createElement('Button');
+    endBtnElement.innerHTML = 'End';
+    document.body.appendChild(endBtnElement);
+
+    expect(endBtnElement.innerHTML).toBe('End');
+    expect(document.hasChildNodes()).toBe(true);
   });
 });
