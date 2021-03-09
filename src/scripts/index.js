@@ -30,6 +30,11 @@ import {
   setButtonVisibility,
 } from './announcement';
 import {
+  initializeConfirmation,
+  openConfirmationPopup,
+  closeConfirmationPopup,
+} from './endSessionConfirmationPopup';
+import {
   POMODORO_ANNOUNCEMENT,
   SHORT_BREAK_ANNOUNCEMENT,
   LONG_BREAK_ANNOUNCEMENT,
@@ -178,6 +183,7 @@ const startSession = async (changeSessionButton) => {
  * @param {number} numPomodoros - number of pomodoros completed during the session
  */
 const endSession = (sessionButton, numPomodoros) => {
+  isSessionOngoing = false;
   setAnnouncement(
     numPomodoros === -1 ? NO_TASKS_ANNOUNCEMENT : END_OF_SESSION_ANNOUNCEMENT,
   );
@@ -189,12 +195,14 @@ const endSession = (sessionButton, numPomodoros) => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
+  const settingsIcon = document.querySelector('.settings-icon');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
+  const sessionButton = document.querySelector('.session-button');
   const announcementElement = document.querySelector('.announcement-container');
   const taskListElement = document.querySelector('.task-list');
+  const confirmationPopup = document.querySelector('.confirmation-popup');
   const settingsElement = document.querySelector('.settings');
-  const settingsIcon = document.querySelector('.settings-icon');
 
   const onSaveSettings = (newShortBreakLength, newLongBreakLength) => {
     shortBreakLength = newShortBreakLength;
@@ -205,6 +213,9 @@ window.addEventListener('DOMContentLoaded', () => {
   initializeTimer(timerElement);
   initializeAnnouncement(announcementElement);
   initializeTaskList(taskListElement);
+  initializeConfirmation(confirmationPopup, () => {
+    isSessionOngoing = false;
+  });
   initializeSettings(settingsElement, onSaveSettings);
   settingsIcon.onclick = openSettingsPopup;
 
@@ -225,11 +236,10 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   // start session when start button is clicked
-  const startButton = document.querySelector('.session-button');
-  startButton.onmousedown = (e) => {
+  sessionButton.onmousedown = (e) => {
     e.preventDefault();
   };
-  startButton.addEventListener('click', async (e) => {
+  sessionButton.addEventListener('click', async (e) => {
     if (e.target.innerText === 'Start') {
       isSessionOngoing = true;
       const changeSessionButton = () => {
@@ -244,7 +254,7 @@ window.addEventListener('DOMContentLoaded', () => {
       endSession(e.target, numPomodoros);
       setButtonVisibility('hidden');
     } else {
-      isSessionOngoing = false;
+      openConfirmationPopup();
     }
   });
 });
