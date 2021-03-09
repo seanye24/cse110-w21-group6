@@ -18,18 +18,18 @@ describe('test intervals', () => {
   test('default pomodoro intervals', () => {
     initializeIntervalLengths();
 
-    expect(window.localStorage.getItem('shortBreakLength')).toBe('300'); // 5 minutes
-    expect(window.localStorage.getItem('longBreakLength')).toBe('900'); // 15 minutes
+    expect(window.localStorage.getItem('shortBreakLength')).toBe('5'); 
+    expect(window.localStorage.getItem('longBreakLength')).toBe('15'); 
   });
 
   test('custum intervals', () => {
-    window.localStorage.setItem('shortBreakLength', 120); // 2 minutes
-    window.localStorage.setItem('longBreakLength', 1800); // 30 minutes
+    window.localStorage.setItem('shortBreakLength', 3); 
+    window.localStorage.setItem('longBreakLength', 30); 
 
     initializeIntervalLengths();
 
-    expect(window.localStorage.getItem('shortBreakLength')).toBe('120'); // 2 minutes
-    expect(window.localStorage.getItem('longBreakLength')).toBe('1800'); // 30 minutes
+    expect(window.localStorage.getItem('shortBreakLength')).toBe('3'); 
+    expect(window.localStorage.getItem('longBreakLength')).toBe('30'); 
   });
 });
 
