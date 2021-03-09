@@ -27,7 +27,7 @@ class Settings extends HTMLElement {
 
     this.styleElement = createElement('style', {
       innerText: `
-        .popup {
+          .popup {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -224,18 +224,16 @@ class Settings extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    const isShortInputValid = checkIfShortInputValid(newValue);
-    const isLongInputValid = checkIfLongInputValid(newValue);
     switch (name) {
       case 'shortBreakLength':
-        if (isShortInputValid) {
+        if (checkIfShortInputValid(newValue)) {
           this._shortBreak = newValue;
           this.inputBoxShort.value = newValue;
           this.inputErrorShort.visibility = 'hidden';
         }
         break;
       case 'longBreakLength':
-        if (isLongInputValid) {
+        if (checkIfLongInputValid(newValue)) {
           this._longBreak = newValue;
           this.inputBoxLong.value = newValue;
           this.inputErrorLong.visibility = 'hidden';
