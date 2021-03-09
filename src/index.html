@@ -47,8 +47,12 @@
       <button class="session-button" id="session-button">Start</button>
       <div class="announcement-container">
         <h2 class="announcement">Work on your tasks!</h2>
-        <button class="announcement-button yes-button hidden">Yes</button>
-        <button class="announcement-button no-button hidden">No</button>
+        <button class="announcement-button announcement-yes-button hidden">
+          Yes
+        </button>
+        <button class="announcement-button announcement-no-button hidden">
+          No
+        </button>
       </div>
       <task-list class="task-list"></task-list>
     </div>
@@ -82,8 +86,8 @@
 
     <div class="confirmation-popup">
       <p>Do you want to end session?</p>
-      <button class="no-button">No</button>
-      <button class="yes-button">Yes</button>
+      <button class="confirmation-no-button">No</button>
+      <button class="confirmation-yes-button">Yes</button>
     </div>
 
     <settings-component class="settings"></settings-component>
