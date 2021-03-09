@@ -15,6 +15,7 @@ let saveButton;
 let overlay;
 let shortBreakInput;
 let longBreakInput;
+let soundInput;
 let errorMessages;
 
 /**
@@ -45,6 +46,12 @@ const getShortBreakLength = () => settingsElement.shortBreakLength;
 const getLongBreakLength = () => settingsElement.longBreakLength;
 
 /**
+ * Get pathway to sound file
+ * @return {string} - audio url
+ */
+const getTimerAudio = () => settingsElement.getAttribute('timerSound');
+
+/**
  * Set short break length
  * @param {number} shortBreakLength - new short break length
  */
@@ -61,14 +68,25 @@ const setLongBreakLength = (longBreakLength) => {
 };
 
 /**
+ * Set url of audio
+ * @param {number} input - pathway to sound
+ */
+const setTimerAudio = (input) => {
+  settingsElement.timerSound = input;
+};
+
+/**
  * Open settings popup
  */
 const openSettingsPopup = () => {
   popupEl.classList.add('active');
   overlay.classList.add('active');
+  
   shortBreakInput.value = getShortBreakLength();
   longBreakInput.value = getLongBreakLength();
+  soundInput.value = getTimerSound();
 };
+
 
 /**
  * Close settings popup
@@ -79,7 +97,7 @@ const closeSettingsPopup = () => {
 };
 
 /**
- * Save interval length settings, display error if invalid
+ * Save interval length / audio settings, display error if invalid
  * @return {[number, number] | null} - new interval lengths, null if error occurs
  */
 const saveSettings = () => {
@@ -94,6 +112,7 @@ const saveSettings = () => {
     return null;
   }
 
+  setTimerSound(soundInput.value);
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
   localStorage.setItem('shortBreakLength', newShortBreakLength);
@@ -111,6 +130,7 @@ const initializeSettings = (element, saveSettingsCallback) => {
   setRoot(element);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
+  setTimerSound(soundInput.value); // TODO: pull from localstorage
 
   saveButton.addEventListener('click', () => {
     const newBreakLengths = saveSettings();
@@ -120,14 +140,21 @@ const initializeSettings = (element, saveSettingsCallback) => {
     closeSettingsPopup();
     saveSettingsCallback(...newBreakLengths);
   });
+
+  soundInput.onchange = () => {
+    const audio = new Audio(soundInput.value);
+    audio.play();
+  };
 };
 
 export {
-  initializeSettings,
+  initializeSettings, 
   getShortBreakLength,
   getLongBreakLength,
   setShortBreakLength,
   setLongBreakLength,
   openSettingsPopup,
   closeSettingsPopup,
+  getTimerAudio,
+  setTimerAudio,
 };
