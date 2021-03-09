@@ -2,12 +2,12 @@
  * @file Constants file
  */
 
-// default interval durations
-export const DEFAULT_POMODORO_INTERVAL = 25 * 60;
-export const DEFAULT_SHORT_BREAK_INTERVAL = 5 * 60;
-export const DEFAULT_LONG_BREAK_INTERVAL = 15 * 60;
+// default interval durations (in minutes)
+export const DEFAULT_POMODORO_INTERVAL = 25;
+export const DEFAULT_SHORT_BREAK_INTERVAL = 5;
+export const DEFAULT_LONG_BREAK_INTERVAL = 15;
 
-// announement messages
+// announcements
 export const POMODORO_ANNOUNCEMENT = 'Focus.';
 export const SHORT_BREAK_ANNOUNCEMENT = 'Enjoy your short break!';
 export const LONG_BREAK_ANNOUNCEMENT = 'Good work. Enjoy a longer break!';
