@@ -2,9 +2,24 @@
  * @file Manage Confirmation Pop-up for page
  */
 
+let confirmationOverlay;
 let confirmationPopup;
 let noButton;
 let yesButton;
+
+/**
+ * Open the confirmation popup
+ */
+const openConfirmationPopup = () => {
+  confirmationOverlay.classList.add('active');
+};
+
+/**
+ * Close the confirmation popup
+ */
+const closeConfirmationPopup = () => {
+  confirmationOverlay.classList.remove('active');
+};
 
 /**
  * Initialize element variables for different elements of confirmation popup
@@ -12,23 +27,12 @@ let yesButton;
  * @param {() => void} onAcceptCallback - callback when confirmation is accepted
  */
 const setRoot = (root) => {
-  confirmationPopup = root;
+  confirmationOverlay = root;
+  confirmationPopup = confirmationOverlay.querySelector('.confirmation-popup');
   noButton = confirmationPopup.querySelector('.confirmation-no-button');
   yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
-};
-
-/**
- * Open the confirmation popup
- */
-const openConfirmationPopup = () => {
-  confirmationPopup.classList.add('active');
-};
-
-/**
- * Close the confirmation popup
- */
-const closeConfirmationPopup = () => {
-  confirmationPopup.classList.remove('active');
+  noButton.onmousedown = (e) => e.preventDefault();
+  yesButton.onmousedown = (e) => e.preventDefault();
 };
 
 /**
@@ -43,6 +47,8 @@ const initializeConfirmation = (element, onAcceptCallback) => {
     onAcceptCallback();
   };
   noButton.onclick = closeConfirmationPopup;
+  confirmationOverlay.onclick = closeConfirmationPopup;
+  confirmationPopup.onclick = (e) => e.stopPropagation();
 };
 
 export {
