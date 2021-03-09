@@ -48,9 +48,6 @@ const initializeConfirmation = (element, onAccept, onReject) => {
  * @description Open the confirmation popup
  */
 function openConfirmation() {
-  if (confirmationPopup == null) {
-    return;
-  }
   confirmationPopup.classList.add('active');
   overlay.classList.add('active');
 }
@@ -60,9 +57,6 @@ function openConfirmation() {
  * @description Close the confirmation popup
  */
 function closeConfirmation() {
-  if (confirmationPopup == null) {
-    return;
-  }
   confirmationPopup.classList.remove('active');
   overlay.classList.remove('active');
 }
