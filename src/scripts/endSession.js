@@ -1,3 +1,8 @@
+/**
+ * @file Manage Confirmation Pop-up for page
+ * @author Siddharth Nag
+ */
+
 let confirmationElement;
 
 let sessionButton;
