@@ -16,14 +16,12 @@ let onRejectFunction;
 
 /**
  * @description Access all the shadow root elements and set the confirmation element
- * @param {HTMLElement} root - the settings element
+ * @param {HTMLElement} root - the confirmation element
  */
 const setRoot = (root) => {
   confirmationElement = root;
   sessionButton = document.getElementById('session-button');
-  confirmationPopup = confirmationElement.shadowRoot.querySelector(
-    '#confirmation-popup',
-  );
+  confirmationPopup = confirmationElement.shadowRoot.querySelector('#confirmation-popup',);
   noButton = confirmationElement.shadowRoot.querySelector('#no-button');
   yesButton = confirmationElement.shadowRoot.querySelector('#yes-button');
   overlay = confirmationElement.shadowRoot.querySelector('#overlay');

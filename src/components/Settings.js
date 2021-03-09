@@ -48,6 +48,7 @@ class Settings extends HTMLElement {
             font: 2rem 'Source Sans Pro', sans-serif;
             color: #777;
             letter-spacing: 0.1em;
+            text-align: center;
           }
           
           .settings-hr {

@@ -86,6 +86,7 @@ body {
   margin-left: 1em;
   display: inline-block;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 .progress-ring {
@@ -198,7 +199,7 @@ footer {
   margin-top: 3.5em;
 }
 
-/* end session pop up */
+/* pop-up styling */
 
 .popup {
   position: fixed;
@@ -242,9 +243,18 @@ footer {
   font: 0.8rem 'Duru Sans', sans-serif;
   color: #000;
   line-height: 14px;
-
-  /* letter-spacing: 17px; */
 }
+
+.summary-hr {
+  margin-top: -1em;
+  margin-bottom: 2em;
+}
+
+.popup h1 {
+  font: 2rem 'Source Sans Pro', sans-serif;
+  color: #777;
+  letter-spacing: 0.1em;
+}  
 
 #overlay {
   position: fixed;
