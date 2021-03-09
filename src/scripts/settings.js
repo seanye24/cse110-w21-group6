@@ -17,6 +17,7 @@ let saveButton;
 let overlay;
 let shortBreakInput;
 let longBreakInput;
+let soundInput;
 let errorMessages;
 
 /**
@@ -31,6 +32,7 @@ const setRoot = (root) => {
   overlay = settingsElement.shadowRoot.querySelector('#overlay');
   shortBreakInput = settingsElement.shadowRoot.querySelector('#short-number');
   longBreakInput = settingsElement.shadowRoot.querySelector('#long-number');
+  soundInput = settingsElement.shadowRoot.querySelector('#sound');
   errorMessages = settingsElement.shadowRoot.querySelectorAll('.error');
 };
 
@@ -45,6 +47,12 @@ const getShortBreak = () => settingsElement.getAttribute('shortBreakLength');
  * @return {number} - long break length
  */
 const getLongBreak = () => settingsElement.getAttribute('longBreakLength');
+
+/**
+ * Get pathway to sound file
+ * @return {string} - pathway to current sound
+ */
+const getTimerSound = () => settingsElement.getAttribute('timerSound');
 
 /**
  * Set short break length
@@ -63,6 +71,14 @@ const setLong = (input) => {
 };
 
 /**
+ * Set pathway to sound file
+ * @param {number} input - pathway to sound
+ */
+const setTimerSound = (input) => {
+  settingsElement.setAttribute('timerSound', input);
+};
+
+/**
  * @function openPopup
  * @description Open the popup with the correct saved settings
  */
@@ -74,6 +90,7 @@ function openPopup() {
   overlay.classList.add('active');
   shortBreakInput.value = getShortBreak() / 60;
   longBreakInput.value = getLongBreak() / 60;
+  soundInput.value = getTimerSound();
 }
 
 /**
@@ -106,8 +123,10 @@ function saveAndClose() {
     const newLong = longBreakInput.value * 60;
     setShort(newShort);
     setLong(newLong);
+    setTimerSound(soundInput.value);
     localStorage.setItem('shortBreakLength', newShort);
     localStorage.setItem('longBreakLength', newLong);
+    localStorage.setItem('timerSound', soundInput.value);
     popupEl.classList.remove('active');
     overlay.classList.remove('active');
   }
@@ -125,6 +144,10 @@ const initializeSettings = (element) => {
   settingsButton.addEventListener('click', () => {
     openPopup();
   });
+  soundInput.addEventListener('change', () => {
+    const audio = new Audio(soundInput.value);
+    audio.play();
+  });
   const {
     pomodoroLength,
     shortBreakLength,
@@ -132,14 +155,17 @@ const initializeSettings = (element) => {
   } = initializeIntervalLengths();
   settingsElement.setAttribute('shortBreakLength', shortBreakLength);
   settingsElement.setAttribute('longBreakLength', longBreakLength);
+  settingsElement.setAttribute('timerSound', soundInput.value);
 };
 
 export {
   initializeSettings,
   getShortBreak,
   getLongBreak,
+  getTimerSound,
   setShort,
   setLong,
+  setTimerSound,
   openPopup,
   saveAndClose,
 };
