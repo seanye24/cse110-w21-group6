@@ -10,8 +10,6 @@ import {
 } from '../utils/utils';
 
 let settingsElement;
-
-let settingsButton;
 let popupEl;
 let saveButton;
 let overlay;
@@ -21,151 +19,143 @@ let soundInput;
 let errorMessages;
 
 /**
- * @description Access all the shadow root elements and set the settings element
- * @param {HTMLElement} root - the settings element
+ * Initialize element variables for different elements of settings component
+ * @param {HTMLElement} root - root element of settings component
  */
 const setRoot = (root) => {
   settingsElement = root;
-  settingsButton = document.getElementById('open-popup');
-  popupEl = settingsElement.shadowRoot.querySelector('.popup');
-  saveButton = settingsElement.shadowRoot.querySelector('.save-button');
-  overlay = settingsElement.shadowRoot.querySelector('#overlay');
-  shortBreakInput = settingsElement.shadowRoot.querySelector('#short-number');
-  longBreakInput = settingsElement.shadowRoot.querySelector('#long-number');
-  soundInput = settingsElement.shadowRoot.querySelector('#sound');
-  errorMessages = settingsElement.shadowRoot.querySelectorAll('.error');
+  const { shadowRoot } = settingsElement;
+  popupEl = shadowRoot.querySelector('.popup');
+  saveButton = shadowRoot.querySelector('.save-button');
+  overlay = shadowRoot.querySelector('#overlay');
+  shortBreakInput = shadowRoot.querySelector('#short-number');
+  longBreakInput = shadowRoot.querySelector('#long-number');
+  soundInput = shadowRoot.querySelector('#sound');
+  errorMessages = shadowRoot.querySelectorAll('.error');
 };
 
 /**
  * Get short break length
  * @return {number} - short break length
  */
-const getShortBreak = () => settingsElement.getAttribute('shortBreakLength');
+const getShortBreakLength = () => settingsElement.shortBreakLength;
 
 /**
  * Get long break length
  * @return {number} - long break length
  */
-const getLongBreak = () => settingsElement.getAttribute('longBreakLength');
+const getLongBreakLength = () => settingsElement.longBreakLength;
 
 /**
  * Get pathway to sound file
- * @return {string} - pathway to current sound
+ * @return {string} - audio url
  */
-const getTimerSound = () => settingsElement.getAttribute('timerSound');
+const getTimerAudio = () => settingsElement.getAttribute('timerSound');
 
 /**
  * Set short break length
- * @param {number} input - length to set the short break length
+ * @param {number} shortBreakLength - new short break length
  */
-const setShort = (input) => {
-  settingsElement.setAttribute('shortBreakLength', input);
+const setShortBreakLength = (shortBreakLength) => {
+  settingsElement.shortBreakLength = shortBreakLength;
 };
 
 /**
  * Set long break length
- * @param {number} input - length to set the long break length
+ * @param {number} longBreakLength - new long break length
  */
-const setLong = (input) => {
-  settingsElement.setAttribute('longBreakLength', input);
+const setLongBreakLength = (longBreakLength) => {
+  settingsElement.longBreakLength = longBreakLength;
 };
 
 /**
- * Set pathway to sound file
+ * Set url of audio
  * @param {number} input - pathway to sound
  */
-const setTimerSound = (input) => {
-  settingsElement.setAttribute('timerSound', input);
+const setTimerAudio = (input) => {
+  settingsElement.timerSound = input;
 };
 
 /**
- * @function openPopup
- * @description Open the popup with the correct saved settings
+ * Open settings popup
  */
-function openPopup() {
-  if (popupEl == null) {
-    return;
-  }
+const openSettingsPopup = () => {
   popupEl.classList.add('active');
   overlay.classList.add('active');
-  shortBreakInput.value = getShortBreak() / 60;
-  longBreakInput.value = getLongBreak() / 60;
-  soundInput.value = getTimerSound();
-}
+
+  shortBreakInput.value = getShortBreakLength();
+  longBreakInput.value = getLongBreakLength();
+  soundInput.value = getTimerAudio();
+};
 
 /**
- * @function saveAndClose
- * @description Close the popup while saving any changes into the
- * local storage and show error messages when needed
+ * Close settings popup
  */
-function saveAndClose() {
-  if (popupEl == null) {
-    return;
+const closeSettingsPopup = () => {
+  popupEl.classList.remove('active');
+  overlay.classList.remove('active');
+};
+
+/**
+ * Save interval length / audio settings, display error if invalid
+ * @return {[number, number] | null} - new interval lengths, null if error occurs
+ */
+const saveSettings = () => {
+  const newShortBreakLength = shortBreakInput.value;
+  const newLongBreakLength = longBreakInput.value;
+  const isShortInputValid = checkIfShortInputValid(newShortBreakLength);
+  const isLongInputValid = checkIfLongInputValid(newLongBreakLength);
+
+  errorMessages[0].style.visibility = isShortInputValid ? 'hidden' : 'visible';
+  errorMessages[1].style.visibility = isLongInputValid ? 'hidden' : 'visible';
+  if (!isShortInputValid || !isLongInputValid) {
+    return null;
   }
-  if (!checkIfShortInputValid(shortBreakInput.value)) {
-    errorMessages[0].style.visibility = 'visible';
-  } else {
-    errorMessages[0].style.visibility = 'hidden';
-  }
-  if (!checkIfLongInputValid(longBreakInput.value)) {
-    errorMessages[1].style.visibility = 'visible';
-  } else {
-    errorMessages[1].style.visibility = 'hidden';
-  }
-  if (
-    checkIfShortInputValid(shortBreakInput.value) &&
-    checkIfLongInputValid(longBreakInput.value)
-  ) {
-    errorMessages.forEach((message) => {
-      message.style.visibility = 'hidden';
-    });
-    const newShort = shortBreakInput.value * 60;
-    const newLong = longBreakInput.value * 60;
-    setShort(newShort);
-    setLong(newLong);
-    setTimerSound(soundInput.value);
-    localStorage.setItem('shortBreakLength', newShort);
-    localStorage.setItem('longBreakLength', newLong);
-    localStorage.setItem('timerSound', soundInput.value);
-    popupEl.classList.remove('active');
-    overlay.classList.remove('active');
-  }
-}
+
+  setTimerAudio(soundInput.value);
+  setShortBreakLength(newShortBreakLength);
+  setLongBreakLength(newLongBreakLength);
+  localStorage.setItem('shortBreakLength', newShortBreakLength);
+  localStorage.setItem('longBreakLength', newLongBreakLength);
+  return [newShortBreakLength, newLongBreakLength];
+};
 
 /**
  * Set the initial settings element
  * @param {HTMLElement} element - settings element
+ * @param {() => void} saveSettingsCallback - callback for when settings are saved
  */
-const initializeSettings = (element) => {
+const initializeSettings = (element, saveSettingsCallback) => {
+  const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
   setRoot(element);
+  setShortBreakLength(shortBreakLength);
+  setLongBreakLength(longBreakLength);
+  setTimerAudio('assets/calm-alarm.mp3'); // TODO: pull from localstorage
+
   saveButton.addEventListener('click', () => {
-    saveAndClose();
+    const newBreakLengths = saveSettings();
+    if (!newBreakLengths) {
+      return;
+    }
+    closeSettingsPopup();
+    saveSettingsCallback(...newBreakLengths);
   });
-  settingsButton.addEventListener('click', () => {
-    openPopup();
-  });
-  soundInput.addEventListener('change', () => {
+
+  soundInput.onchange = () => {
     const audio = new Audio(soundInput.value);
+    audio.volume = 0.2;
     audio.play();
-  });
-  const {
-    pomodoroLength,
-    shortBreakLength,
-    longBreakLength,
-  } = initializeIntervalLengths();
-  settingsElement.setAttribute('shortBreakLength', shortBreakLength);
-  settingsElement.setAttribute('longBreakLength', longBreakLength);
-  settingsElement.setAttribute('timerSound', soundInput.value);
+  };
 };
 
 export {
   initializeSettings,
-  getShortBreak,
-  getLongBreak,
-  getTimerSound,
-  setShort,
-  setLong,
-  setTimerSound,
-  openPopup,
-  saveAndClose,
+  getShortBreakLength,
+  getLongBreakLength,
+  setShortBreakLength,
+  setLongBreakLength,
+  openSettingsPopup,
+  closeSettingsPopup,
+  getTimerAudio,
+  setTimerAudio,
 };

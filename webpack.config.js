@@ -13,7 +13,7 @@ module.exports = (env, argv) => {
     output: {
       filename: 'main.js',
       path: path.join(__dirname, 'dist'),
-      assetModuleFilename: 'images/[hash][ext][query]',
+      assetModuleFilename: 'assets/[hash][ext][query]',
     },
     module: {
       rules: [
@@ -34,7 +34,7 @@ module.exports = (env, argv) => {
           ],
         },
         {
-          test: /\.(jpe?g|png|gif|svg)$/i,
+          test: /\.(jpe?g|png|gif|svg|mp3)$/i,
           include: [path.join(__dirname, 'src')],
           type: 'asset/resource',
         },
