@@ -188,6 +188,28 @@ class Settings extends HTMLElement {
       innerText: 'Please enter valid entry',
     });
     this.inputErrorLong.style.visibility = 'hidden';
+    this.inputContainerSound = createElement('div', {
+      className: 'form-input',
+    });
+    this.inputLabelSound = createElement('p', {
+      innerText: 'Sound: ',
+    });
+    this.inputBoxSound = createElement('select', {
+      name: 'sound',
+      id: 'sound',
+    });
+    this.soundOption1 = createElement('option', {
+      value: 'mp3',
+      innerText: 'Calm Alarm',
+    });
+    this.soundOption2 = createElement('option', {
+      value: 'mp3',
+      innerText: 'Orginal Alarm',
+    });
+    this.soundOption3 = createElement('option', {
+      value: 'mp3',
+      innerText: 'Kanye Telling You to Stop',
+    });
     this.saveButton = createElement('button', {
       innerText: 'SAVE',
       className: 'save-button',
@@ -210,11 +232,20 @@ class Settings extends HTMLElement {
       this.inputErrorLong,
     );
 
+    this.inputBoxSound.append(
+      this.soundOption1,
+      this.soundOption2,
+      this.soundOption3,
+    );
+
+    this.inputContainerSound.append(this.inputLabelSound, this.inputBoxSound);
+
     this.contentContainer.append(
       this.popupTitle,
       this.popupTitleLine,
       this.inputContainerShort,
       this.inputContainerLong,
+      this.inputContainerSound,
       this.saveButton,
     );
 
