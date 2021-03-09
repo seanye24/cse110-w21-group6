@@ -1,64 +1,52 @@
 /**
  * @file Manage Confirmation Pop-up for page
- * @author Siddharth Nag
  */
 
-let confirmationElement;
-
-let sessionButton;
 let confirmationPopup;
 let noButton;
 let yesButton;
-let overlay;
-
-let onAcceptFunction;
-let onRejectFunction;
 
 /**
- * @description Access all the shadow root elements and set the confirmation element
- * @param {HTMLElement} root - the settings element
+ * Initialize element variables for different elements of confirmation popup
+ * @param {HTMLElement} root - confirmation popup
+ * @param {() => void} onAcceptCallback - callback when confirmation is accepted
  */
 const setRoot = (root) => {
-  confirmationElement = root;
-  sessionButton = document.getElementById('session-button');
-  confirmationPopup = confirmationElement.shadowRoot.querySelector(
-    '#confirmation-popup',
-  );
-  noButton = confirmationElement.shadowRoot.querySelector('#no-button');
-  yesButton = confirmationElement.shadowRoot.querySelector('#yes-button');
-  overlay = confirmationElement.shadowRoot.querySelector('#overlay');
+  confirmationPopup = root;
+  noButton = confirmationPopup.querySelector('.confirmation-no-button');
+  yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
+};
+
+/**
+ * Open the confirmation popup
+ */
+const openConfirmationPopup = () => {
+  confirmationPopup.classList.add('active');
+};
+
+/**
+ * Close the confirmation popup
+ */
+const closeConfirmationPopup = () => {
+  confirmationPopup.classList.remove('active');
 };
 
 /**
  * Set the initial confirmation element
  * @param {HTMLElement} element - confirmation element
- * @param {Function} onAccept - function for when user accepts confirmation
- * @param {Function} onReject - function for when user reject confirmation
+ * @param {() => void} onAcceptCallback - callback when confirmation is accepted
  */
-const initializeConfirmation = (element, onAccept, onReject) => {
+const initializeConfirmation = (element, onAcceptCallback) => {
   setRoot(element);
-  onAcceptFunction = onAccept;
-  onRejectFunction = onReject;
-  yesButton.addEventListener('click', onAcceptFunction);
-  noButton.addEventListener('click', onRejectFunction);
+  yesButton.onclick = () => {
+    closeConfirmationPopup();
+    onAcceptCallback();
+  };
+  noButton.onclick = closeConfirmationPopup;
 };
 
-/**
- * @function openConfirmation
- * @description Open the confirmation popup
- */
-function openConfirmation() {
-  confirmationPopup.classList.add('active');
-  overlay.classList.add('active');
-}
-
-/**
- * @function closeConfirmation
- * @description Close the confirmation popup
- */
-function closeConfirmation() {
-  confirmationPopup.classList.remove('active');
-  overlay.classList.remove('active');
-}
-
-export { initializeConfirmation, openConfirmation, closeConfirmation };
+export {
+  initializeConfirmation,
+  openConfirmationPopup,
+  closeConfirmationPopup,
+};
