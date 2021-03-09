@@ -4,7 +4,7 @@
  */
 
 import '../styles/style.css';
-import { Timer, ProgressRing, TaskList } from '../components';
+import { Timer, ProgressRing, TaskList, Settings } from '../components';
 import {
   completeTask,
   deselectAllTasks,
@@ -16,6 +16,12 @@ import {
 } from './taskList';
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
+import {
+  initializeSettings,
+  getShortBreakLength,
+  getLongBreakLength,
+  openSettingsPopup,
+} from './settings';
 import {
   initializeAnnouncement,
   setAnnouncement,
@@ -33,14 +39,19 @@ import {
   END_OF_SESSION_ANNOUNCEMENT,
   TASK_COMPLETION_QUESTION,
   NO_TASKS_ANNOUNCEMENT,
+  DEFAULT_POMODORO_INTERVAL,
 } from '../utils/constants';
-import { initializeIntervalLengths, tick } from '../utils/utils';
+import { tick } from '../utils/utils';
 
 customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);
 customElements.define('task-list', TaskList);
+customElements.define('settings-component', Settings);
 
 let isSessionOngoing = false;
+const pomodoroLength = DEFAULT_POMODORO_INTERVAL;
+let shortBreakLength;
+let longBreakLength;
 
 /**
  * Starts and runs interval until interval is completed
@@ -65,12 +76,6 @@ const startInterval = async (intervalLength) => {
   return true;
 };
 
-const {
-  pomodoroLength,
-  shortBreakLength,
-  longBreakLength,
-} = initializeIntervalLengths();
-
 /**
  * Handles pomodoro app, dispatches actions to components depending on the current interval
  * @param {Function} changeSessionButton - changes session button from start to end
@@ -87,17 +92,25 @@ const startSession = async (changeSessionButton) => {
       // use previous currTask or next available
       // stop if no tasks are available
       currSelectedTask = getCurrentlySelectedTask();
-      if (!currSelectedTask) currSelectedTask = selectFirstTask();
-      if (!currSelectedTask) return numPomodoros === 0 ? -1 : numPomodoros;
+      if (!currSelectedTask) {
+        currSelectedTask = selectFirstTask();
+      }
+      if (!currSelectedTask) {
+        return numPomodoros === 0 ? -1 : numPomodoros;
+      }
 
-      if (numPomodoros === 0) changeSessionButton();
+      if (numPomodoros === 0) {
+        changeSessionButton();
+      }
 
       // disable tasklist
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
       // start pomodoro
-      if (!(await startInterval(pomodoroLength))) return numPomodoros;
+      if (!(await startInterval(60 * pomodoroLength))) {
+        return numPomodoros;
+      }
 
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task if pomo is fully completed
 
@@ -139,8 +152,8 @@ const startSession = async (changeSessionButton) => {
       if (
         !(await startInterval(
           currInterval === LONG_BREAK_INTERVAL
-            ? longBreakLength
-            : shortBreakLength,
+            ? 60 * longBreakLength
+            : 60 * shortBreakLength,
         ))
       ) {
         return numPomodoros;
@@ -179,14 +192,37 @@ window.addEventListener('DOMContentLoaded', () => {
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
   const announcementElement = document.querySelector('.announcement-container');
+  const taskListElement = document.querySelector('.task-list');
+  const settingsElement = document.querySelector('.settings');
+  const settingsIcon = document.querySelector('.settings-icon');
+
+  const onSaveSettings = (newShortBreakLength, newLongBreakLength) => {
+    shortBreakLength = newShortBreakLength;
+    longBreakLength = newLongBreakLength;
+  };
 
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
-  initializeTaskList(document.querySelector('.task-list'));
   initializeAnnouncement(announcementElement);
+  initializeTaskList(taskListElement);
+  initializeSettings(settingsElement, onSaveSettings);
+  settingsIcon.onclick = openSettingsPopup;
+
+  shortBreakLength = getShortBreakLength();
+  longBreakLength = getLongBreakLength();
 
   deselectAllTasks();
-  setTimer(pomodoroLength);
+  setTimer(60 * pomodoroLength);
+
+  // adjust nav bar color
+  const navBar = document.querySelector('.navbar');
+  window.onscroll = () => {
+    if (window.scrollY === 0) {
+      navBar.classList.remove('scrolled');
+    } else {
+      navBar.classList.add('scrolled');
+    }
+  };
 
   // start session when start button is clicked
   const startButton = document.querySelector('.session-button');

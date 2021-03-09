@@ -26,6 +26,10 @@ let taskItemForm;
 let taskItemFormContainer;
 let taskItemFormInputs;
 
+/**
+ * Initialize element variables for different elements of task list
+ * @param {HTMLElement} root - root element of tasklist
+ */
 const setRoot = (root) => {
   taskList = root;
   taskListContainer = taskList.shadowRoot.querySelector('.container');
@@ -60,7 +64,7 @@ const getTask = ({ name }) => ({
 /**
  * Get button elements from task-item element
  * @param {HTMLElement} taskElement - task-item element
- * @return {{delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
+ * @return {{delete: HTMLButtonElement}} - button elements object
  */
 const getTaskItemButtons = (taskElement) => {
   const buttons = Array.from(
@@ -69,7 +73,6 @@ const getTaskItemButtons = (taskElement) => {
 
   return {
     delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
-    edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
   };
 };
 
@@ -155,8 +158,9 @@ const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
  */
 const selectTask = (task) => {
   const prevSelectedTask = getCurrentlySelectedTask();
-  if (prevSelectedTask)
+  if (prevSelectedTask) {
     updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
+  }
 
   const { taskElement, taskIndex } = getTask(task);
   // move task to front of DOM list
@@ -176,23 +180,31 @@ const selectTask = (task) => {
  * @param {Task} newTask - task to be created
  */
 const createTaskElement = (newTask) => {
-  const { name, usedPomodoros, estimatedPomodoros, selected } = newTask;
+  const {
+    name,
+    usedPomodoros,
+    estimatedPomodoros,
+    selected,
+    completed,
+  } = newTask;
 
-  // add task to dom
+  // create html element
   const newTaskElement = createElement('task-item', {
     name,
     'used-pomodoros': usedPomodoros,
     'estimated-pomodoros': estimatedPomodoros,
     selected,
   });
-  newTaskElement.shadowRoot.querySelector('.text-container').onclick = () => {
-    selectTask(newTask);
-  };
-  const buttons = getTaskItemButtons(newTaskElement);
-  buttons.delete.addEventListener('click', () => deleteTask(newTask));
-  buttons.edit.addEventListener('click', () => {
-    // TODO: Add edit functionality
-  });
+
+  // add event listeners
+  const textContainer = newTaskElement.shadowRoot.querySelector(
+    '.text-container',
+  );
+  const { delete: deleteButton } = getTaskItemButtons(newTaskElement);
+  if (!completed) {
+    textContainer.onclick = () => selectTask(newTask);
+  }
+  deleteButton.onclick = () => deleteTask(newTask);
   return newTaskElement;
 };
 
@@ -235,16 +247,6 @@ const handleTaskFormSubmit = (e) => {
 
   const trimmedName = name.trim();
 
-  // check if fields are non-empty
-  if (!trimmedName) {
-    // TODO: Update name label
-    return;
-  }
-  if (!pomodoro) {
-    // TODO: Update pomodoro label
-    return;
-  }
-
   // check if task already exists
   if (tasks.some((task) => task.name === trimmedName)) {
     // TODO: Update name label
@@ -277,6 +279,21 @@ const restoreTasks = () => {
 };
 
 /**
+ * Checks if task input is already in list
+ * Sets error message for form
+ * @param {InputEvent} e - input change from task item form
+ */
+const checkDuplicateTask = (e) => {
+  const { value } = e.target;
+  const trimmedName = value.trim();
+  if (tasks.some((task) => task.name === trimmedName)) {
+    e.target.setCustomValidity('Duplicate task.');
+  } else {
+    e.target.setCustomValidity('');
+  }
+};
+
+/**
  * Set tasklist
  * @param {HTMLElement} element - task list element
  */
@@ -284,6 +301,7 @@ const initializeTaskList = (element) => {
   setRoot(element);
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
   restoreTasks();
+  taskItemFormInputs.name.oninput = checkDuplicateTask;
 };
 /**
  * Increment the usedPomodoros for one task
@@ -300,7 +318,9 @@ const incrementPomodoro = (task) => {
  * @return {Task | null} returns first available task, if there are none, return null
  */
 const selectFirstTask = () => {
-  if (tasks.length > 0 && !tasks[0].completed) return selectTask(tasks[0]);
+  if (tasks.length > 0 && !tasks[0].completed) {
+    return selectTask(tasks[0]);
+  }
   return null;
 };
 
@@ -319,13 +339,27 @@ const deselectAllTasks = () => {
  */
 const setTasklistUsability = (shouldTasklistBeUsable) => {
   tasks.forEach((task) => {
-    const { taskElement } = getTask(task);
-    taskElement.shadowRoot.querySelector('.text-container').onclick =
-      shouldTasklistBeUsable && !task.completed
-        ? () => {
-            selectTask(task);
-          }
-        : null;
+    const {
+      taskElement: { shadowRoot },
+    } = getTask(task);
+    const itemContainer = shadowRoot.querySelector('.item-container');
+    const textContainer = shadowRoot.querySelector('.text-container');
+
+    // disable item container
+    if (shouldTasklistBeUsable) {
+      itemContainer.classList.remove('disabled');
+    } else {
+      itemContainer.classList.add('disabled');
+    }
+
+    // disable select task listener
+    if (shouldTasklistBeUsable && !task.completed) {
+      textContainer.onclick = () => selectTask(task);
+    } else {
+      textContainer.onclick = null;
+    }
+
+    // disable buttons
     const buttons = getTaskItemButtons(getTask(task).taskElement);
     Object.values(buttons).forEach((btn) => {
       btn.disabled = !shouldTasklistBeUsable;

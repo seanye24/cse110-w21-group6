@@ -40,7 +40,7 @@ class TaskItemForm extends HTMLElement {
 
       .pomodoro-input-container {
         flex: 1;
-        min-width: 75px;
+        min-width: 95px;
         position: relative;
       }
 
@@ -72,7 +72,7 @@ class TaskItemForm extends HTMLElement {
       }
 
       .task-input:focus {
-        box-shadow: 0 0 0 2pt #48cae4;
+        box-shadow: 0 0 0 2pt #90e0ef;
         outline: none;
         z-index: 1;
         position: relative;
@@ -96,7 +96,7 @@ class TaskItemForm extends HTMLElement {
       #submit-input {
         width: 50%;
         margin: auto;
-        background: #4dcfe9;
+        background: rgb(77, 207, 233);
         border-radius: 5px;
         outline: none;
         border: none;
@@ -106,7 +106,7 @@ class TaskItemForm extends HTMLElement {
       }
 
       #submit-input:hover {
-        background: #48cae4;
+        background: rgb(112, 216, 237);
         cursor: pointer;
       }
     `;
@@ -136,6 +136,7 @@ class TaskItemForm extends HTMLElement {
       type: 'text',
       name: 'name',
       placeholder: 'Task Description...',
+      required: true,
     });
 
     this.pomodoroInputContainer = createElement('div', {
@@ -146,7 +147,7 @@ class TaskItemForm extends HTMLElement {
       className: 'task-input-label',
       id: 'pomodoro-input-label',
       for: 'pomodoro-input',
-      innerText: 'Pomodoros',
+      innerText: 'Est Pomodoros',
     });
 
     this.pomodoroInputElement = createElement('input', {
@@ -156,6 +157,7 @@ class TaskItemForm extends HTMLElement {
       name: 'pomodoro',
       placeholder: '#',
       min: '1',
+      required: true,
     });
 
     this.submitInputElement = createElement('input', {

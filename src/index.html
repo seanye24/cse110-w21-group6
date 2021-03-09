@@ -26,25 +26,25 @@
   <body>
     <nav class="navbar">
       <ul class="links">
-        <li><a class="link" href="#main">TIMER</a></li>
+        <li><a class="link" href="#main">POMODORO TIMER</a></li>
         <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
       </ul>
-      <a
-        href="https://github.com/seanye24/cse110-w21-group6"
-        target="_blank"
-        rel="noreferrer noopener"
-        ><img src="assets/github-icon.png" alt="github" class="github-icon"
-      /></a>
+      <img
+        src="assets/settings-icon.png"
+        alt="settings"
+        data-popup-target="#popup"
+        id="open-popup"
+        class="settings-icon"
+      />
     </nav>
     <div id="main">
-      <h1 class="title">Pomodoro</h1>
       <progress-ring
         progress="100"
         radius="150"
         stroke="5"
         class="progress-ring"
       ></progress-ring>
-      <button class="session-button">Start</button>
+      <button class="session-button" id="session-button">Start</button>
       <div class="announcement-container">
         <h2 class="announcement">Work on your tasks!</h2>
         <button class="announcement-button yes-button hidden">Yes</button>
@@ -80,8 +80,25 @@
       </p>
     </div>
 
+    <div class="popup" id="confirmation-popup">    
+      <p>Do you want to end session?</p>
+      <button id="no-button">No</button>
+      <button id="yes-button">Yes</button>
+    </div>
+    <div id="overlay"></div>
+
+    <settings-component class="settings"></settings-component>
+
     <footer>
-      <p>Created by Pomodo Dragons © 2021</p>
+      <p>
+        Created by Pomodo Dragons © 2021&ensp;
+        <a
+          href="https://github.com/seanye24/cse110-w21-group6"
+          target="_blank"
+          rel="noreferrer noopener"
+          ><img src="assets/github-icon.png" alt="github" class="github-icon"
+        /></a>
+      </p>
     </footer>
   </body>
 </html>
