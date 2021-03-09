@@ -47,19 +47,36 @@ class TaskItem extends HTMLElement {
         outline: none;
       }
 
-      .selected {
+      .item-container.selected {
         background: #90e0ef;
       }
 
       .text-container {
-        background: #fff;
+        background: rgba(255, 255, 255, 1);
         color: #555;
         position: relative;
         padding: 0.5em;
         border-radius: 5px;
-        font-size: 1rem;
+        width: 100%;
+        text-align: left;
+        font: 1rem Source Sans Pro, sans-serif;
+        border: none;
+        cursor: pointer;
         display: flex;
         align-items: center;
+      }
+
+      .item-container:not(.disabled):not(.selected) > .text-container:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .text-container:focus {
+        outline: none;
+        box-shadow: 0 0 0 2pt #90e0ef;
+      }
+
+      .item-container.selected > .text-container:focus {
+        box-shadow: 0 0 0 2pt #00b4d8;
       }
       
       .completed .name {
@@ -98,51 +115,54 @@ class TaskItem extends HTMLElement {
         position: absolute;
         border: none;
         padding: 0.25em;
-        color: #fff;
+        color: rgba(255, 255, 255, 1); 
         background: transparent;
         border-radius: 50%;
       }
 
-      .task-button:focus {
-        outline: none;
-        box-shadow: inset 0 0 0 1pt #48cae4;
-        z-index: 1;
-        position: absolute;
-      }
-
-      .item-container:hover > .task-button,
+      .item-container:hover:not(.disabled) > .task-button,
       .task-button:focus {
         opacity: 1;
       }
 
-      .item-container[selected="true"] .task-button:hover {
-        background: rgba(0, 180, 216, 0.25);
-        color: #00b4d8;
-        cursor: pointer;
+      .task-button:focus {
+        outline: none;
+        z-index: 1;
+        position: absolute;
       }
 
-      .task-button:disabled {
-        opacity: 0 !important;
+      .task-button:focus {
+        box-shadow: inset 0 0 0 2pt #90e0ef;
+      }
+
+      .item-container.selected > .task-button:focus {
+        box-shadow: inset 0 0 0 2pt #00b4d8;
       }
 
       .task-button:hover {
         border-radius: 50%;
-        color: #ddd;
+        color: rgba(255, 255, 255, 0.8); 
         cursor: pointer;
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .item-container.selected > .task-button,
+      .item-container.selected > .task-button:hover {
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      .task-button:disabled {
+        opacity: 0;
       }
 
       .task-button-icon {
         font-size: 1.2rem;
       }
 
-      #edit-button {
-        top: 0;
-        right: 0;
-      }
-
       #delete-button {
-        bottom: 0;
+        top: 50%;
         right: 0;
+        transform: translate(0, -50%);
       }
     `;
 
@@ -151,11 +171,17 @@ class TaskItem extends HTMLElement {
       href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
     });
 
-    this.textContainerElement = createElement('div', {
-      className: 'text-container',
-    });
     this.itemContainerElement = createElement('div', {
       className: 'item-container',
+    });
+    this.textContainerElement = createElement('button', {
+      className: 'text-container',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
     });
     this.nameElement = createElement('p', {
       className: 'name',
@@ -171,21 +197,6 @@ class TaskItem extends HTMLElement {
     this.pomodoroElement = createElement('p', {
       className: 'pomodoro',
       id: 'pomodoro',
-    });
-
-    this.editTaskButton = createElement('button', {
-      className: 'task-button',
-      id: 'edit-button',
-      onmouseout: (e) => {
-        e.target.blur();
-      },
-      onmousedown: (e) => {
-        e.preventDefault();
-      },
-    });
-    this.editTaskIcon = createElement('span', {
-      className: 'material-icons task-button-icon',
-      innerText: 'mode',
     });
 
     this.deleteTaskButton = createElement('button', {
@@ -210,10 +221,8 @@ class TaskItem extends HTMLElement {
     );
     this.itemContainerElement.append(
       this.textContainerElement,
-      this.editTaskButton,
       this.deleteTaskButton,
     );
-    this.editTaskButton.appendChild(this.editTaskIcon);
     this.deleteTaskButton.appendChild(this.deleteTaskIcon);
     this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
     this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
@@ -233,14 +242,18 @@ class TaskItem extends HTMLElement {
         this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
         break;
       case 'selected':
-        if (newValue === 'true')
+        if (newValue === 'true') {
           this.itemContainerElement.classList.add('selected');
-        else this.itemContainerElement.classList.remove('selected');
+        } else {
+          this.itemContainerElement.classList.remove('selected');
+        }
         break;
       case 'completed':
-        if (newValue === 'true')
+        if (newValue === 'true') {
           this.itemContainerElement.classList.add('completed');
-        else this.itemContainerElement.classList.remove('completed');
+        } else {
+          this.itemContainerElement.classList.remove('completed');
+        }
         break;
       default:
     }

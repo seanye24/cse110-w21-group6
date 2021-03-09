@@ -18,5 +18,6 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'no-plusplus': 'off',
     'no-param-reassign': 'off',
+    curly: ['error', 'all'],
   },
 };
