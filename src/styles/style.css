@@ -211,6 +211,7 @@ footer {
   background-color: white;
   width: 700px;
   max-width: 80%;
+  text-align: center;
 }
 
 .popup.active {
@@ -235,7 +236,7 @@ footer {
   cursor: pointer;
 }
 
-.popup-body p {
+.popup p {
   padding: 10px 15px;
   text-align: center;
   font: 0.8rem 'Duru Sans', sans-serif;
