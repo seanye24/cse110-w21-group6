@@ -13,10 +13,11 @@ import {
  * @extends HTMLElement
  * @param {number} shortBreakLength - short break time
  * @param {number} longBreakLength - long break time
+ * @param {string} timerSound - pathway to sound file
  */
 class Settings extends HTMLElement {
   static get observedAttributes() {
-    return ['shortBreakLength', 'longBreakLength'];
+    return ['shortBreakLength', 'longBreakLength', 'timerSound'];
   }
 
   constructor() {
@@ -24,6 +25,7 @@ class Settings extends HTMLElement {
 
     this._shortBreak = this.getAttribute('shortBreakLength');
     this._longBreak = this.getAttribute('longBreakLength');
+    this._timerSound = this.getAttribute('timerSound');
 
     this.styleElement = createElement('style', {
       innerText: `
@@ -53,7 +55,7 @@ class Settings extends HTMLElement {
           
           .settings-hr {
             margin-top: -1em;
-            margin-bottom: 2em;
+            margin-bottom: 1.5em;
           }
           
           .content {
@@ -79,6 +81,25 @@ class Settings extends HTMLElement {
           .content .form-input .bounds {
             color: #808080;
             margin-left: 1em;
+          }
+
+          .content .form-input label {
+            line-height: 35px;
+            margin-right: 0.5em
+          }
+
+          select {
+            font: 0.85rem 'Duru Sans', sans-serif;
+            display: inline-block;
+            vertical-align: middle;
+            padding: 5px;
+            width: 225px;
+            border: 1px solid #FFF;
+            height: 34px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: url(assets/sound.png) 96% / 10% no-repeat #EEE;
           }
           
           .content button {
@@ -189,6 +210,29 @@ class Settings extends HTMLElement {
       innerText: 'Please enter valid entry',
     });
     this.inputErrorLong.style.visibility = 'hidden';
+    this.inputContainerSound = createElement('div', {
+      className: 'form-input',
+    });
+    this.inputLabelSound = createElement('label', {
+      for: 'sound',
+      innerText: 'Sound: ',
+    });
+    this.inputBoxSound = createElement('select', {
+      name: 'sound',
+      id: 'sound',
+    });
+    this.soundOption1 = createElement('option', {
+      value: 'assets/calm-alarm.mp3',
+      innerText: 'Calm Alarm',
+    });
+    this.soundOption2 = createElement('option', {
+      value: 'assets/original-alarm.mp3',
+      innerText: 'Orginal Alarm',
+    });
+    this.soundOption3 = createElement('option', {
+      value: 'assets/kanye-stop.mp3',
+      innerText: 'Kanye Telling You to Stop',
+    });
     this.saveButton = createElement('button', {
       innerText: 'SAVE',
       className: 'save-button',
@@ -211,11 +255,20 @@ class Settings extends HTMLElement {
       this.inputErrorLong,
     );
 
+    this.inputBoxSound.append(
+      this.soundOption1,
+      this.soundOption2,
+      this.soundOption3,
+    );
+
+    this.inputContainerSound.append(this.inputLabelSound, this.inputBoxSound);
+
     this.contentContainer.append(
       this.popupTitle,
       this.popupTitleLine,
       this.inputContainerShort,
       this.inputContainerLong,
+      this.inputContainerSound,
       this.saveButton,
     );
 
@@ -242,6 +295,10 @@ class Settings extends HTMLElement {
           this.inputErrorLong.visibility = 'hidden';
         }
         break;
+      case 'timerSound':
+        this._timerSound = newValue;
+        this.inputBoxSound.value = newValue;
+        break;
       default:
     }
   }
@@ -262,6 +319,15 @@ class Settings extends HTMLElement {
   set longBreak(longBreak) {
     this._longBreak = longBreak;
     this.setAttribute('longBreakLength', this._longBreak);
+  }
+
+  get timerSound() {
+    return this._timerSound;
+  }
+
+  set timerSound(timerSound) {
+    this._timerSound = timerSound;
+    this.setAttribute('timerSound', this._timerSound);
   }
 }
 

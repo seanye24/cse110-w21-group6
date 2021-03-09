@@ -10,6 +10,8 @@ import {
   getLongBreak,
   setShort,
   setLong,
+  setTimerSound,
+  getTimerSound,
 } from '../scripts/settings';
 
 customElements.define('settings-component', Settings);
@@ -31,6 +33,7 @@ describe('testing settings values', () => {
   test('see if initial values are setting correctly', () => {
     expect(Number(getShortBreak())).toBe(300);
     expect(Number(getLongBreak())).toBe(900);
+    expect(getTimerSound()).toBe('assets/calm-alarm.mp3');
   });
 
   test('testing change in input', () => {
@@ -38,6 +41,8 @@ describe('testing settings values', () => {
     expect(Number(getShortBreak())).toBe(240);
     setLong(1020);
     expect(Number(getLongBreak())).toBe(1020);
+    setTimerSound('assets/kanye-stop.mp3');
+    expect(getTimerSound()).toBe('assets/kanye-stop.mp3');
   });
 
   test('invalid entries are captured', () => {
