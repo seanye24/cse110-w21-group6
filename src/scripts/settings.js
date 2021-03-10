@@ -7,6 +7,7 @@ import {
   initializeIntervalLengths,
   checkIfShortInputValid,
   checkIfLongInputValid,
+  checkIfTimerAudioValid,
 } from '../utils/utils';
 
 let settingsElement;
@@ -60,6 +61,7 @@ const setLongBreakLength = (longBreakLength) => {
  */
 const setTimerAudio = (input) => {
   settingsElement.timerSound = input;
+  window.localStorage.setItem('timerAudio', input);
 };
 
 /**
@@ -133,7 +135,10 @@ const initializeSettings = (element, saveSettingsCallback) => {
   setRoot(element);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
-  setTimerAudio('assets/calm-alarm.mp3'); // TODO: pull from localstorage
+  const savedAudio = window.localStorage.getItem('timerAudio');
+  setTimerAudio(
+    checkIfTimerAudioValid(savedAudio) ? savedAudio : 'assets/calm-alarm.mp3',
+  );
 
   overlay.onclick = closeSettingsPopup;
 
