@@ -51,6 +51,18 @@ const validateNumber = (value, shouldTruncate = false) => {
 };
 
 /**
+ * Validate if input is string
+ * @param {any} value - value to to check
+ * @return {string | null} - string if input is a valid string, null otherwise
+ */
+const validateString = (value) => {
+  if (typeof value === 'string' || value instanceof String) {
+    return value;
+  }
+  return null;
+};
+
+/**
  * Checks if time is valid for timer, between 0 seconds and 1 hour
  * @param {number} time - time to be checked (in seconds)
  */
@@ -136,4 +148,5 @@ export {
   tick,
   checkIfTimeValid,
   validateNumber,
+  validateString,
 };
