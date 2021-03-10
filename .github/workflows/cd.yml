@@ -1,5 +1,5 @@
 name: CD (Deploy to GitHub Pages)
-on: 
+on:
   push:
     branches:
       - main
@@ -21,8 +21,8 @@ jobs:
         with:
           branch: gh-pages
           folder: dist
-          
+
       - name: Deploy docs to docs branch
         run: |
           yarn run docs
-          git subtree push --prefix origin jsdoc
+          git subtree push --prefix https://github.com/seanye24/cse110-w21-group6.git jsdoc
