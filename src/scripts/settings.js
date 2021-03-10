@@ -165,4 +165,7 @@ export {
   getShortBreakLength,
   getLongBreakLength,
   getTimerAudio,
+  setShortBreakLength,
+  setLongBreakLength,
+  setTimerAudio,
 };
