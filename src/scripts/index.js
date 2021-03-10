@@ -4,7 +4,13 @@
  */
 
 import '../styles/style.css';
-import { Timer, ProgressRing, TaskList, Settings } from '../components';
+import {
+  Timer,
+  ProgressRing,
+  TaskList,
+  PomodoroCircles,
+  Settings,
+} from '../components';
 import {
   completeTask,
   deselectAllTasks,
@@ -17,6 +23,7 @@ import {
 } from './taskList';
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
+import { initializePomodoroCircles } from './pomodoroCircles';
 import {
   initializeSettings,
   getShortBreakLength,
@@ -56,6 +63,7 @@ customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);
 customElements.define('task-list', TaskList);
 customElements.define('settings-component', Settings);
+customElements.define('pomodoro-circles', PomodoroCircles);
 
 let isSessionOngoing = false;
 let pomodoroLength = DEFAULT_POMODORO_INTERVAL;
@@ -207,6 +215,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const settingsIcon = document.querySelector('.settings-icon');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
+  const circlesElement = progressRingElement.shadowRoot.querySelector(
+    '.circles',
+  );
   const sessionButton = document.querySelector('.session-button');
   const announcementElement = document.querySelector('.announcement-container');
   const taskListElement = document.querySelector('.task-list');
@@ -220,6 +231,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
+  initializePomodoroCircles(circlesElement);
   initializeAnnouncement(announcementElement);
   initializeTaskList(taskListElement);
   initializeConfirmation(confirmationOverlay, () => {

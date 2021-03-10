@@ -36,4 +36,3 @@ describe('testing pomodoro circles', () => {
     expect(getCircleCount()).toBe(5);
   });
 });
-

@@ -16,36 +16,22 @@ class PomodoroCircles extends HTMLElement {
   constructor() {
     super();
 
-    this._circleCount = 0;
+    this._circleCount = this.getAttribute('circleCount');
 
     this.styleElement = createElement('style', {
       innerText: `
-      .circle1 {
-        height: 10px;
-        width: 10px;
-        background-color: #bbb;
-        border-radius: 50%;
-        display: inline-block;
+      .circle-container {
+        display: flex;
       }
-      .circle2 {
-        height: 10px;
-        width: 10px;
-        background-color: #bbb;
+      
+      .circle {
+        height: 15px;
+        width: 15px;
+        border: 1px solid white;
         border-radius: 50%;
-        display: inline-block;
-      }
-      .circle3 {
-        height: 10px;
-        width: 10px;
-        background-color: #bbb;
-        border-radius: 50%;
-        display: inline-block;
-      }
-      .circle4 {
-        height: 10px;
-        width: 10px;
-        background-color: #bbb;
-        border-radius: 50%;
+        margin-left: 7px;
+        margin-right: 7px;
+        margin-top: 15px;
         display: inline-block;
       }
       `,
@@ -54,184 +40,35 @@ class PomodoroCircles extends HTMLElement {
     this.shadow = this.attachShadow({ mode: 'open' });
     // add html elements and styling
     this.counterContainer = createElement('div', {
-      className: 'container',
+      className: 'cirlce-container',
+    });
+    this.circle1 = createElement('div', {
+      className: 'circle',
+    });
+    this.circle2 = createElement('div', {
+      className: 'circle',
+    });
+    this.circle3 = createElement('div', {
+      className: 'circle',
+    });
+    this.circle4 = createElement('div', {
+      className: 'circle',
     });
 
+    this.counterContainer.append(
+      this.circle1,
+      this.circle2,
+      this.circle3,
+      this.circle4,
+    );
     this.shadow.append(this.styleElement, this.counterContainer);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    // TODO: validate newValue
-    // make sure newValue is a number
-    // make sure newValue >= 1 && newValue <= 4
-
     switch (name) {
       case 'circle-count':
-        // TODO: circle count changes behavior
-        if (newValue.isNaN === false) {
-          if (newValue >= 1 && newValue <= 4) {
-            this._circleCount = newValue;
-          } else {
-            this._circleCount = 0;
-          }
-          /*
-          if (this._circleCount === 0) {
-            this.styleElement.innerText = `
-            .circle1 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle2 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle3 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle4 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            `;
-          } else if (this._circleCount === 1) {
-            this.styleElement.innerText = `
-            .circle1 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle2 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle3 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle4 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            `;
-          } else if (this._circleCount === 2) {
-            this.styleElement.innerText = `
-            .circle1 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle2 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle3 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle4 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            `;
-          } else if (this._circleCount === 3) {
-            this.styleElement.innerText = `
-            .circle1 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle2 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle3 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle4 {
-              height: 10px;
-              width: 10px;
-              background-color: #bbb;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            `;
-          } else if (this._circleCount === 4) {
-            this.styleElement.innerText = `
-            .circle1 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle2 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle3 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            .circle4 {
-              height: 10px;
-              width: 10px;
-              background-color: #000;
-              border-radius: 50%;
-              display: inline-block;
-            }
-            `;
-          }
-          */
+        if (newValue >= 1 && newValue <= 4) {
+          this._circleCount = newValue;
         }
         break;
       default:
