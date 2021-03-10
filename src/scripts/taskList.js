@@ -26,6 +26,10 @@ let taskItemForm;
 let taskItemFormContainer;
 let taskItemFormInputs;
 
+/**
+ * Initialize element variables for different elements of task list
+ * @param {HTMLElement} root - root element of tasklist
+ */
 const setRoot = (root) => {
   taskList = root;
   taskListContainer = taskList.shadowRoot.querySelector('.container');

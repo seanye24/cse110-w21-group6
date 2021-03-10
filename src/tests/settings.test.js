@@ -6,12 +6,12 @@ import {
 } from '../utils/utils';
 import {
   initializeSettings,
-  getShortBreak,
-  getLongBreak,
-  setShort,
-  setLong,
-  setTimerSound,
-  getTimerSound,
+  getShortBreakLength,
+  getLongBreakLength,
+  setShortBreakLength,
+  setLongBreakLength,
+  getTimerAudio,
+  setTimerAudio,
 } from '../scripts/settings';
 
 customElements.define('settings-component', Settings);
@@ -31,28 +31,28 @@ describe('testing settings values', () => {
   });
 
   test('see if initial values are setting correctly', () => {
-    expect(Number(getShortBreak())).toBe(300);
-    expect(Number(getLongBreak())).toBe(900);
-    expect(getTimerSound()).toBe('assets/calm-alarm.mp3');
+    expect(Number(getShortBreakLength())).toBe(5);
+    expect(Number(getLongBreakLength())).toBe(15);
+    expect(getTimerAudio()).toBe('assets/calm-alarm.mp3');
   });
 
   test('testing change in input', () => {
-    setShort(240);
-    expect(Number(getShortBreak())).toBe(240);
-    setLong(1020);
-    expect(Number(getLongBreak())).toBe(1020);
-    setTimerSound('assets/kanye-stop.mp3');
-    expect(getTimerSound()).toBe('assets/kanye-stop.mp3');
+    setShortBreakLength(4);
+    expect(Number(getShortBreakLength())).toBe(4);
+    setLongBreakLength(17);
+    expect(Number(getLongBreakLength())).toBe(17);
+    setTimerAudio('assets/kanye-stop.mp3');
+    expect(getTimerAudio()).toBe('assets/kanye-stop.mp3');
   });
 
   test('invalid entries are captured', () => {
-    setShort(120);
-    expect(checkIfShortInputValid(Number(getShortBreak()) / 60)).toBe(false);
-    setShort(360);
-    expect(checkIfShortInputValid(Number(getShortBreak()) / 60)).toBe(false);
-    setLong(1860);
-    expect(checkIfLongInputValid(Number(getLongBreak()) / 60)).toBe(false);
-    setLong(840);
-    expect(checkIfLongInputValid(Number(getLongBreak()) / 60)).toBe(false);
+    setShortBreakLength(120);
+    expect(checkIfShortInputValid(Number(getShortBreakLength()))).toBe(false);
+    setShortBreakLength(360);
+    expect(checkIfShortInputValid(Number(getShortBreakLength()))).toBe(false);
+    setLongBreakLength(1860);
+    expect(checkIfLongInputValid(Number(getLongBreakLength()))).toBe(false);
+    setLongBreakLength(840);
+    expect(checkIfLongInputValid(Number(getLongBreakLength()))).toBe(false);
   });
 });

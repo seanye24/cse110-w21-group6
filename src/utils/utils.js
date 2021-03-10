@@ -3,7 +3,6 @@
  */
 
 import {
-  DEFAULT_POMODORO_INTERVAL,
   DEFAULT_SHORT_BREAK_INTERVAL,
   DEFAULT_LONG_BREAK_INTERVAL,
 } from './constants';
@@ -96,16 +95,11 @@ const getMinutesAndSeconds = (totalSeconds) => {
 
 /**
  * Initialize interval lengths, retrieve from localStorage if possible
- * @return {{pomodoroLength: number, shortBreakLength: number, longBreakLength: number}} - lengths of intervals
+ * @return {{shortBreakLength: number, longBreakLength: number}} - lengths of intervals
  */
 const initializeIntervalLengths = () => {
-  let pomodoroLength = window.localStorage.getItem('pomodoroLength');
   let shortBreakLength = window.localStorage.getItem('shortBreakLength');
   let longBreakLength = window.localStorage.getItem('longBreakLength');
-  if (!pomodoroLength) {
-    pomodoroLength = DEFAULT_POMODORO_INTERVAL;
-    window.localStorage.setItem('pomodoroLength', pomodoroLength);
-  }
   if (!shortBreakLength) {
     shortBreakLength = DEFAULT_SHORT_BREAK_INTERVAL;
     window.localStorage.setItem('shortBreakLength', shortBreakLength);
@@ -114,7 +108,7 @@ const initializeIntervalLengths = () => {
     longBreakLength = DEFAULT_LONG_BREAK_INTERVAL;
     window.localStorage.setItem('longBreakLength', longBreakLength);
   }
-  return { pomodoroLength, shortBreakLength, longBreakLength };
+  return { shortBreakLength, longBreakLength };
 };
 
 export {

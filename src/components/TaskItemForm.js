@@ -40,7 +40,7 @@ class TaskItemForm extends HTMLElement {
 
       .pomodoro-input-container {
         flex: 1;
-        min-width: 75px;
+        min-width: 95px;
         position: relative;
       }
 
@@ -147,7 +147,7 @@ class TaskItemForm extends HTMLElement {
       className: 'task-input-label',
       id: 'pomodoro-input-label',
       for: 'pomodoro-input',
-      innerText: 'Pomodoros',
+      innerText: 'Est Pomodoros',
     });
 
     this.pomodoroInputElement = createElement('input', {
