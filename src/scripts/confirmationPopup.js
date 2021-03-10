@@ -24,7 +24,7 @@ const closePopup = () => {
 /**
  * Initialize element variables for different elements of confirmation popup
  * @param {HTMLElement} root - confirmation popup
- * @param {() => void} onAcceptCallback - callback when confirmation is accepted
+ * @param {Function} onAcceptCallback - callback when confirmation is accepted
  */
 const initializeElements = (root) => {
   confirmationOverlay = root;
@@ -36,7 +36,7 @@ const initializeElements = (root) => {
 /**
  * Initialize popup
  * @param {HTMLElement} root - confirmation element
- * @param {() => void} onAcceptCallback - callback when confirmation is accepted
+ * @param {Function} onAcceptCallback - callback when confirmation is accepted
  */
 const initializePopup = (root, onAcceptCallback) => {
   initializeElements(root);
