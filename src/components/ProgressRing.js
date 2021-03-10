@@ -101,8 +101,6 @@ class ProgressRing extends HTMLElement {
       }
 
       .foreign-object {
-        width: ${2 * radius}px;
-        height: ${2 * radius}px;
       }
 
       .foreign-object-container {
@@ -114,6 +112,8 @@ class ProgressRing extends HTMLElement {
       }
     `;
 
+    this.foreignObjectElement.setAttribute('width', 2 * radius);
+    this.foreignObjectElement.setAttribute('height', 2 * radius);
     this.circleElement.setAttribute('r', normalizedRadius);
     this.circleElement.setAttribute('cx', radius);
     this.circleElement.setAttribute('cy', radius);
@@ -129,19 +129,28 @@ class ProgressRing extends HTMLElement {
     const newValueNumber = validateNumber(newValue);
 
     // check if attribute value is number
-    if (newValueNumber === null) return;
+    if (newValueNumber === null) {
+      return;
+    }
 
     // validate attribute ranges
     switch (name) {
       case 'radius':
-        if (newValueNumber < 0) return;
+        if (newValueNumber < 0) {
+          return;
+        }
         break;
       case 'stroke':
-        if (newValueNumber < 0) return;
+        if (newValueNumber < 0) {
+          return;
+        }
         break;
       case 'progress':
-        if (name === 'progress')
-          if (newValueNumber < 0 || newValueNumber > 100) return;
+        if (name === 'progress') {
+          if (newValueNumber < 0 || newValueNumber > 100) {
+            return;
+          }
+        }
         break;
       default:
         return;

@@ -10,32 +10,39 @@ module.exports = (env, argv) => {
   const config = {
     entry: ['./src/scripts/index.js'],
     mode: argv.mode || 'production',
+    target: 'web',
     output: {
       filename: 'main.js',
       path: path.join(__dirname, 'dist'),
-      assetModuleFilename: 'images/[hash][ext][query]',
+      assetModuleFilename: 'assets/[hash][ext][query]',
     },
     module: {
       rules: [
         {
           test: /\.css$/i,
           include: [path.join(__dirname, 'src')],
-          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          use: [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: ['postcss-preset-env'],
+                },
+              },
+            },
+          ],
         },
         {
-          test: /\.(jpe?g|png|gif|svg)$/i,
+          test: /\.(jpe?g|png|gif|svg|mp3)$/i,
           include: [path.join(__dirname, 'src')],
           type: 'asset/resource',
         },
         {
           test: /\.js$/,
           include: [path.join(__dirname, 'src')],
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env'],
-            },
-          },
+          use: ['babel-loader'],
         },
       ],
     },
@@ -58,7 +65,7 @@ module.exports = (env, argv) => {
     ],
     optimization: {
       minimize: true,
-      minimizer: [`...`, new CssMinimizerPlugin()],
+      minimizer: ['...', new CssMinimizerPlugin()],
     },
     devServer: {
       contentBase: path.join(__dirname, 'dist'),

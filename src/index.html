@@ -26,29 +26,49 @@
   <body>
     <nav class="navbar">
       <ul class="links">
-        <li><a class="link" href="#main">TIMER</a></li>
+        <li><a class="link" href="#main">POMODORO TIMER</a></li>
         <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
       </ul>
-      <a
-        href="https://github.com/seanye24/cse110-w21-group6"
-        target="_blank"
-        rel="noreferrer noopener"
-        ><img src="assets/github-icon.png" alt="github" class="github-icon"
-      /></a>
+      <img
+        src="assets/settings-icon.png"
+        alt="settings"
+        data-popup-target="#popup"
+        id="open-popup"
+        class="settings-icon"
+      />
     </nav>
     <div id="main">
-      <h1 class="title">Pomodoro</h1>
       <progress-ring
         progress="100"
         radius="150"
         stroke="5"
         class="progress-ring"
       ></progress-ring>
-      <button class="session-button">Start</button>
+      <button class="session-button" id="session-button">Start</button>
+      <div class="confirmation-overlay">
+        <div class="confirmation-popup">
+          <p class="confirmation-question">
+            Are you sure you want to end the session?
+          </p>
+          <div class="confirmation-button-container">
+            <button class="confirmation-button confirmation-no-button">
+              Cancel
+            </button>
+            <button class="confirmation-button confirmation-yes-button">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="announcement-container">
         <h2 class="announcement">Work on your tasks!</h2>
-        <button class="announcement-button yes-button hidden">Yes</button>
-        <button class="announcement-button no-button hidden">No</button>
+        <button class="announcement-button announcement-yes-button hidden">
+          Yes
+        </button>
+        <button class="announcement-button announcement-no-button hidden">
+          No
+        </button>
       </div>
       <task-list class="task-list"></task-list>
     </div>
@@ -80,8 +100,31 @@
       </p>
     </div>
 
+    <settings-component class="settings"></settings-component>
+
+    <div class="summary-overlay">
+      <div class="summary-popup">
+        <h1 class="summary-title">Summary</h1>
+        <hr class="summary-hr" />
+        <div class="task-summary-list"></div>
+        <div class="summary-stats-container">
+          <span class="summary-actual-pomos"></span>
+          <span class="summary-estimated-pomos"></span>
+        </div>
+        <button class="summary-close-button">CLOSE</button>
+      </div>
+    </div>
+
     <footer>
-      <p>Created by Pomodo Dragons © 2021</p>
+      <p>
+        Created by Pomodo Dragons © 2021&ensp;
+        <a
+          href="https://github.com/seanye24/cse110-w21-group6"
+          target="_blank"
+          rel="noreferrer noopener"
+          ><img src="assets/github-icon.png" alt="github" class="github-icon"
+        /></a>
+      </p>
     </footer>
   </body>
 </html>
