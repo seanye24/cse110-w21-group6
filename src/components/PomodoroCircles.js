@@ -83,8 +83,10 @@ class PomodoroCircles extends HTMLElement {
   }
 
   set circleCount(circleCount) {
-    this._circleCount = circleCount;
-    this.setAttribute('circleCount', this._circleCount);
+    if (circleCount >= 0 && circleCount <= 4) {
+      this._circleCount = circleCount;
+      this.setAttribute('circleCount', this._circleCount);
+    }
   }
 }
 

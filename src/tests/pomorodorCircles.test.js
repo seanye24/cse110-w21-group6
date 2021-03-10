@@ -12,13 +12,12 @@ describe('testing pomodoro circles', () => {
   // initialize pomodoro circles before each test
   beforeEach(() => {
     const pomodoroCirclesElement = createElement('pomodoro-circles', {
-      circleCount: 0,
       className: 'pomodoro-circles',
     });
     document.body.innerHTML = '';
     document.body.appendChild(pomodoroCirclesElement);
     initializePomodoroCircles(pomodoroCirclesElement);
-    jest.useFakeTimers();
+    // jest.useFakeTimers();
   });
 
   test('setCircleCount sets circleCount correctly', () => {
@@ -32,7 +31,12 @@ describe('testing pomodoro circles', () => {
     expect(getCircleCount()).toBe(3);
     setCircleCount(4);
     expect(getCircleCount()).toBe(4);
+  });
+
+  test('invalid circle counts are ignored', () => {
+    setCircleCount(-1);
+    expect(getCircleCount()).toBe(null);
     setCircleCount(5);
-    expect(getCircleCount()).toBe(5);
+    expect(getCircleCount()).toBe(null);
   });
 });
