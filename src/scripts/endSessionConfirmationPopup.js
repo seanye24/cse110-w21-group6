@@ -28,7 +28,7 @@ const closeConfirmationPopup = () => {
  */
 const setRoot = (root) => {
   confirmationOverlay = root;
-  confirmationPopup = confirmationOverlay.querySelector('.confirmation-popup');
+  confirmationPopup = confirmationOverlay.querySelector('#confirmation-popup');
   noButton = confirmationPopup.querySelector('.confirmation-no-button');
   yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
   noButton.onmousedown = (e) => e.preventDefault();

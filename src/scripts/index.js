@@ -201,7 +201,7 @@ const endSession = (sessionButton, numPomodoros) => {
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
   initializeSummaryPopup(
-    document.querySelector('.summary-overlay'),
+    document.querySelector('#summary-overlay'),
     getTasks(),
   );
   openSummaryPopup();
@@ -214,7 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const sessionButton = document.querySelector('.session-button');
   const announcementElement = document.querySelector('.announcement-container');
   const taskListElement = document.querySelector('.task-list');
-  const confirmationOverlay = document.querySelector('.confirmation-overlay');
+  const confirmationOverlay = document.querySelector('#confirmation-overlay');
   const settingsElement = document.querySelector('.settings');
 
   const saveSettingsCallback = (newShortBreakLength, newLongBreakLength) => {

@@ -79,7 +79,7 @@ const createTaskSummaryList = (taskList) => {
  */
 const setRoot = (root) => {
   summaryOverlay = root;
-  summaryPopup = summaryOverlay.querySelector('.summary-popup');
+  summaryPopup = summaryOverlay.querySelector('#summary-popup');
   taskSummaryList = summaryOverlay.querySelector('.task-summary-list');
   actualPomosElement = summaryOverlay.querySelector('.summary-actual-pomos');
   estimatedPomosElement = summaryOverlay.querySelector(

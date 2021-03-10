@@ -188,11 +188,11 @@ footer {
   height: 1.75em;
   border-radius: 50%;
   vertical-align: bottom;
+  background: #fff;
 }
 
-.confirmation-overlay,
-.summary-overlay {
-  transition: 200ms ease-in;
+.overlay {
+  transition: 200ms;
   z-index: 4;
   cursor: pointer;
   visibility: hidden;
@@ -204,13 +204,11 @@ footer {
   background: rgba(0, 0, 0, 0.5);
 }
 
-.confirmation-overlay.active,
-.summary-overlay.active {
+.overlay.active {
   visibility: visible;
 }
 
-.confirmation-popup,
-.summary-popup {
+.popup {
   transition: 200ms ease-in;
   cursor: initial;
   position: fixed;
@@ -224,7 +222,7 @@ footer {
   padding: 1em;
 }
 
-.summary-popup {
+#summary-popup {
   min-height: 500px;
   max-height: 600px;
   display: flex;
@@ -232,8 +230,7 @@ footer {
   align-items: center;
 }
 
-.confirmation-overlay.active .confirmation-popup,
-.summary-overlay.active .summary-popup {
+.overlay.active .popup {
   transform: translate(-50%, -50%) scale(1);
 }
 
