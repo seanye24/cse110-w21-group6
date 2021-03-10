@@ -1,6 +1,5 @@
 /**
  * @file Manage tasklist for page
- * @author Sean Ye
  */
 
 /**
@@ -246,10 +245,9 @@ const handleTaskFormSubmit = (e) => {
   const { value: pomodoro } = pomodoroInput;
 
   const trimmedName = name.trim();
+  const pomodoroNumber = Number(pomodoro);
 
-  // check if task already exists
-  if (tasks.some((task) => task.name === trimmedName)) {
-    // TODO: Update name label
+  if (Number.isNaN(pomodoroNumber)) {
     return;
   }
 
@@ -257,7 +255,7 @@ const handleTaskFormSubmit = (e) => {
 
   addTask({
     name: trimmedName,
-    estimatedPomodoros: pomodoro,
+    estimatedPomodoros: pomodoroNumber,
     usedPomodoros: 0,
     selected: false,
     completed: false,
