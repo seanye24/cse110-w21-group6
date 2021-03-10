@@ -10,6 +10,7 @@ module.exports = (env, argv) => {
   const config = {
     entry: ['./src/scripts/index.js'],
     mode: argv.mode || 'production',
+    target: 'web',
     output: {
       filename: 'main.js',
       path: path.join(__dirname, 'dist'),
@@ -64,7 +65,7 @@ module.exports = (env, argv) => {
     ],
     optimization: {
       minimize: true,
-      minimizer: [`...`, new CssMinimizerPlugin()],
+      minimizer: ['...', new CssMinimizerPlugin()],
     },
     devServer: {
       contentBase: path.join(__dirname, 'dist'),

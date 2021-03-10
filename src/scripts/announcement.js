@@ -14,8 +14,8 @@ let noButton;
 const initializeAnnouncement = (containerElement) => {
   announcementContainer = containerElement;
   announcementElement = announcementContainer.querySelector('.announcement');
-  yesButton = announcementContainer.querySelector('.yes-button');
-  noButton = announcementContainer.querySelector('.no-button');
+  yesButton = announcementContainer.querySelector('.announcement-yes-button');
+  noButton = announcementContainer.querySelector('.announcement-no-button');
   yesButton.onmousedown = (e) => e.preventDefault();
   noButton.onmousedown = (e) => e.preventDefault();
 };

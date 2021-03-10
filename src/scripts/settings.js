@@ -17,22 +17,8 @@ let shortBreakInput;
 let longBreakInput;
 let soundInput;
 let errorMessages;
-
-/**
- * Initialize element variables for different elements of settings component
- * @param {HTMLElement} root - root element of settings component
- */
-const setRoot = (root) => {
-  settingsElement = root;
-  const { shadowRoot } = settingsElement;
-  popupEl = shadowRoot.querySelector('.popup');
-  saveButton = shadowRoot.querySelector('.save-button');
-  overlay = shadowRoot.querySelector('#overlay');
-  shortBreakInput = shadowRoot.querySelector('#short-number');
-  longBreakInput = shadowRoot.querySelector('#long-number');
-  soundInput = shadowRoot.querySelector('#sound');
-  errorMessages = shadowRoot.querySelectorAll('.error');
-};
+const timerAudio = new Audio();
+timerAudio.volume = 0.2;
 
 /**
  * Get short break length
@@ -50,7 +36,7 @@ const getLongBreakLength = () => settingsElement.longBreakLength;
  * Get pathway to sound file
  * @return {string} - audio url
  */
-const getTimerAudio = () => settingsElement.getAttribute('timerSound');
+const getTimerAudio = () => settingsElement.timerSound;
 
 /**
  * Set short break length
@@ -92,6 +78,7 @@ const openSettingsPopup = () => {
  * Close settings popup
  */
 const closeSettingsPopup = () => {
+  timerAudio.pause();
   popupEl.classList.remove('active');
   overlay.classList.remove('active');
 };
@@ -121,6 +108,22 @@ const saveSettings = () => {
 };
 
 /**
+ * Initialize element variables for different elements of settings component
+ * @param {HTMLElement} root - root element of settings component
+ */
+const setRoot = (root) => {
+  settingsElement = root;
+  const { shadowRoot } = settingsElement;
+  popupEl = shadowRoot.querySelector('.popup');
+  saveButton = shadowRoot.querySelector('.save-button');
+  overlay = shadowRoot.querySelector('#overlay');
+  shortBreakInput = shadowRoot.querySelector('#short-number');
+  longBreakInput = shadowRoot.querySelector('#long-number');
+  soundInput = shadowRoot.querySelector('#sound');
+  errorMessages = shadowRoot.querySelectorAll('.error');
+};
+
+/**
  * Set the initial settings element
  * @param {HTMLElement} element - settings element
  * @param {() => void} saveSettingsCallback - callback for when settings are saved
@@ -132,6 +135,8 @@ const initializeSettings = (element, saveSettingsCallback) => {
   setLongBreakLength(longBreakLength);
   setTimerAudio('assets/calm-alarm.mp3'); // TODO: pull from localstorage
 
+  overlay.onclick = closeSettingsPopup;
+
   saveButton.addEventListener('click', () => {
     const newBreakLengths = saveSettings();
     if (!newBreakLengths) {
@@ -142,9 +147,9 @@ const initializeSettings = (element, saveSettingsCallback) => {
   });
 
   soundInput.onchange = () => {
-    const audio = new Audio(soundInput.value);
-    audio.volume = 0.2;
-    audio.play();
+    timerAudio.pause();
+    timerAudio.src = soundInput.value;
+    timerAudio.play();
   };
 };
 
