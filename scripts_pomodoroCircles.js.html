@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/settings.js</title>
+    <title>JSDoc: Source: scripts/pomodoroCircles.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/settings.js</h1>
+    <h1 class="page-title">Source: scripts/pomodoroCircles.js</h1>
 
     
 
@@ -27,176 +27,34 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage tasklist for page
- * @author Dillan Merchant
+ * @file Manage pomodoro circles for page
  */
 
-import {
-  initializeIntervalLengths,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
-  checkIfTimerAudioValid,
-} from '../utils/utils';
-
-let settingsElement;
-let popupEl;
-let saveButton;
-let overlay;
-let shortBreakInput;
-let longBreakInput;
-let soundInput;
-let errorMessages;
-const timerAudio = new Audio();
-timerAudio.volume = 0.2;
+let circlesElement;
 
 /**
- * Get short break length
- * @return {number} - short break length
+ * Get number of filled pomodoro circles
+ * @return {number} - amount of filled pomodoro circles
  */
-const getShortBreakLength = () => settingsElement.shortBreakLength;
+const getCircleCount = () => circlesElement.circleCount;
 
 /**
- * Get long break length
- * @return {number} - long break length
+ * Set number of filled pomodoro circles
+ * @param {number} progress - amount of filled pomodoro circles to set
  */
-const getLongBreakLength = () => settingsElement.longBreakLength;
-
-/**
- * Get pathway to sound file
- * @return {string} - audio url
- */
-const getTimerAudio = () => settingsElement.timerSound;
-
-/**
- * Set short break length
- * @param {number} shortBreakLength - new short break length
- */
-const setShortBreakLength = (shortBreakLength) => {
-  settingsElement.shortBreakLength = shortBreakLength;
+const setCircleCount = (circleCount) => {
+  circlesElement.circleCount = circleCount;
 };
 
 /**
- * Set long break length
- * @param {number} longBreakLength - new long break length
+ * Set pomodoro circles
+ * @param {HTMLElement} element - pomodoro circles element
  */
-const setLongBreakLength = (longBreakLength) => {
-  settingsElement.longBreakLength = longBreakLength;
+const initializePomodoroCircles = (element) => {
+  circlesElement = element;
 };
 
-/**
- * Set url of audio
- * @param {number} input - pathway to sound
- */
-const setTimerAudio = (input) => {
-  settingsElement.timerSound = input;
-  window.localStorage.setItem('timerAudio', input);
-};
-
-/**
- * Open settings popup
- */
-const openPopup = () => {
-  popupEl.classList.add('active');
-  overlay.classList.add('active');
-
-  shortBreakInput.value = getShortBreakLength();
-  longBreakInput.value = getLongBreakLength();
-  soundInput.value = getTimerAudio();
-};
-
-/**
- * Close settings popup
- */
-const closePopup = () => {
-  timerAudio.pause();
-  popupEl.classList.remove('active');
-  overlay.classList.remove('active');
-};
-
-/**
- * Save interval length / audio settings, display error if invalid
- * @return {(number[] | null)} - new interval lengths, null if error occurs
- */
-const saveSettings = () => {
-  const newShortBreakLength = shortBreakInput.value;
-  const newLongBreakLength = longBreakInput.value;
-  const isShortInputValid = checkIfShortInputValid(newShortBreakLength);
-  const isLongInputValid = checkIfLongInputValid(newLongBreakLength);
-
-  errorMessages[0].style.visibility = isShortInputValid ? 'hidden' : 'visible';
-  errorMessages[1].style.visibility = isLongInputValid ? 'hidden' : 'visible';
-  if (!isShortInputValid || !isLongInputValid) {
-    return null;
-  }
-
-  setTimerAudio(soundInput.value);
-  setShortBreakLength(newShortBreakLength);
-  setLongBreakLength(newLongBreakLength);
-  localStorage.setItem('shortBreakLength', newShortBreakLength);
-  localStorage.setItem('longBreakLength', newLongBreakLength);
-  return [newShortBreakLength, newLongBreakLength];
-};
-
-/**
- * Initialize element variables for different elements of settings component
- * @param {HTMLElement} root - root element of settings component
- */
-const initializeElements = (root) => {
-  settingsElement = root;
-  const { shadowRoot } = settingsElement;
-  popupEl = shadowRoot.querySelector('.popup');
-  saveButton = shadowRoot.querySelector('.save-button');
-  overlay = shadowRoot.querySelector('#overlay');
-  shortBreakInput = shadowRoot.querySelector('#short-number');
-  longBreakInput = shadowRoot.querySelector('#long-number');
-  soundInput = shadowRoot.querySelector('#sound');
-  errorMessages = shadowRoot.querySelectorAll('.error');
-};
-
-/**
- * Set the initial settings element
- * @param {HTMLElement} root - settings element
- * @param {Function} saveSettingsCallback - callback for when settings are saved
- */
-const initializePopup = (root, saveSettingsCallback) => {
-  const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
-  initializeElements(root);
-  setShortBreakLength(shortBreakLength);
-  setLongBreakLength(longBreakLength);
-  const savedAudio = window.localStorage.getItem('timerAudio');
-  setTimerAudio(
-    checkIfTimerAudioValid(savedAudio) ? savedAudio : 'assets/calm-alarm.mp3',
-  );
-
-  overlay.onclick = closePopup;
-
-  saveButton.addEventListener('click', () => {
-    const newBreakLengths = saveSettings();
-    if (!newBreakLengths) {
-      return;
-    }
-    closePopup();
-    saveSettingsCallback(...newBreakLengths);
-  });
-
-  soundInput.onchange = () => {
-    timerAudio.pause();
-    timerAudio.src = soundInput.value;
-    timerAudio.play();
-  };
-};
-
-export {
-  initializePopup,
-  openPopup,
-  closePopup,
-  getShortBreakLength,
-  getLongBreakLength,
-  getTimerAudio,
-  setShortBreakLength,
-  setLongBreakLength,
-  setTimerAudio,
-};
+export { initializePomodoroCircles, getCircleCount, setCircleCount };
 </code></pre>
         </article>
     </section>
