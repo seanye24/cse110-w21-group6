@@ -33,12 +33,10 @@ import {
 import {
   initializeConfirmation,
   openConfirmationPopup,
-  closeConfirmationPopup,
 } from './endSessionConfirmationPopup';
 import {
   initializePopup as initializeSummaryPopup,
   openPopup as openSummaryPopup,
-  closePopup as closeSummaryPopup,
 } from './summaryPopup';
 import {
   POMODORO_ANNOUNCEMENT,

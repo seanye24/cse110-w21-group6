@@ -33,6 +33,7 @@ const openPopup = () => {
  */
 const closePopup = () => {
   summaryOverlay.classList.remove('active');
+  taskSummaryList.innerHTML = '';
 };
 
 /**
@@ -44,7 +45,7 @@ const createTaskSummary = (task) => {
   const { name, usedPomodoros, estimatedPomodoros, completed } = task;
 
   const taskSummary = createElement('div', {
-    className: `task-summary ${completed ? 'completed' : 'incompleted'}`,
+    className: `task-summary-item ${completed ? 'completed' : 'incompleted'}`,
   });
   const nameElement = createElement('span', {
     className: 'task-summary-name',
@@ -64,7 +65,9 @@ const createTaskSummary = (task) => {
  * @param {Task[]} taskList - tasks to summarize
  */
 const createTaskSummaryList = (taskList) => {
-  taskList.forEach((task) => {
+  const completedTasks = taskList.filter((task) => task.completed);
+  const incompletedTasks = taskList.filter((task) => !task.completed);
+  [...completedTasks, ...incompletedTasks].forEach((task) => {
     const taskSummary = createTaskSummary(task);
     taskSummaryList.append(taskSummary);
   });
@@ -93,7 +96,20 @@ const setRoot = (root) => {
 const initializePopup = (element, tasks) => {
   setRoot(element);
   createTaskSummaryList(tasks);
+  const { actual, estimated } = tasks.reduce(
+    (acc, task) => ({
+      actual: acc.actual + task.usedPomodoros,
+      estimated: acc.estimated + task.estimatedPomodoros,
+    }),
+    { actual: 0, estimated: 0 },
+  );
+  actualPomosElement.innerText = `Actual: ${actual}`;
+  estimatedPomosElement.innerText = `Estimated: ${estimated}`;
+
   closeSummaryButton.onclick = closePopup;
+  closeSummaryButton.onmousedown = (e) => e.preventDefault();
+  summaryOverlay.onclick = closePopup;
+  summaryPopup.onclick = (e) => e.stopPropagation();
 };
 
 export { initializePopup, openPopup, closePopup };
