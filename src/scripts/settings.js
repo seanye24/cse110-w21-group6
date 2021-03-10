@@ -17,6 +17,8 @@ let shortBreakInput;
 let longBreakInput;
 let soundInput;
 let errorMessages;
+const timerAudio = new Audio();
+timerAudio.volume = 0.2;
 
 /**
  * Get short break length
@@ -34,7 +36,7 @@ const getLongBreakLength = () => settingsElement.longBreakLength;
  * Get pathway to sound file
  * @return {string} - audio url
  */
-const getTimerAudio = () => settingsElement.getAttribute('timerSound');
+const getTimerAudio = () => settingsElement.timerSound;
 
 /**
  * Set short break length
@@ -76,6 +78,7 @@ const openSettingsPopup = () => {
  * Close settings popup
  */
 const closeSettingsPopup = () => {
+  timerAudio.pause();
   popupEl.classList.remove('active');
   overlay.classList.remove('active');
 };
@@ -144,9 +147,9 @@ const initializeSettings = (element, saveSettingsCallback) => {
   });
 
   soundInput.onchange = () => {
-    const audio = new Audio(soundInput.value);
-    audio.volume = 0.2;
-    audio.play();
+    timerAudio.pause();
+    timerAudio.src = soundInput.value;
+    timerAudio.play();
   };
 };
 
