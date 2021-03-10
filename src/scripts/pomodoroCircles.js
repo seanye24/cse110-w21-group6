@@ -4,12 +4,9 @@
 
 let circlesElement;
 
-let pomoCircles;
-
 const setRoot = (root) => {
   circlesElement = root;
   const { shadowRoot } = circlesElement;
-  pomoCircles = shadowRoot.querySelectorAll('.circle');
 };
 
 /**

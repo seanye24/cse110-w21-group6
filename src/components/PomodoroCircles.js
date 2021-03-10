@@ -34,13 +34,7 @@ class PomodoroCircles extends HTMLElement {
       }
 
       .circle.active {
-        height: 15px;
-        width: 15px;
-        border: 1px solid white;
-        background-color: #FFF;
-        border-radius: 50%;
-        margin: 15px 7px 0px;
-        display: inline-block;
+        background-color: #fff;
       }
       `,
     });
@@ -73,13 +67,12 @@ class PomodoroCircles extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    switch (name) {
-      case 'circle-count':
-        if (newValue >= 1 && newValue <= 4) {
-          this._circleCount = newValue;
-        }
-        break;
-      default:
+    const newValueNumber = Number(newValue);
+    for (let i = 1; i <= newValueNumber; i++) {
+      if (i <= newValueNumber)
+        this[`circle${i}`].classList.add('active');
+      else
+        this[`circle${i}`].classList.remove('active');
     }
   }
 
