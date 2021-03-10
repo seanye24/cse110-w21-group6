@@ -35,4 +35,23 @@ const setRadiusStroke = (radius, stroke) => {
   progressRingElement.stroke = stroke;
 };
 
-export { initializeProgressRing, getProgress, setProgress, setRadiusStroke };
+/**
+ * Get radius of ring
+ * @return {number} radius
+ */
+const getRadius = () => progressRingElement.radius;
+
+/**
+ * Get stroke of ring
+ * @return {number} stroke
+ */
+const getStroke = () => progressRingElement.stroke;
+
+export {
+  initializeProgressRing,
+  getProgress,
+  setProgress,
+  setRadiusStroke,
+  getRadius,
+  getStroke,
+};
