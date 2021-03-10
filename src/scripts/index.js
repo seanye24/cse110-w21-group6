@@ -9,6 +9,7 @@ import {
   completeTask,
   deselectAllTasks,
   getCurrentlySelectedTask,
+  getTasks,
   incrementPomodoro,
   initializeTaskList,
   selectFirstTask,
@@ -34,6 +35,11 @@ import {
   openConfirmationPopup,
   closeConfirmationPopup,
 } from './endSessionConfirmationPopup';
+import {
+  initializePopup as initializeSummaryPopup,
+  openPopup as openSummaryPopup,
+  closePopup as closeSummaryPopup,
+} from './summaryPopup';
 import {
   POMODORO_ANNOUNCEMENT,
   SHORT_BREAK_ANNOUNCEMENT,
@@ -192,7 +198,11 @@ const endSession = (sessionButton, numPomodoros) => {
   deselectAllTasks();
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
-  // TODO: display session summary
+  initializeSummaryPopup(
+    document.querySelector('.summary-overlay'),
+    getTasks(),
+  );
+  openSummaryPopup();
 };
 
 window.addEventListener('DOMContentLoaded', () => {

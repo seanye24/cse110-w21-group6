@@ -36,7 +36,7 @@ const setRoot = (root) => {
 };
 
 /**
- * Set the initial confirmation element
+ * Initialize popup
  * @param {HTMLElement} element - confirmation element
  * @param {() => void} onAcceptCallback - callback when confirmation is accepted
  */

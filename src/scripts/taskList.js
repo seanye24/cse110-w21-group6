@@ -1,6 +1,5 @@
 /**
  * @file Manage tasklist for page
- * @author Sean Ye
  */
 
 /**

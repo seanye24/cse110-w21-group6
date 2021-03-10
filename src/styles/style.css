@@ -190,7 +190,8 @@ footer {
   vertical-align: bottom;
 }
 
-.confirmation-overlay {
+.confirmation-overlay,
+.summary-overlay {
   transition: 200ms ease-in;
   z-index: 4;
   cursor: pointer;
@@ -203,11 +204,13 @@ footer {
   background: rgba(0, 0, 0, 0.5);
 }
 
-.confirmation-overlay.active {
+.confirmation-overlay.active,
+.summary-overlay.active {
   visibility: visible;
 }
 
-.confirmation-popup {
+.confirmation-popup,
+.summary-popup {
   transition: 200ms ease-in;
   cursor: initial;
   position: fixed;
@@ -220,7 +223,8 @@ footer {
   padding: 1em;
 }
 
-.confirmation-overlay.active .confirmation-popup {
+.confirmation-overlay.active .confirmation-popup,
+.summary-overlay.active .summary-popup {
   transform: translate(-50%, -50%) scale(1);
 }
 
@@ -248,4 +252,13 @@ footer {
 
 .confirmation-button:hover {
   background-color: rgba(176, 176, 176, 0.8);
+}
+
+.summary-title {
+  margin: 0;
+  text-align: center;
+}
+
+.summary-hr {
+  margin-bottom: 1em;
 }
