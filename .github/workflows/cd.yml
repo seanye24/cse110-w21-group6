@@ -25,4 +25,4 @@ jobs:
       - name: Deploy docs to docs branch
         run: |
           yarn run docs
-          git subtree push --prefix https://github.com/seanye24/cse110-w21-group6.git jsdoc
+          git subtree add --prefix https://github.com/seanye24/cse110-w21-group6.git jsdoc
