@@ -217,6 +217,7 @@ footer {
   transform: translate(-50%, -50%) scale(0);
   background: #fff;
   border-radius: 5px;
+  padding: 1em;
 }
 
 .confirmation-overlay.active .confirmation-popup {
@@ -225,6 +226,8 @@ footer {
 
 .confirmation-question {
   text-align: center;
+  font-size: 1.5em;
+  color: #555;
 }
 
 .confirmation-button-container {
@@ -235,14 +238,14 @@ footer {
 .confirmation-button {
   cursor: pointer;
   margin: 1em;
-  padding: 0.375rem 0.75rem;
+  padding: 0.375em 0.75em;
   border: none;
   border-radius: 0.25rem;
-  background-color: rgba(72, 202, 228, 1);
+  background-color: rgba(176, 176, 176, 1);
   color: #fff;
-  font: 1rem 'Source Sans Pro', sans-serif;
+  font: 1.25em 'Source Sans Pro', sans-serif;
 }
 
 .confirmation-button:hover {
-  background-color: rgba(72, 202, 228, 0.8);
+  background-color: rgba(176, 176, 176, 0.8);
 }
