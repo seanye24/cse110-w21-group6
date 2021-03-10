@@ -131,9 +131,6 @@ const startSession = async (changeSessionButton) => {
       currInterval = shouldBeLongBreak
         ? LONG_BREAK_INTERVAL
         : SHORT_BREAK_INTERVAL;
-
-      // reenable task list
-      setTasklistUsability(true);
     } else {
       // prompt user
       setButtonVisibility('visible');
@@ -153,6 +150,7 @@ const startSession = async (changeSessionButton) => {
         setAnnouncement(currAnnouncement);
         setButtonVisibility('hidden');
         wasAnnouncementButtonClicked = true;
+        setTasklistUsability(true);
       });
       setAnnouncementNoButtonCallback(() => {
         setAnnouncement(currAnnouncement);
