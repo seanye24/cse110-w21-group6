@@ -1,7 +1,8 @@
+/* eslint-disable no-await-in-loop */
 import {
   initializeIntervalLengths,
-  checkIfShortInputValid ,
-  checkIfLongInputValid, 
+  checkIfShortInputValid,
+  checkIfLongInputValid,
   tick,
   validateNumber,
   getMinutesAndSeconds,
@@ -18,18 +19,18 @@ describe('test intervals', () => {
   test('default pomodoro intervals', () => {
     initializeIntervalLengths();
 
-    expect(window.localStorage.getItem('shortBreakLength')).toBe('5'); 
-    expect(window.localStorage.getItem('longBreakLength')).toBe('15'); 
+    expect(window.localStorage.getItem('shortBreakLength')).toBe('5');
+    expect(window.localStorage.getItem('longBreakLength')).toBe('15');
   });
 
   test('custum intervals', () => {
-    window.localStorage.setItem('shortBreakLength', 3); 
-    window.localStorage.setItem('longBreakLength', 30); 
+    window.localStorage.setItem('shortBreakLength', 3);
+    window.localStorage.setItem('longBreakLength', 30);
 
     initializeIntervalLengths();
 
-    expect(window.localStorage.getItem('shortBreakLength')).toBe('3'); 
-    expect(window.localStorage.getItem('longBreakLength')).toBe('30'); 
+    expect(window.localStorage.getItem('shortBreakLength')).toBe('3');
+    expect(window.localStorage.getItem('longBreakLength')).toBe('30');
   });
 });
 
@@ -94,18 +95,38 @@ describe('test ticking', () => {
     jest.useFakeTimers();
   });
 
-  test('call tick multiple times', () => {
-    for (let i = 1; i < 11; i++) {
-      tick(i);
-      expect(setTimeout).toHaveBeenLastCalledWith(
-        expect.any(Function),
-        i * 1000,
-      );
-    }
-    expect(setTimeout).toHaveBeenCalledTimes(10);
-  });
+  const flushPromises = () => {
+    return new Promise((resolve) => setImmediate(resolve));
+  };
 
-  // TODO: add more tests for tick using await/.then()
+  test('call tick multiple times', async () => {
+    let a = 0;
+    tick(1)
+      .then(() => {
+        a = 1;
+        return tick(1);
+      })
+      .then(() => {
+        a = 2;
+        return tick(1);
+      })
+      .then(() => {
+        a = 3;
+      });
+
+    for (let i = 0; i <= 3; i++) {
+      expect(a).toBe(i);
+      jest.advanceTimersByTime(500);
+      await flushPromises();
+      expect(a).toBe(i);
+      jest.advanceTimersByTime(500);
+      await flushPromises();
+    }
+    expect(a).toBe(3);
+    jest.advanceTimersByTime(500);
+    await flushPromises();
+    expect(a).toBe(3);
+  });
 });
 
 describe('test createElement', () => {
