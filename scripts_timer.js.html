@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Source: scripts/timer.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Source: scripts/timer.js</h1>
 
     
 
@@ -27,62 +27,35 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
+ * @author Fernando Bracamonte
+ * @file Timer script used to emulate the pomodoro process
  */
 
-let progressRingElement;
+let timerElement;
 
 /**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
+ * Initialize timer component
+ * @param {HTMLElement} element - timer element
  */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
+const initializeTimer = (element) => {
+  timerElement = element;
 };
 
 /**
- * Get progress
- * @return {number} - current progress
+ * Set time of timer component
+ * @param {number} time - new time of timer (in seconds)
  */
-const getProgress = () => progressRingElement.progress;
-
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
+const setTimer = (time) => {
+  timerElement.time = time;
 };
 
 /**
- * Set radius of ring
- * @param {number} radius - new radius to set
+ * Get time of timer component
+ * @return {number} - current time of timer (in seconds)
  */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
-};
+const getTime = () => timerElement.time;
 
-/**
- * Get radius of ring
- * @return {number} radius
- */
-const getRadius = () => progressRingElement.radius;
-
-/**
- * Get stroke of ring
- * @return {number} stroke
- */
-const getStroke = () => progressRingElement.stroke;
-
-export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
-};
+export { initializeTimer, setTimer, getTime };
 </code></pre>
         </article>
     </section>

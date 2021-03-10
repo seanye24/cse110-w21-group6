@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Source: components/Timer.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Source: components/Timer.js</h1>
 
     
 
@@ -27,62 +27,98 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
+ * @file progress-ring web component
  */
 
-let progressRingElement;
+import {
+  checkIfTimeValid,
+  createElement,
+  getMinutesAndSeconds,
+} from '../utils/utils';
 
 /**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
+ * Custom web component representing a timer
+ * @extends HTMLElement
+ * @param {number} time - current remaining time (in seconds)
+ * @param {number} radius - radius of container (progress ring)
  */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
-};
+class Timer extends HTMLElement {
+  static get observedAttributes() {
+    return ['time', 'container-radius'];
+  }
 
-/**
- * Get progress
- * @return {number} - current progress
- */
-const getProgress = () => progressRingElement.progress;
+  constructor() {
+    super();
 
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
-};
+    this._time = this.getAttribute('time');
+    this._containerRadius = this.getAttribute('container-radius');
 
-/**
- * Set radius of ring
- * @param {number} radius - new radius to set
- */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
-};
+    this.styleElement = createElement('style', {
+      innerText: `
+        .container {
+          font: initial 'Duru-Sans', sans-serif;
+          color: #fff;
+        }
+      `,
+    });
 
-/**
- * Get radius of ring
- * @return {number} radius
- */
-const getRadius = () => progressRingElement.radius;
+    this.shadow = this.attachShadow({ mode: 'open' });
+    this.timerContainer = createElement('div', {
+      className: 'container',
+    });
 
-/**
- * Get stroke of ring
- * @return {number} stroke
- */
-const getStroke = () => progressRingElement.stroke;
+    this.shadow.append(this.styleElement, this.timerContainer);
+  }
 
-export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
-};
+  attributeChangedCallback(name, oldValue, newValue) {
+    const newVal = parseInt(newValue, 10);
+    if (Number.isNaN(newVal)) {
+      return;
+    }
+    switch (name) {
+      case 'time': {
+        const isTimeValid = checkIfTimeValid(newValue);
+        if (isTimeValid) {
+          this._time = newVal;
+          this.timerContainer.innerText = getMinutesAndSeconds(this._time);
+        }
+        break;
+      }
+      case 'container-radius': {
+        this._containerRadius = newVal;
+        // scale font relative to progress ring radius
+        this.styleElement.innerText = `
+            .container {
+              font: ${this._containerRadius / 30}em 'Duru-Sans', sans-serif; 
+              color: #fff;
+            }
+          `;
+        break;
+      }
+      default:
+    }
+  }
+
+  get time() {
+    return this._time;
+  }
+
+  set time(time) {
+    this._time = time;
+    this.setAttribute('time', this._time);
+  }
+
+  get containerRadius() {
+    return this._containerRadius;
+  }
+
+  set containerRadius(radius) {
+    this._containerRadius = radius;
+    this.setAttribute('container-radius', this._containerRadius);
+  }
+}
+
+export default Timer;
 </code></pre>
         </article>
     </section>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Source: scripts/summaryPopup.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Source: scripts/summaryPopup.js</h1>
 
     
 
@@ -27,62 +27,120 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
+ * @file Manage Summary Pop-up for page
  */
-
-let progressRingElement;
 
 /**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
+ * A task object containing a name and pomodoros stats
+ * @typedef {Object} Task
+ * @property {string} name                - name of the task
+ * @property {number} usedPomodoros       - pomodoros used so far
+ * @property {number} estimatedPomodoros  - estimated number of pomos needed
+ * @property {boolean} selected           - whether task is selected
+ * @property {boolean} completed          - whether task is completed
  */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
+
+import { createElement } from '../utils/utils';
+
+let summaryOverlay;
+let summaryPopup;
+let taskSummaryList;
+let actualPomosElement;
+let estimatedPomosElement;
+let closeSummaryButton;
+
+/**
+ * Open summary popup
+ */
+const openPopup = () => {
+  summaryOverlay.classList.add('active');
 };
 
 /**
- * Get progress
- * @return {number} - current progress
+ * Close summary popup
  */
-const getProgress = () => progressRingElement.progress;
-
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
+const closePopup = () => {
+  summaryOverlay.classList.remove('active');
+  taskSummaryList.innerHTML = '';
 };
 
 /**
- * Set radius of ring
- * @param {number} radius - new radius to set
+ * Create task summary element
+ * @param {Task} task - task to summarize
+ * @return {HTMLElement} - task summary element
  */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
+const createTaskSummary = (task) => {
+  const { name, usedPomodoros, estimatedPomodoros, completed } = task;
+
+  const taskSummary = createElement('div', {
+    className: `task-summary-item ${completed ? 'completed' : 'incompleted'}`,
+  });
+  const nameElement = createElement('span', {
+    className: 'task-summary-name',
+    innerText: name,
+  });
+  const pomodorosElement = createElement('span', {
+    className: 'task-summary-pomodoros',
+    innerText: `${usedPomodoros}/${estimatedPomodoros}`,
+  });
+  taskSummary.append(nameElement, pomodorosElement);
+
+  return taskSummary;
 };
 
 /**
- * Get radius of ring
- * @return {number} radius
+ * Create summary of tasks
+ * @param {Task[]} taskList - tasks to summarize
  */
-const getRadius = () => progressRingElement.radius;
+const createTaskSummaryList = (taskList) => {
+  const completedTasks = taskList.filter((task) => task.completed);
+  const incompletedTasks = taskList.filter((task) => !task.completed);
+  [...completedTasks, ...incompletedTasks].forEach((task) => {
+    const taskSummary = createTaskSummary(task);
+    taskSummaryList.append(taskSummary);
+  });
+};
 
 /**
- * Get stroke of ring
- * @return {number} stroke
+ * @description Access all the shadow root elements and set the summary element
+ * @param {HTMLElement} root - the summary element
  */
-const getStroke = () => progressRingElement.stroke;
-
-export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
+const initializeElements = (root) => {
+  summaryOverlay = root;
+  summaryPopup = summaryOverlay.querySelector('#summary-popup');
+  taskSummaryList = summaryOverlay.querySelector('.task-summary-list');
+  actualPomosElement = summaryOverlay.querySelector('.summary-actual-pomos');
+  estimatedPomosElement = summaryOverlay.querySelector(
+    '.summary-estimated-pomos',
+  );
+  closeSummaryButton = summaryOverlay.querySelector('.summary-close-button');
 };
+
+/**
+ * Initialize popup
+ * @param {HTMLElement} root - summary popup element
+ * @param {Task[]} tasks - tasks to summarize
+ */
+const initializePopup = (root, tasks) => {
+  initializeElements(root);
+  createTaskSummaryList(tasks);
+  const { actual, estimated } = tasks.reduce(
+    (acc, task) => ({
+      actual: acc.actual + task.usedPomodoros,
+      estimated: acc.estimated + task.estimatedPomodoros,
+    }),
+    { actual: 0, estimated: 0 },
+  );
+  actualPomosElement.innerText = `Actual: ${actual}`;
+  estimatedPomosElement.innerText = `Estimated: ${estimated}`;
+
+  closeSummaryButton.onclick = closePopup;
+  closeSummaryButton.onmousedown = (e) => e.preventDefault();
+  summaryOverlay.onclick = closePopup;
+  summaryPopup.onclick = (e) => e.stopPropagation();
+};
+
+export { initializePopup, openPopup, closePopup };
 </code></pre>
         </article>
     </section>

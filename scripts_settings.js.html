@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Source: scripts/settings.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Source: scripts/settings.js</h1>
 
     
 
@@ -27,61 +27,175 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
+ * @file Manage tasklist for page
+ * @author Dillan Merchant
  */
 
-let progressRingElement;
+import {
+  initializeIntervalLengths,
+  checkIfShortInputValid,
+  checkIfLongInputValid,
+  checkIfTimerAudioValid,
+} from '../utils/utils';
+
+let settingsElement;
+let popupEl;
+let saveButton;
+let overlay;
+let shortBreakInput;
+let longBreakInput;
+let soundInput;
+let errorMessages;
+const timerAudio = new Audio();
+timerAudio.volume = 0.2;
 
 /**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
+ * Get short break length
+ * @return {number} - short break length
  */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
+const getShortBreakLength = () => settingsElement.shortBreakLength;
+
+/**
+ * Get long break length
+ * @return {number} - long break length
+ */
+const getLongBreakLength = () => settingsElement.longBreakLength;
+
+/**
+ * Get pathway to sound file
+ * @return {string} - audio url
+ */
+const getTimerAudio = () => settingsElement.timerSound;
+
+/**
+ * Set short break length
+ * @param {number} shortBreakLength - new short break length
+ */
+const setShortBreakLength = (shortBreakLength) => {
+  settingsElement.shortBreakLength = shortBreakLength;
 };
 
 /**
- * Get progress
- * @return {number} - current progress
+ * Set long break length
+ * @param {number} longBreakLength - new long break length
  */
-const getProgress = () => progressRingElement.progress;
-
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
+const setLongBreakLength = (longBreakLength) => {
+  settingsElement.longBreakLength = longBreakLength;
 };
 
 /**
- * Set radius of ring
- * @param {number} radius - new radius to set
+ * Set url of audio
+ * @param {number} input - pathway to sound
  */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
+const setTimerAudio = (input) => {
+  settingsElement.timerSound = input;
+  window.localStorage.setItem('timerAudio', input);
 };
 
 /**
- * Get radius of ring
- * @return {number} radius
+ * Open settings popup
  */
-const getRadius = () => progressRingElement.radius;
+const openPopup = () => {
+  popupEl.classList.add('active');
+  overlay.classList.add('active');
+
+  shortBreakInput.value = getShortBreakLength();
+  longBreakInput.value = getLongBreakLength();
+  soundInput.value = getTimerAudio();
+};
 
 /**
- * Get stroke of ring
- * @return {number} stroke
+ * Close settings popup
  */
-const getStroke = () => progressRingElement.stroke;
+const closePopup = () => {
+  timerAudio.pause();
+  popupEl.classList.remove('active');
+  overlay.classList.remove('active');
+};
+
+/**
+ * Save interval length / audio settings, display error if invalid
+ * @return {(number[] | null)} - new interval lengths, null if error occurs
+ */
+const saveSettings = () => {
+  const newShortBreakLength = shortBreakInput.value;
+  const newLongBreakLength = longBreakInput.value;
+  const isShortInputValid = checkIfShortInputValid(newShortBreakLength);
+  const isLongInputValid = checkIfLongInputValid(newLongBreakLength);
+
+  errorMessages[0].style.visibility = isShortInputValid ? 'hidden' : 'visible';
+  errorMessages[1].style.visibility = isLongInputValid ? 'hidden' : 'visible';
+  if (!isShortInputValid || !isLongInputValid) {
+    return null;
+  }
+
+  setTimerAudio(soundInput.value);
+  setShortBreakLength(newShortBreakLength);
+  setLongBreakLength(newLongBreakLength);
+  localStorage.setItem('shortBreakLength', newShortBreakLength);
+  localStorage.setItem('longBreakLength', newLongBreakLength);
+  return [newShortBreakLength, newLongBreakLength];
+};
+
+/**
+ * Initialize element variables for different elements of settings component
+ * @param {HTMLElement} root - root element of settings component
+ */
+const initializeElements = (root) => {
+  settingsElement = root;
+  const { shadowRoot } = settingsElement;
+  popupEl = shadowRoot.querySelector('.popup');
+  saveButton = shadowRoot.querySelector('.save-button');
+  overlay = shadowRoot.querySelector('#overlay');
+  shortBreakInput = shadowRoot.querySelector('#short-number');
+  longBreakInput = shadowRoot.querySelector('#long-number');
+  soundInput = shadowRoot.querySelector('#sound');
+  errorMessages = shadowRoot.querySelectorAll('.error');
+};
+
+/**
+ * Set the initial settings element
+ * @param {HTMLElement} root - settings element
+ * @param {Function} saveSettingsCallback - callback for when settings are saved
+ */
+const initializePopup = (root, saveSettingsCallback) => {
+  const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
+  initializeElements(root);
+  setShortBreakLength(shortBreakLength);
+  setLongBreakLength(longBreakLength);
+  const savedAudio = window.localStorage.getItem('timerAudio');
+  setTimerAudio(
+    checkIfTimerAudioValid(savedAudio) ? savedAudio : 'assets/calm-alarm.mp3',
+  );
+
+  overlay.onclick = closePopup;
+
+  saveButton.addEventListener('click', () => {
+    const newBreakLengths = saveSettings();
+    if (!newBreakLengths) {
+      return;
+    }
+    closePopup();
+    saveSettingsCallback(...newBreakLengths);
+  });
+
+  soundInput.onchange = () => {
+    timerAudio.pause();
+    timerAudio.src = soundInput.value;
+    timerAudio.play();
+  };
+};
 
 export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
+  initializePopup,
+  openPopup,
+  closePopup,
+  getShortBreakLength,
+  getLongBreakLength,
+  getTimerAudio,
+  setShortBreakLength,
+  setLongBreakLength,
+  setTimerAudio,
 };
 </code></pre>
         </article>

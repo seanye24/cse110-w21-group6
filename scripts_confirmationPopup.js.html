@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Source: scripts/confirmationPopup.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Source: scripts/confirmationPopup.js</h1>
 
     
 
@@ -27,62 +27,59 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
+ * @file Manage Confirmation Pop-up for page
  */
 
-let progressRingElement;
+let confirmationOverlay;
+let confirmationPopup;
+let noButton;
+let yesButton;
 
 /**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
+ * Open the confirmation popup
  */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
+const openPopup = () => {
+  confirmationOverlay.classList.add('active');
 };
 
 /**
- * Get progress
- * @return {number} - current progress
+ * Close the confirmation popup
  */
-const getProgress = () => progressRingElement.progress;
-
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
+const closePopup = () => {
+  confirmationOverlay.classList.remove('active');
 };
 
 /**
- * Set radius of ring
- * @param {number} radius - new radius to set
+ * Initialize element variables for different elements of confirmation popup
+ * @param {HTMLElement} root - confirmation popup
+ * @param {Function} onAcceptCallback - callback when confirmation is accepted
  */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
+const initializeElements = (root) => {
+  confirmationOverlay = root;
+  confirmationPopup = confirmationOverlay.querySelector('#confirmation-popup');
+  noButton = confirmationPopup.querySelector('.confirmation-no-button');
+  yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
 };
 
 /**
- * Get radius of ring
- * @return {number} radius
+ * Initialize popup
+ * @param {HTMLElement} root - confirmation element
+ * @param {Function} onAcceptCallback - callback when confirmation is accepted
  */
-const getRadius = () => progressRingElement.radius;
-
-/**
- * Get stroke of ring
- * @return {number} stroke
- */
-const getStroke = () => progressRingElement.stroke;
-
-export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
+const initializePopup = (root, onAcceptCallback) => {
+  initializeElements(root);
+  noButton.onmousedown = (e) => e.preventDefault();
+  yesButton.onmousedown = (e) => e.preventDefault();
+  yesButton.onclick = () => {
+    closePopup();
+    onAcceptCallback();
+  };
+  noButton.onclick = closePopup;
+  confirmationOverlay.onclick = closePopup;
+  confirmationPopup.onclick = (e) => e.stopPropagation();
 };
+
+export { initializePopup, openPopup, closePopup };
 </code></pre>
         </article>
     </section>

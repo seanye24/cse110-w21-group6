@@ -28,62 +28,119 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * @file Manage tasklist for page
- * @author Sean Ye
  */
 
 /**
- * A task object containing a title and description
+ * A task object containing a name and pomodoros stats
  * @typedef {Object} Task
- * @property {string} title       - title of the task
- * @property {string} description - description of the task
+ * @property {string} name                - name of the task
+ * @property {number} usedPomodoros       - pomodoros used so far
+ * @property {number} estimatedPomodoros  - estimated number of pomos needed
+ * @property {boolean} selected           - whether task is selected
+ * @property {boolean} completed          - whether task is completed
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 import '../components/TaskItem';
 import '../components/TaskItemForm';
 import '../components/TaskList';
 
 let tasks = [];
+let taskList;
+let taskListContainer;
+let taskListItemContainer;
+let taskItemForm;
+let taskItemFormContainer;
+let taskItemFormInputs;
 
-// task-list element
-// task-list container element
-// container element for task-list-item
-const taskList = createElement('task-list', {});
-const taskListContainer = Array.from(taskList.shadowRoot.childNodes).find(
-  (elem) => elem.className === 'container',
-);
-const taskListItemContainer = taskListContainer.querySelector(
-  '.task-item-container',
-);
+/**
+ * Save current tasks to localStorage
+ */
+const saveTasks = () => {
+  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+};
 
-// task-item-form element
-// task-item-form container element
-// task-item-form text input elements
-const taskItemForm = taskListContainer.querySelector('.task-item-form');
-const taskItemFormContainer = Array.from(
-  taskItemForm.shadowRoot.childNodes,
-).find((elem) => elem.className === 'task-form');
-const taskItemFormInputs = Array.from(
-  taskItemFormContainer.querySelectorAll('.task-input[type="text"]'),
-).reduce((acc, elem) => ({ ...acc, [elem.name]: elem }), {});
+/**
+ * Retrieve task from tasks and DOM
+ * @param {Task} task - task
+ * @return {{taskIndex: number, taskElement: HTMLElement}}
+ */
+const getTask = ({ name }) => ({
+  taskIndex: tasks.findIndex((task) => task.name === name),
+  taskElement: taskListItemContainer.querySelector(`[name="${name}"]`),
+});
 
 /**
  * Get button elements from task-item element
- * @param {Task} task - task-item element
- * @return {{finish: HTMLButtonElement, delete: HTMLButtonElement, edit: HTMLButtonElement}} - button elements object
+ * @param {HTMLElement} taskElement - task-item element
+ * @return {{delete: HTMLButtonElement}} - button elements object
  */
-const getTaskItemButtons = (task) => {
+const getTaskItemButtons = (taskElement) => {
   const buttons = Array.from(
-    Array.from(task.shadowRoot.childNodes)
-      .find((elem) => elem.getAttribute('class') === 'container')
-      .querySelectorAll('.task-button'),
+    taskElement.shadowRoot.querySelectorAll('.task-button'),
   );
 
   return {
-    finish: buttons.find((btn) => btn.getAttribute('id') === 'finish-button'),
     delete: buttons.find((btn) => btn.getAttribute('id') === 'delete-button'),
-    edit: buttons.find((btn) => btn.getAttribute('id') === 'edit-button'),
   };
+};
+
+/**
+ * Add task object to DOM, add event listeners to task-item
+ * @param {HTMLElement} newTaskElement - new task element to be added
+ * @param {'start' | 'end' | HTMLElement} position - position in list to append
+ * @return {HTMLElement} - new task element added to DOM
+ */
+const addTaskToDom = (newTaskElement, position = 'end') => {
+  if (position !== 'end' &amp;&amp; position !== 'start') {
+    const { taskElement } = getTask(position);
+    taskElement.before(newTaskElement);
+  } else if (position === 'end') {
+    taskListItemContainer.append(newTaskElement);
+  } else if (position === 'start') {
+    taskListItemContainer.prepend(newTaskElement);
+  }
+  return newTaskElement;
+};
+
+/**
+ * Remove task object from DOM
+ * @param {Task} taskToRemove - task to be removed
+ * @return {HTMLElement} - task element removed from DOM
+ */
+const removeTaskFromDom = (taskToRemove) => {
+  const { taskElement } = getTask(taskToRemove);
+  taskElement.remove();
+  return taskElement;
+};
+
+/**
+ * Update existing task
+ * @param {Task} prevTask - task to be updated
+ * @param {Task} nextTask - updated task
+ * @return {Task} - updated task
+ */
+const updateTask = (prevTask, nextTask) => {
+  const {
+    name: nextName,
+    usedPomodoros,
+    estimatedPomodoros,
+    selected,
+    completed,
+  } = nextTask;
+  const { taskIndex, taskElement } = getTask(prevTask);
+
+  // update localStorage
+  tasks[taskIndex] = nextTask;
+  saveTasks();
+
+  // update task in dom
+  taskElement.setAttribute('name', nextName);
+  taskElement.setAttribute('used-pomodoros', usedPomodoros);
+  taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
+  taskElement.setAttribute('selected', selected);
+  taskElement.setAttribute('completed', completed);
+  return nextTask;
 };
 
 /**
@@ -91,75 +148,91 @@ const getTaskItemButtons = (task) => {
  * @param {Task} taskToDelete - task to be deleted
  */
 const deleteTask = (taskToDelete) => {
-  const { title, description } = taskToDelete;
-
   // update localStorage
-  const taskIndex = tasks.findIndex(
-    ({ title: t, description: d }) => title === t &amp;&amp; description === d,
-  );
+  const { taskIndex } = getTask(taskToDelete);
   tasks.splice(taskIndex, 1);
   window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // remove task from dom
-  const taskItem = taskListItemContainer.querySelector(
-    `[title="${title}"][description="${description}"]`,
-  );
-  taskItem.remove();
+  removeTaskFromDom(taskToDelete);
 };
 
 /**
- * Add task object to DOM, add event listeners to task-item
- * @param {Task} newTask - new task to be added
+ * Get currently selected task
  */
-const addTaskToDom = (newTask) => {
-  const { title, description } = newTask;
+const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
 
-  // add task to dom
-  const taskItem = createElement('task-item', {
-    title,
-    description,
-  });
-  const buttons = getTaskItemButtons(taskItem);
-  buttons.finish.addEventListener('click', () => deleteTask(newTask));
-  buttons.delete.addEventListener('click', () => deleteTask(newTask));
-  buttons.edit.addEventListener('click', () => window.alert('editting task!'));
-  taskListItemContainer.append(taskItem);
+/**
+ * Select a task
+ * @param {Task} task - task to be selected
+ * @return {Task} - selected task
+ */
+const selectTask = (task) => {
+  const prevSelectedTask = getCurrentlySelectedTask();
+  if (prevSelectedTask) {
+    updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
+  }
+
+  const { taskElement, taskIndex } = getTask(task);
+  // move task to front of DOM list
+  removeTaskFromDom(task);
+  addTaskToDom(taskElement, 'start');
+
+  // move task to front of tasks array
+  tasks.splice(taskIndex, 1);
+  tasks.unshift(task);
+
+  // update selected property of task
+  return updateTask(task, { ...task, selected: true });
 };
 
 /**
- * Add new task to localStorage
+ * Create a task element from a task object
+ * @param {Task} newTask - task to be created
+ */
+const createTaskElement = (newTask) => {
+  const {
+    name,
+    usedPomodoros,
+    estimatedPomodoros,
+    selected,
+    completed,
+  } = newTask;
+
+  // create html element
+  const newTaskElement = createElement('task-item', {
+    name,
+    'used-pomodoros': usedPomodoros,
+    'estimated-pomodoros': estimatedPomodoros,
+    selected,
+  });
+
+  // add event listeners
+  const textContainer = newTaskElement.shadowRoot.querySelector(
+    '.text-container',
+  );
+  const { delete: deleteButton } = getTaskItemButtons(newTaskElement);
+  if (!completed) {
+    textContainer.onclick = () => selectTask(newTask);
+  }
+  deleteButton.onclick = () => deleteTask(newTask);
+  return newTaskElement;
+};
+
+/**
+ * Add new task to localStorage, append to DOM
  * @param {Task} newTask - new task to be added
  */
 const addTask = (newTask) => {
   // update localStorage
-  tasks.push(newTask);
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-  addTaskToDom(newTask);
-};
-
-/**
- * Update existing task
- * @param {Task} prevTask - task to be updated
- * @param {Task} nextTask - updated task
- */
-const updateTask = (prevTask, nextTask) => {
-  const { title: prevTitle, description: prevDescription } = prevTask;
-  const { title: nextTitle, description: nextDescription } = nextTask;
-
-  // update localStorage
-  const taskIndex = tasks.findIndex(
-    ({ title, description }) =>
-      prevTitle === title &amp;&amp; prevDescription === description,
-  );
-  tasks[taskIndex] = nextTask;
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
-
-  // update task in dom
-  const taskItem = taskListItemContainer.querySelector(
-    `[title="${prevTitle}"][description="${prevDescription}"]`,
-  );
-  taskItem.setAttribute('title', nextTitle);
-  taskItem.setAttribute('description', nextDescription);
+  const newTaskElement = createTaskElement(newTask);
+  const indexOfFirstCompleted = tasks.findIndex((t) => t.completed);
+  if (indexOfFirstCompleted !== -1) {
+    tasks.splice(indexOfFirstCompleted, 0, newTask);
+    addTaskToDom(newTaskElement, tasks[indexOfFirstCompleted + 1]);
+  } else {
+    tasks.push(newTask);
+    addTaskToDom(newTaskElement);
+  }
+  saveTasks();
 };
 
 /**
@@ -177,57 +250,190 @@ const getTasks = () => {
 const handleTaskFormSubmit = (e) => {
   e.preventDefault(); // prevent page reload
 
-  const {
-    title: { value: title },
-    description: { value: description },
-  } = taskItemFormInputs;
-  const [trimmedTitle, trimmedDescription] = [title.trim(), description.trim()];
+  const { name: nameInput, pomodoro: pomodoroInput } = taskItemFormInputs;
+  const { value: name } = nameInput;
+  const { value: pomodoro } = pomodoroInput;
 
-  // check if fields are non-empty
-  if (!trimmedTitle || !trimmedDescription) {
-    console.error('task fields cannot be empty');
+  const trimmedName = name.trim();
+  const pomodoroNumber = Number(pomodoro);
+
+  if (Number.isNaN(pomodoroNumber)) {
     return;
   }
 
-  // check if task already exists
-  if (
-    tasks.some(
-      ({ title: t, description: d }) =>
-        trimmedTitle === t &amp;&amp; trimmedDescription === d,
-    )
-  ) {
-    console.error(
-      { title: trimmedTitle, description: trimmedDescription },
-      ' already defined',
-    );
-    return;
-  }
+  nameInput.focus();
 
-  addTask({ title: trimmedTitle, description: trimmedDescription });
-  Object.values(taskItemFormInputs).forEach((input) => ({
-    ...input,
-    value: '',
-  }));
+  addTask({
+    name: trimmedName,
+    estimatedPomodoros: pomodoroNumber,
+    usedPomodoros: 0,
+    selected: false,
+    completed: false,
+  });
+  Object.values(taskItemFormInputs).forEach((input) => {
+    input.value = '';
+  });
 };
 
 /**
- * Initialize tasklist on page
  * Retrieve tasks from localStorage
- * @param {HTMLElement} containerElement - container for task list
  */
-const initializeTaskList = (containerElement) => {
-  containerElement.appendChild(taskList);
-  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
-
-  // retrive and add tasks from localStorage
-  if (!window.localStorage.getItem('tasks')) {
+const restoreTasks = () => {
+  if (!JSON.parse(window.localStorage.getItem('tasks'))) {
     window.localStorage.setItem('tasks', JSON.stringify([]));
   }
   tasks = JSON.parse(window.localStorage.getItem('tasks'));
-  tasks.forEach((task) => addTaskToDom(task));
+  tasks.forEach((task) => addTaskToDom(createTaskElement(task)));
 };
 
-export { initializeTaskList, addTask, getTasks, updateTask, deleteTask };
+/**
+ * Checks if task input is already in list
+ * Sets error message for form
+ * @param {InputEvent} e - input change from task item form
+ */
+const checkDuplicateTask = (e) => {
+  const { value } = e.target;
+  const trimmedName = value.trim();
+  if (tasks.some((task) => task.name === trimmedName)) {
+    e.target.setCustomValidity('Duplicate task.');
+  } else {
+    e.target.setCustomValidity('');
+  }
+};
+
+/**
+ * Increment the usedPomodoros for one task
+ * @param {Task} task - task to be incremented
+ * @return {Task} - incremented task
+ */
+const incrementPomodoro = (task) => {
+  const { usedPomodoros } = task;
+  return updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
+};
+
+/**
+ * Automatically select first task in the task list
+ * @return {Task | null} returns first available task, if there are none, return null
+ */
+const selectFirstTask = () => {
+  if (tasks.length > 0 &amp;&amp; !tasks[0].completed) {
+    return selectTask(tasks[0]);
+  }
+  return null;
+};
+
+/**
+ * Deselect all tasks
+ */
+const deselectAllTasks = () => {
+  tasks.forEach((task) => {
+    updateTask(task, { ...task, selected: false });
+  });
+};
+
+/**
+ * Disable task list
+ * @param {boolean} shouldTasklistBeUsable - whether task list should be usable
+ */
+const setTasklistUsability = (shouldTasklistBeUsable) => {
+  tasks.forEach((task) => {
+    const {
+      taskElement: { shadowRoot },
+    } = getTask(task);
+    const itemContainer = shadowRoot.querySelector('.item-container');
+    const textContainer = shadowRoot.querySelector('.text-container');
+
+    // disable item container
+    if (shouldTasklistBeUsable) {
+      itemContainer.classList.remove('disabled');
+    } else {
+      itemContainer.classList.add('disabled');
+    }
+
+    // disable select task listener
+    if (shouldTasklistBeUsable &amp;&amp; !task.completed) {
+      textContainer.onclick = () => selectTask(task);
+    } else {
+      textContainer.onclick = null;
+    }
+
+    // disable buttons
+    const buttons = getTaskItemButtons(getTask(task).taskElement);
+    Object.values(buttons).forEach((btn) => {
+      btn.disabled = !shouldTasklistBeUsable;
+    });
+  });
+};
+
+/**
+ * Mark task as complete
+ * @param {Task} completedTask - task that has been completed
+ */
+const completeTask = (completedTask) => {
+  const { taskIndex, taskElement } = getTask(completedTask);
+
+  // mark task as completed and move it to end of DOM list
+  removeTaskFromDom(completedTask);
+  addTaskToDom(taskElement, 'end');
+  taskElement.setAttribute('selected', false);
+  taskElement.setAttribute('completed', true);
+  taskElement.shadowRoot.querySelector('.text-container').onclick = null;
+
+  // move task to end of tasks array
+  tasks.splice(taskIndex, 1);
+  tasks.push(completedTask);
+
+  // update selected property of task
+  updateTask(completedTask, {
+    ...completedTask,
+    selected: false,
+    completed: true,
+  });
+};
+
+/**
+ * Initialize element variables for different elements of task list
+ * @param {HTMLElement} root - tasklist element
+ */
+const initializeElements = (root) => {
+  taskList = root;
+  taskListContainer = taskList.shadowRoot.querySelector('.container');
+  taskListItemContainer = taskListContainer.querySelector(
+    '.task-item-container',
+  );
+  taskItemForm = taskListContainer.querySelector('.task-item-form');
+  taskItemFormContainer = taskItemForm.shadowRoot.querySelector('.task-form');
+  taskItemFormInputs = {
+    name: taskItemFormContainer.querySelector('#name-input'),
+    pomodoro: taskItemFormContainer.querySelector('#pomodoro-input'),
+  };
+};
+
+/**
+ * Set tasklist
+ * @param {HTMLElement} root - task list element
+ */
+const initializeTaskList = (root) => {
+  initializeElements(root);
+  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
+  restoreTasks();
+  taskItemFormInputs.name.oninput = checkDuplicateTask;
+};
+
+export {
+  initializeTaskList,
+  addTask,
+  getTasks,
+  updateTask,
+  deleteTask,
+  incrementPomodoro,
+  selectTask,
+  selectFirstTask,
+  deselectAllTasks,
+  getCurrentlySelectedTask,
+  setTasklistUsability,
+  completeTask,
+};
 </code></pre>
         </article>
     </section>
@@ -238,13 +444,13 @@ export { initializeTaskList, addTask, getTasks, updateTask, deleteTask };
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#startProgressRing">startProgressRing</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#checkIfLongInputValid">checkIfLongInputValid</a></li><li><a href="global.html#checkIfShortInputValid">checkIfShortInputValid</a></li><li><a href="global.html#checkIfTimerAudioValid">checkIfTimerAudioValid</a></li><li><a href="global.html#checkIfTimeValid">checkIfTimeValid</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadiusStroke">setRadiusStroke</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Feb 24 2021 16:51:33 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 10:44:13 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

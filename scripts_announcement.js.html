@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Source: scripts/announcement.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Source: scripts/announcement.js</h1>
 
     
 
@@ -27,61 +27,71 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
+ * @file Manage displaying announcements
  */
 
-let progressRingElement;
+let announcementContainer;
+let announcementElement;
+let yesButton;
+let noButton;
 
 /**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
+ * Initialize announcement element
+ * @param {HTMLElement} announcementElement - announcement element
  */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
+const initializeAnnouncement = (containerElement) => {
+  announcementContainer = containerElement;
+  announcementElement = announcementContainer.querySelector('.announcement');
+  yesButton = announcementContainer.querySelector('.announcement-yes-button');
+  noButton = announcementContainer.querySelector('.announcement-no-button');
+  yesButton.onmousedown = (e) => e.preventDefault();
+  noButton.onmousedown = (e) => e.preventDefault();
 };
 
 /**
- * Get progress
- * @return {number} - current progress
+ * Set an announcement
+ * @param {string} announcement - announcement to display
  */
-const getProgress = () => progressRingElement.progress;
-
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
+const setAnnouncement = (announcement) => {
+  announcementElement.innerText = announcement;
 };
 
 /**
- * Set radius of ring
- * @param {number} radius - new radius to set
+ * Set yes button on click callback
+ * @param {Function} callback - yes button onclick callback
  */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
+const setYesButtonCallback = (callback) => {
+  yesButton.onclick = callback;
 };
 
 /**
- * Get radius of ring
- * @return {number} radius
+ * Set no button on click callback
+ * @param {Function} callback - no button onclick callback
  */
-const getRadius = () => progressRingElement.radius;
+const setNoButtonCallback = (callback) => {
+  noButton.onclick = callback;
+};
 
 /**
- * Get stroke of ring
- * @return {number} stroke
+ * Toggle visibility of buttons
+ * @param {'visible' | 'hidden'} visibility - button visibility
  */
-const getStroke = () => progressRingElement.stroke;
+const setButtonVisibility = (visibility) => {
+  if (visibility === 'visible') {
+    yesButton.classList.remove('hidden');
+    noButton.classList.remove('hidden');
+  } else {
+    yesButton.classList.add('hidden');
+    noButton.classList.add('hidden');
+  }
+};
 
 export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
+  initializeAnnouncement,
+  setAnnouncement,
+  setYesButtonCallback,
+  setNoButtonCallback,
+  setButtonVisibility,
 };
 </code></pre>
         </article>

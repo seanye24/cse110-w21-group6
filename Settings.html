@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Class: Settings</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,75 +17,243 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Class: Settings</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
- */
+        <h2><span class="attribs"><span class="type-signature"></span></span>Settings<span class="signature">(shortBreakLength, longBreakLength, timerSound)</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description">Custom web component representing the settings popup</div>
+        
+    
+</header>
 
-let progressRingElement;
+<article>
+    <div class="container-overview">
+    
+        
 
-/**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
- */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
-};
+    
+    <h2>Constructor</h2>
+    
 
-/**
- * Get progress
- * @return {number} - current progress
- */
-const getProgress = () => progressRingElement.progress;
+    
+    <h4 class="name" id="Settings"><span class="type-signature"></span>new Settings<span class="signature">(shortBreakLength, longBreakLength, timerSound)</span><span class="type-signature"></span></h4>
+    
 
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
-};
+    
 
-/**
- * Set radius of ring
- * @param {number} radius - new radius to set
- */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
-};
 
-/**
- * Get radius of ring
- * @return {number} radius
- */
-const getRadius = () => progressRingElement.radius;
 
-/**
- * Get stroke of ring
- * @return {number} stroke
- */
-const getStroke = () => progressRingElement.stroke;
 
-export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
-};
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>shortBreakLength</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">short break time</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>longBreakLength</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">long break time</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>timerSound</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">pathway to sound file</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="components_Settings.js.html">components/Settings.js</a>, <a href="components_Settings.js.html#line18">line 18</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>HTMLElement</li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

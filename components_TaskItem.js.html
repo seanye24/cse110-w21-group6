@@ -30,7 +30,7 @@
  * @file task-item web component
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 /**
  * Custom web component representing a task item.
@@ -38,69 +38,159 @@ import { createElement } from '../utils';
  * @param {number} name - name of task
  * @param {number} estimated-pomodoros - estimated number of pomodoros needed
  * @param {number} used-pomodoros - pomodoros used so far
+ * @param {boolean} selected - indicates if the current task is selected
+ * @param {boolean} completed - indicates if the current task is completed
  */
 class TaskItem extends HTMLElement {
   static get observedAttributes() {
-    return ['title', 'description'];
+    return [
+      'name',
+      'estimated-pomodoros',
+      'used-pomodoros',
+      'selected',
+      'completed',
+    ];
   }
 
   constructor() {
     super();
+
+    this.usedPomodoros = 0;
+    this.estimatedPomodoros = 0;
 
     // create shadow root
     this.shadow = this.attachShadow({ mode: 'open' });
 
     this.styleElement = document.createElement('style');
     this.styleElement.innerText = `
-      .container {
-        background: lightblue;
-        font-family: Roboto, sans-serif;
-        margin: 1em;
-        padding: 0.5em;
-        position: relative;
+      .item-container {
+        margin-bottom: 1em;
+        padding: 0.5em 2em;
         border-radius: 5px;
+        position: relative;
+        cursor: pointer;
       }
 
-      .title {
-        font-size: 1.25rem;
+      .item-container:focus {
+        outline: none;
       }
 
-      .description {
-        font-size: 1rem;
-        color: darkgray;
+      .item-container.selected {
+        background: #90e0ef;
+      }
+
+      .text-container {
+        background: rgba(255, 255, 255, 1);
+        color: #555;
+        position: relative;
+        padding: 0.5em;
+        border-radius: 5px;
+        width: 100%;
+        text-align: left;
+        font: 1rem Source Sans Pro, sans-serif;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+      }
+
+      .item-container:not(.disabled):not(.selected) > .text-container:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .text-container:focus {
+        outline: none;
+        box-shadow: 0 0 0 2pt #90e0ef;
+      }
+
+      .item-container.selected > .text-container:focus {
+        box-shadow: 0 0 0 2pt #00b4d8;
+      }
+      
+      .completed .name {
+        text-decoration: line-through;
+      }
+
+      .name {
+        width: 80%;
+        display: inline-block;
+        margin: 0.5em 0;
+      }
+      
+      .pomodoro-container {
+        width: 20%;
+        height: 100%;
+        display: inline-block;
+        position: relative;
+        text-align: right;
+      }
+
+      .pomodoro-label {
+        position: absolute;
+        top: -0.5em;
+        right: 0;
+        font: 0.8rem 'Source Sans Pro', sans-serif;
+        color: #777;
+      }
+
+      .pomodoro {
+        display: inline-block;
+        margin: 1em 0 0 0;
       }
 
       .task-button {
+        opacity: 0;
         position: absolute;
-        padding: 0.5em;
-        color: rgba(51, 51, 51, 0.5);
+        border: none;
+        padding: 0.25em;
+        color: rgba(255, 255, 255, 1); 
+        background: transparent;
+        border-radius: 50%;
+      }
+
+      .item-container:hover:not(.disabled) > .task-button,
+      .task-button:focus {
+        opacity: 1;
+      }
+
+      .task-button:focus {
+        outline: none;
+        z-index: 1;
+        position: absolute;
+      }
+
+      .task-button:focus {
+        box-shadow: inset 0 0 0 2pt #90e0ef;
+      }
+
+      .item-container.selected > .task-button:focus {
+        box-shadow: inset 0 0 0 2pt #00b4d8;
       }
 
       .task-button:hover {
         border-radius: 50%;
-        background: rgba(238, 238, 238, 0.5);
-        color: rgba(51, 51, 51, 1);
+        color: rgba(255, 255, 255, 0.8); 
         cursor: pointer;
+        background: rgba(255, 255, 255, 0.3);
       }
 
-      #edit-button {
-        display: none;
+      .item-container.selected > .task-button,
+      .item-container.selected > .task-button:hover {
+        color: rgba(0, 0, 0, 0.54);
       }
 
-      .container:hover > #edit-button {
-        display: initial;
-        top: 0;
-        right: 0;
+      .task-button:disabled {
+        opacity: 0;
       }
 
-      #finish-button {
-        bottom: 0;
-        right: 1.5em;
+      .task-button-icon {
+        font-size: 1.2rem;
       }
 
       #delete-button {
-        bottom: 0;
+        top: 50%;
         right: 0;
+        transform: translate(0, -50%);
       }
     `;
 
@@ -109,55 +199,89 @@ class TaskItem extends HTMLElement {
       href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
     });
 
-    this.containerElement = createElement('div', {
-      className: 'container',
+    this.itemContainerElement = createElement('div', {
+      className: 'item-container',
     });
-    this.titleElement = createElement('h1', {
-      className: 'title',
+    this.textContainerElement = createElement('button', {
+      className: 'text-container',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
     });
-    this.descriptionElement = createElement('h2', {
-      className: 'description',
+    this.nameElement = createElement('p', {
+      className: 'name',
+    });
+    this.pomodoroContainer = createElement('span', {
+      className: 'pomodoro-container',
+    });
+    this.pomodoroLabel = createElement('label', {
+      className: 'pomodoro-label',
+      for: 'pomodoro',
+      innerText: 'Pomodoros',
+    });
+    this.pomodoroElement = createElement('p', {
+      className: 'pomodoro',
+      id: 'pomodoro',
     });
 
-    this.editTaskButton = createElement('span', {
-      className: 'material-icons task-button',
-      id: 'edit-button',
-      innerText: 'mode',
-    });
-
-    this.finishTaskButton = createElement('span', {
-      className: 'material-icons task-button',
-      id: 'finish-button',
-      innerText: 'done',
-    });
-
-    this.deleteTaskButton = createElement('span', {
-      className: 'material-icons task-button',
+    this.deleteTaskButton = createElement('button', {
+      className: 'task-button',
       id: 'delete-button',
+      onmouseout: (e) => {
+        e.target.blur();
+      },
+      onmousedown: (e) => {
+        e.preventDefault();
+      },
+    });
+    this.deleteTaskIcon = createElement('span', {
+      className: 'material-icons task-button-icon',
       innerText: 'delete',
     });
 
     this.shadow.append(
       this.materialIconLinkElement,
       this.styleElement,
-      this.containerElement,
+      this.itemContainerElement,
     );
-    this.containerElement.append(
-      this.titleElement,
-      this.descriptionElement,
-      this.editTaskButton,
-      this.finishTaskButton,
+    this.itemContainerElement.append(
+      this.textContainerElement,
       this.deleteTaskButton,
     );
+    this.deleteTaskButton.appendChild(this.deleteTaskIcon);
+    this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
+    this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'title':
-        this.titleElement.innerText = newValue;
+      case 'name':
+        this.nameElement.innerText = newValue;
         break;
-      case 'description':
-        this.descriptionElement.innerText = newValue;
+      case 'used-pomodoros':
+        this.usedPomodoros = newValue;
+        this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
+        break;
+      case 'estimated-pomodoros':
+        this.estimatedPomodoros = newValue;
+        this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
+        break;
+      case 'selected':
+        if (newValue === 'true') {
+          this.itemContainerElement.classList.add('selected');
+        } else {
+          this.itemContainerElement.classList.remove('selected');
+        }
+        break;
+      case 'completed':
+        if (newValue === 'true') {
+          this.itemContainerElement.classList.add('completed');
+        } else {
+          this.itemContainerElement.classList.remove('completed');
+        }
         break;
       default:
     }
@@ -165,6 +289,7 @@ class TaskItem extends HTMLElement {
 }
 
 customElements.define('task-item', TaskItem);
+export default TaskItem;
 </code></pre>
         </article>
     </section>
@@ -175,13 +300,13 @@ customElements.define('task-item', TaskItem);
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#startProgressRing">startProgressRing</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#checkIfLongInputValid">checkIfLongInputValid</a></li><li><a href="global.html#checkIfShortInputValid">checkIfShortInputValid</a></li><li><a href="global.html#checkIfTimerAudioValid">checkIfTimerAudioValid</a></li><li><a href="global.html#checkIfTimeValid">checkIfTimeValid</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadiusStroke">setRadiusStroke</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Feb 24 2021 16:51:33 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 10:44:13 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

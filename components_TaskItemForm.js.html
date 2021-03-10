@@ -30,7 +30,7 @@
  * @file task-item-form web component
  */
 
-import { createElement } from '../utils';
+import { createElement } from '../utils/utils';
 
 /**
  * Custom web component representing a task item form.
@@ -48,47 +48,94 @@ class TaskItemForm extends HTMLElement {
     this.styleElement.innerText = `
       .task-form {
         margin: 1em;
-        padding: 1em 20%;
-        font-family: Roboto, sans-serif;
+        padding: 1em ;
         display: flex;
         flex-direction: column;
-        border-radius: 5px;
       }
 
-      .task-input[type='text'] {
+      .field-input-container {
         margin-bottom: 1em;
-        padding: 0.75em;
         border-radius: 5px;
-        border: 1px solid #777;
-        font-size: 0.9rem;
-        color: #444;
+        position: relative;
+        width: 100%;
+        display: flex;
       }
 
-      .task-input[type='text']:focus {
-        border: 2px solid #0077b6;
-        outline: none;
-        box-shadow: none;
+      .name-input-container {
+        flex: 4;
+        position: relative;
       }
 
-      .task-input[type='text']::placeholder {
+      .pomodoro-input-container {
+        flex: 1;
+        min-width: 95px;
+        position: relative;
+      }
+
+      .task-input-label {
+        position: absolute;
+        z-index: 2;
+        font: 0.8rem 'Source Sans Pro', sans-serif;
         color: #777;
       }
 
-      #submit-input {
+      #name-input-label {
+        top: 0.2em;
+        left: 0.75em;
+      }
+
+      #pomodoro-input-label {
+        top: 0.2em;
+        left: 0.75em;
+      }
+
+      .task-input[type='text'],
+      .task-input[type='number'] {
+        padding: 1.5em 0.75em 0.75em 0.75em;
+        border: none;
+        font: 1rem 'Source Sans Pro', sans-serif;
+        color: #444;
+        box-sizing: border-box;
         width: 100%;
+      }
+
+      .task-input:focus {
+        box-shadow: 0 0 0 2pt #90e0ef;
+        outline: none;
+        z-index: 1;
+        position: relative;
+      }
+
+      #name-input {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+      }
+
+      #pomodoro-input {
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
+
+      .task-input[type='text']::placeholder,
+      .task-input[type='number']::placeholder {
+        color: #c8c8c8;
+      }
+
+      #submit-input {
+        width: 50%;
         margin: auto;
-        background: rgba(51, 51, 51, 0.75);
+        background: rgb(77, 207, 233);
         border-radius: 5px;
         outline: none;
         border: none;
         color: white;
-        padding: 1em;
-        font-size: 1rem;
+        padding: 0.5em;
+        font: 1.2rem 'Source Sans Pro', sans-serif;
       }
 
       #submit-input:hover {
+        background: rgb(112, 216, 237);
         cursor: pointer;
-        background: rgba(51, 51, 51, 1);
       }
     `;
 
@@ -96,51 +143,77 @@ class TaskItemForm extends HTMLElement {
       className: 'task-form',
     });
 
-    this.titleInputLabel = createElement('label', {
-      for: 'title-input',
-      innerText: 'Title',
+    this.fieldInputContainer = createElement('div', {
+      className: 'field-input-container',
     });
 
-    this.titleInputElement = createElement('input', {
+    this.nameInputContainer = createElement('div', {
+      className: 'name-input-container',
+    });
+
+    this.nameInputLabel = createElement('label', {
+      className: 'task-input-label',
+      id: 'name-input-label',
+      for: 'name-input',
+      innerText: 'Name',
+    });
+
+    this.nameInputElement = createElement('input', {
       className: 'task-input',
-      id: 'title-input',
+      id: 'name-input',
       type: 'text',
-      name: 'title',
-      placeholder: 'task title',
+      name: 'name',
+      placeholder: 'Task Description...',
+      required: true,
     });
 
-    this.descriptionInputLabel = createElement('label', {
-      for: 'description-input',
-      innerText: 'Description',
+    this.pomodoroInputContainer = createElement('div', {
+      className: 'pomodoro-input-container',
     });
 
-    this.descriptionInputElement = createElement('input', {
+    this.pomodoroInputLabel = createElement('label', {
+      className: 'task-input-label',
+      id: 'pomodoro-input-label',
+      for: 'pomodoro-input',
+      innerText: 'Est Pomodoros',
+    });
+
+    this.pomodoroInputElement = createElement('input', {
       className: 'task-input',
-      id: 'description-input',
-      type: 'text',
-      name: 'description',
-      placeholder: 'task description',
+      id: 'pomodoro-input',
+      type: 'number',
+      name: 'pomodoro',
+      placeholder: '#',
+      min: '1',
+      required: true,
     });
 
     this.submitInputElement = createElement('input', {
       className: 'task-input',
       id: 'submit-input',
       type: 'submit',
-      value: 'Add',
+      value: 'ADD',
     });
 
     this.shadow.append(this.styleElement, this.containerElement);
     this.containerElement.append(
-      this.titleInputLabel,
-      this.titleInputElement,
-      this.descriptionInputLabel,
-      this.descriptionInputElement,
+      this.fieldInputContainer,
       this.submitInputElement,
+    );
+    this.fieldInputContainer.append(
+      this.nameInputContainer,
+      this.pomodoroInputContainer,
+    );
+    this.nameInputContainer.append(this.nameInputLabel, this.nameInputElement);
+    this.pomodoroInputContainer.append(
+      this.pomodoroInputLabel,
+      this.pomodoroInputElement,
     );
   }
 }
 
 customElements.define('task-item-form', TaskItemForm);
+export default TaskItemForm;
 </code></pre>
         </article>
     </section>
@@ -151,13 +224,13 @@ customElements.define('task-item-form', TaskItemForm);
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#startProgressRing">startProgressRing</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#checkIfLongInputValid">checkIfLongInputValid</a></li><li><a href="global.html#checkIfShortInputValid">checkIfShortInputValid</a></li><li><a href="global.html#checkIfTimerAudioValid">checkIfTimerAudioValid</a></li><li><a href="global.html#checkIfTimeValid">checkIfTimeValid</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadiusStroke">setRadiusStroke</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Feb 24 2021 16:51:33 GMT-0800 (Pacific Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 10 2021 10:44:13 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
