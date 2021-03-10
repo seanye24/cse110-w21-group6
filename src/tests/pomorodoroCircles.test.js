@@ -35,8 +35,11 @@ describe('testing pomodoro circles', () => {
 
   test('invalid circle counts are ignored', () => {
     setCircleCount(-1);
-    expect(getCircleCount()).toBe(null);
+    expect(getCircleCount()).toBe(0);
     setCircleCount(5);
-    expect(getCircleCount()).toBe(null);
+    expect(getCircleCount()).toBe(0);
+    setCircleCount(3);
+    setCircleCount(7);
+    expect(getCircleCount()).toBe(3);
   });
 });

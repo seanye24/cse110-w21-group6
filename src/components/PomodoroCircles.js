@@ -2,7 +2,20 @@
  * @file pomodoro-circles web component
  */
 
-import { createElement } from '../utils/utils';
+import { createElement, validateNumber } from '../utils/utils';
+
+/**
+ * Validate if input is valid circle count (is Number and in range)
+ * @param {any} value - value to check
+ * @return {number | null} - circle count if valid, otherwise null
+ */
+const validateCircleCount = (value) => {
+  const circleCount = validateNumber(value, true);
+  if (circleCount === null || circleCount < 0 || circleCount > 4) {
+    return null;
+  }
+  return circleCount;
+};
 
 /**
  * Custom web component representing pomodoro circles.
@@ -10,14 +23,13 @@ import { createElement } from '../utils/utils';
  */
 class PomodoroCircles extends HTMLElement {
   static get observedAttributes() {
-    return ['circleCount'];
+    return ['circle-count'];
   }
 
   constructor() {
     super();
 
-    this._circleCount = this.getAttribute('circleCount');
-
+    this._circleCount = 0;
     this.styleElement = createElement('style', {
       innerText: `
       .circle-container {
@@ -42,51 +54,45 @@ class PomodoroCircles extends HTMLElement {
     this.shadow = this.attachShadow({ mode: 'open' });
     // add html elements and styling
     this.counterContainer = createElement('div', {
-      className: 'cirlce-container',
+      className: 'circle-container',
     });
-    this.circle1 = createElement('div', {
-      className: 'circle',
-    });
-    this.circle2 = createElement('div', {
-      className: 'circle',
-    });
-    this.circle3 = createElement('div', {
-      className: 'circle',
-    });
-    this.circle4 = createElement('div', {
-      className: 'circle',
-    });
+    this.circles = new Array(4)
+      .fill(null)
+      .map(() => createElement('div', { className: 'circle' }));
 
-    this.counterContainer.append(
-      this.circle1,
-      this.circle2,
-      this.circle3,
-      this.circle4,
-    );
+    this.counterContainer.append(...this.circles);
     this.shadow.append(this.styleElement, this.counterContainer);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    const newValueNumber = Number(newValue);
-    for (let i = 1; i <= newValueNumber; i++) {
-      if (i <= newValueNumber) {
-        this[`circle${i}`].classList.add('active');
-      } else {
-        this[`circle${i}`].classList.remove('active');
+    if (name === 'circle-count') {
+      const circleCount = validateCircleCount(newValue);
+      if (circleCount === null) {
+        return;
       }
+
+      this.circles.forEach((circle, i) => {
+        if (i < circleCount) {
+          circle.classList.add('active');
+        } else {
+          circle.classList.remove('active');
+        }
+      });
     }
   }
 
-  // TODO: getter/setter for circle count
   get circleCount() {
     return this._circleCount;
   }
 
-  set circleCount(circleCount) {
-    if (circleCount >= 0 && circleCount <= 4) {
-      this._circleCount = circleCount;
-      this.setAttribute('circleCount', this._circleCount);
+  set circleCount(value) {
+    const circleCount = validateCircleCount(value);
+    if (circleCount === null) {
+      return;
     }
+
+    this._circleCount = circleCount;
+    this.setAttribute('circle-count', this._circleCount);
   }
 }
 
