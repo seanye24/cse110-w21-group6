@@ -23,7 +23,7 @@ import {
 } from './taskList';
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
-import { initializePomodoroCircles } from './pomodoroCircles';
+import { initializePomodoroCircles, setCircleCount } from './pomodoroCircles';
 import {
   initializePopup as initializeSettingsPopup,
   openPopup as openSettingsPopup,
@@ -68,7 +68,7 @@ customElements.define('pomodoro-circles', PomodoroCircles);
 
 let isSessionOngoing = false;
 let pomodoroLength = DEFAULT_POMODORO_INTERVAL;
-pomodoroLength = 0.1;
+pomodoroLength = 0.05; // TODO: FOR TESTING, remove later
 let shortBreakLength;
 let longBreakLength;
 const timerAudio = new Audio();
@@ -124,6 +124,11 @@ const startSession = async (changeSessionButton) => {
         changeSessionButton();
       }
 
+      // reset circles if starting new set of 4 pomos
+      if (numPomodoros % 4 === 0) {
+        setCircleCount(0);
+      }
+
       // disable tasklist
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
@@ -141,6 +146,8 @@ const startSession = async (changeSessionButton) => {
 
       // check if break should be short or long
       numPomodoros++;
+      const circleCount = ((numPomodoros - 1) % 4) + 1; // number of circles to display
+      setCircleCount(circleCount);
       const shouldBeLongBreak = numPomodoros > 0 && numPomodoros % 4 === 0;
       currInterval = shouldBeLongBreak
         ? LONG_BREAK_INTERVAL
@@ -153,7 +160,7 @@ const startSession = async (changeSessionButton) => {
       // copy curr selected task due to weird loop closures
       const currSelectedTaskCopy = currSelectedTask;
       const currAnnouncement =
-        currInterval === LONG_BREAK_ANNOUNCEMENT
+        currInterval === LONG_BREAK_INTERVAL
           ? LONG_BREAK_ANNOUNCEMENT
           : SHORT_BREAK_ANNOUNCEMENT;
 
@@ -256,6 +263,8 @@ window.addEventListener('DOMContentLoaded', () => {
   // initialize variables, event listeners, and component values
   shortBreakLength = getShortBreakLength();
   longBreakLength = getLongBreakLength();
+  shortBreakLength = 0.05; // TODO: FOR TESTING, remove later
+  longBreakLength = 0.1; // TODO: FOR TESTING, remove later
   settingsIcon.onclick = openSettingsPopup;
   sessionButton.onmousedown = (e) => {
     e.preventDefault();
@@ -278,9 +287,10 @@ window.addEventListener('DOMContentLoaded', () => {
       setTasklistUsability(true);
       setButtonVisibility('hidden');
 
-      // reset progress and time
+      // reset progress, time, and circles
       setProgress(100);
       setTimer(60 * pomodoroLength);
+      setCircleCount(0);
 
       endSession(sessionButton, numPomodoros);
     } else {
