@@ -4,11 +4,6 @@
 
 let circlesElement;
 
-const setRoot = (root) => {
-  circlesElement = root;
-  const { shadowRoot } = circlesElement;
-};
-
 /**
  * Get number of filled pomodoro circles
  * @return {number} - amount of filled pomodoro circles
@@ -28,7 +23,7 @@ const setCircleCount = (circleCount) => {
  * @param {HTMLElement} element - pomodoro circles element
  */
 const initializePomodoroCircles = (element) => {
-  setRoot(element);
+  circlesElement = element;
 };
 
 export { initializePomodoroCircles, getCircleCount, setCircleCount };
