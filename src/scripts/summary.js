@@ -1,6 +1,5 @@
 /**
  * @file Manage Summary Pop-up for page
- * @author Siddharth Nag
  */
 
 import {
