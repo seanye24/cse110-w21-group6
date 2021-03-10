@@ -36,7 +36,7 @@ class Settings extends HTMLElement {
             transform: translate(-50%, -50%) scale(0);
             transition: 200ms ease-in-out;
             border-radius: 10px;
-            z-index: 10;
+            z-index: 5;
             background-color: white;
             width: 700px;
             max-width: 80%;
@@ -50,11 +50,11 @@ class Settings extends HTMLElement {
             font: 2rem 'Source Sans Pro', sans-serif;
             color: #777;
             letter-spacing: 0.1em;
-            text-align: center;
+            margin: 0;
           }
           
           .settings-hr {
-            margin-top: -1em;
+            margin-top: 0;
             margin-bottom: 1.5em;
           }
           
@@ -73,9 +73,10 @@ class Settings extends HTMLElement {
           
           .content .form-input {
             text-align: center;
-            margin-bottom: 1.5em;
+            margin-bottom: 1em;
             display: flex;
             justify-content: center;
+            align-items: center;
           }
           
           .content .form-input .bounds {
@@ -89,6 +90,7 @@ class Settings extends HTMLElement {
           }
 
           select {
+            cursor: pointer;
             font: 0.85rem 'Duru Sans', sans-serif;
             display: inline-block;
             vertical-align: middle;
@@ -103,21 +105,22 @@ class Settings extends HTMLElement {
           }
           
           .content button {
-            background-color: #48cae4;
+            background-color: rgba(72, 202, 228, 1);
             border: none;
-            border-radius: 20px;
+            border-radius: .25rem;
             color: white;
-            letter-spacing: 10px;
             font: 1.1rem 'Duru Sans', sans-serif;
             text-align: center;
             text-decoration: none;
-            margin-top: 0;
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 1.5em;
+            margin: 1.5em auto 0.5em auto;
+            padding: 0.5em;
             display: block;
             width: 75%;
             cursor: pointer;
+          }
+
+          .content button:hover {
+            background-color: rgba(72, 202, 228, 0.8);
           }
           
           .content .error {
@@ -137,6 +140,8 @@ class Settings extends HTMLElement {
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
             pointer-events: none;
+            z-index: 4;
+            cursor: pointer;
           }
           
           #overlay.active {
@@ -167,8 +172,9 @@ class Settings extends HTMLElement {
     this.inputContainerShort = createElement('div', {
       className: 'form-input',
     });
-    this.inputLabelShort = createElement('p', {
+    this.inputLabelShort = createElement('label', {
       innerText: 'Short Break: ',
+      for: 'short-number',
     });
     this.inputBoxShort = createElement('input', {
       id: 'short-number',
@@ -178,7 +184,7 @@ class Settings extends HTMLElement {
       max: '5',
       value: this._shortBreak,
     });
-    this.inputBoundShort = createElement('p', {
+    this.inputBoundShort = createElement('span', {
       className: 'bounds',
       innerText: '3 - 5 minutes',
     });
@@ -190,8 +196,9 @@ class Settings extends HTMLElement {
     this.inputContainerLong = createElement('div', {
       className: 'form-input',
     });
-    this.inputLabelLong = createElement('p', {
+    this.inputLabelLong = createElement('label', {
       innerText: 'Long Break: ',
+      for: 'long-number',
     });
     this.inputBoxLong = createElement('input', {
       id: 'long-number',
@@ -201,7 +208,7 @@ class Settings extends HTMLElement {
       max: '30',
       value: this._longBreak,
     });
-    this.inputBoundLong = createElement('p', {
+    this.inputBoundLong = createElement('span', {
       className: 'bounds',
       innerText: '15 - 30 minutes',
     });

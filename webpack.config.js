@@ -64,7 +64,7 @@ module.exports = (env, argv) => {
     ],
     optimization: {
       minimize: true,
-      minimizer: [`...`, new CssMinimizerPlugin()],
+      minimizer: ['...', new CssMinimizerPlugin()],
     },
     devServer: {
       contentBase: path.join(__dirname, 'dist'),

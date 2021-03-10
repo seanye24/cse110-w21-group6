@@ -66,6 +66,7 @@ body {
 .settings-icon {
   width: 2em;
   height: 2em;
+  margin-right: 1em;
 }
 
 .settings-icon:hover {
@@ -187,4 +188,64 @@ footer {
   height: 1.75em;
   border-radius: 50%;
   vertical-align: bottom;
+}
+
+.confirmation-overlay {
+  transition: 200ms ease-in;
+  z-index: 4;
+  cursor: pointer;
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.confirmation-overlay.active {
+  visibility: visible;
+}
+
+.confirmation-popup {
+  transition: 200ms ease-in;
+  cursor: initial;
+  position: fixed;
+  width: 40%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: #fff;
+  border-radius: 5px;
+  padding: 1em;
+}
+
+.confirmation-overlay.active .confirmation-popup {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.confirmation-question {
+  text-align: center;
+  font-size: 1.5em;
+  color: #555;
+}
+
+.confirmation-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.confirmation-button {
+  cursor: pointer;
+  margin: 1em;
+  padding: 0.375em 0.75em;
+  border: none;
+  border-radius: 0.25rem;
+  background-color: rgba(176, 176, 176, 1);
+  color: #fff;
+  font: 1.25em 'Source Sans Pro', sans-serif;
+}
+
+.confirmation-button:hover {
+  background-color: rgba(176, 176, 176, 0.8);
 }

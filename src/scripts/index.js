@@ -25,10 +25,15 @@ import {
 import {
   initializeAnnouncement,
   setAnnouncement,
-  setYesButtonCallback,
-  setNoButtonCallback,
+  setYesButtonCallback as setAnnouncementYesButtonCallback,
+  setNoButtonCallback as setAnnouncementNoButtonCallback,
   setButtonVisibility,
 } from './announcement';
+import {
+  initializeConfirmation,
+  openConfirmationPopup,
+  closeConfirmationPopup,
+} from './endSessionConfirmationPopup';
 import {
   POMODORO_ANNOUNCEMENT,
   SHORT_BREAK_ANNOUNCEMENT,
@@ -49,7 +54,8 @@ customElements.define('task-list', TaskList);
 customElements.define('settings-component', Settings);
 
 let isSessionOngoing = false;
-const pomodoroLength = DEFAULT_POMODORO_INTERVAL;
+let pomodoroLength = DEFAULT_POMODORO_INTERVAL;
+pomodoroLength = 0.1;
 let shortBreakLength;
 let longBreakLength;
 
@@ -63,8 +69,6 @@ const startInterval = async (intervalLength) => {
   while (currTime >= 0) {
     // quit if session stops
     if (!isSessionOngoing) {
-      setTimer(0);
-      setProgress(0);
       return false;
     }
     const currProgress = (100 * currTime) / intervalLength;
@@ -79,7 +83,7 @@ const startInterval = async (intervalLength) => {
 /**
  * Handles pomodoro app, dispatches actions to components depending on the current interval
  * @param {Function} changeSessionButton - changes session button from start to end
- * @return {Promise<number>} - number of pomodoros completed during session
+ * @return {Promise<number>} - number of pomodoros completed during session, -1 if no tasks are available at the start of the session
  */
 const startSession = async (changeSessionButton) => {
   let numPomodoros = 0;
@@ -90,15 +94,17 @@ const startSession = async (changeSessionButton) => {
   while (isSessionOngoing) {
     if (currInterval === POMODORO_INTERVAL) {
       // use previous currTask or next available
-      // stop if no tasks are available
       currSelectedTask = getCurrentlySelectedTask();
       if (!currSelectedTask) {
         currSelectedTask = selectFirstTask();
       }
+
+      // stop if no tasks available
       if (!currSelectedTask) {
         return numPomodoros === 0 ? -1 : numPomodoros;
       }
 
+      // change session button to end when first pomo starts
       if (numPomodoros === 0) {
         changeSessionButton();
       }
@@ -107,12 +113,13 @@ const startSession = async (changeSessionButton) => {
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
-      // start pomodoro
-      if (!(await startInterval(60 * pomodoroLength))) {
+      // start pomodoro, stop if interval is interrupted
+      const shouldContinue = await startInterval(60 * pomodoroLength);
+      if (!shouldContinue) {
         return numPomodoros;
       }
 
-      currSelectedTask = incrementPomodoro(currSelectedTask); // increment task if pomo is fully completed
+      currSelectedTask = incrementPomodoro(currSelectedTask); // increment task
 
       // check if break should be short or long
       numPomodoros++;
@@ -135,31 +142,32 @@ const startSession = async (changeSessionButton) => {
           ? LONG_BREAK_ANNOUNCEMENT
           : SHORT_BREAK_ANNOUNCEMENT;
 
-      let wasButtonClicked = false;
-      setYesButtonCallback(() => {
+      let wasAnnouncementButtonClicked = false;
+      setAnnouncementYesButtonCallback(() => {
         completeTask(currSelectedTaskCopy);
         selectFirstTask();
         setAnnouncement(currAnnouncement);
         setButtonVisibility('hidden');
-        wasButtonClicked = true;
+        wasAnnouncementButtonClicked = true;
       });
-      setNoButtonCallback(() => {
+      setAnnouncementNoButtonCallback(() => {
         setAnnouncement(currAnnouncement);
         setButtonVisibility('hidden');
-        wasButtonClicked = true;
+        wasAnnouncementButtonClicked = true;
       });
 
-      if (
-        !(await startInterval(
-          currInterval === LONG_BREAK_INTERVAL
-            ? 60 * longBreakLength
-            : 60 * shortBreakLength,
-        ))
-      ) {
+      // start break, stop if interval is interrupted
+      const shouldContinue = await startInterval(
+        currInterval === LONG_BREAK_INTERVAL
+          ? 60 * longBreakLength
+          : 60 * shortBreakLength,
+      );
+      if (!shouldContinue) {
         return numPomodoros;
       }
 
-      if (!wasButtonClicked) {
+      // hide buttons if they aren't clicked
+      if (!wasAnnouncementButtonClicked) {
         setButtonVisibility('hidden');
       }
       currInterval = POMODORO_INTERVAL;
@@ -167,7 +175,7 @@ const startSession = async (changeSessionButton) => {
 
     // reset progress and give it time to reset (progress-ring transition is 35s)
     setProgress(100);
-    await tick(0.25);
+    await tick(0.5);
   }
   return numPomodoros;
 };
@@ -184,19 +192,20 @@ const endSession = (sessionButton, numPomodoros) => {
   deselectAllTasks();
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
-  // TODO: stop session
-  // TODO: display metrics
+  // TODO: display session summary
 };
 
 window.addEventListener('DOMContentLoaded', () => {
+  const settingsIcon = document.querySelector('.settings-icon');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
+  const sessionButton = document.querySelector('.session-button');
   const announcementElement = document.querySelector('.announcement-container');
   const taskListElement = document.querySelector('.task-list');
+  const confirmationOverlay = document.querySelector('.confirmation-overlay');
   const settingsElement = document.querySelector('.settings');
-  const settingsIcon = document.querySelector('.settings-icon');
 
-  const onSaveSettings = (newShortBreakLength, newLongBreakLength) => {
+  const saveSettingsCallback = (newShortBreakLength, newLongBreakLength) => {
     shortBreakLength = newShortBreakLength;
     longBreakLength = newLongBreakLength;
   };
@@ -205,16 +214,12 @@ window.addEventListener('DOMContentLoaded', () => {
   initializeTimer(timerElement);
   initializeAnnouncement(announcementElement);
   initializeTaskList(taskListElement);
-  initializeSettings(settingsElement, onSaveSettings);
-  settingsIcon.onclick = openSettingsPopup;
+  initializeConfirmation(confirmationOverlay, () => {
+    isSessionOngoing = false;
+  });
+  initializeSettings(settingsElement, saveSettingsCallback);
 
-  shortBreakLength = getShortBreakLength();
-  longBreakLength = getLongBreakLength();
-
-  deselectAllTasks();
-  setTimer(60 * pomodoroLength);
-
-  // adjust nav bar color
+  // adjust nav bar color on scroll
   const navBar = document.querySelector('.navbar');
   window.onscroll = () => {
     if (window.scrollY === 0) {
@@ -224,27 +229,37 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // start session when start button is clicked
-  const startButton = document.querySelector('.session-button');
-  startButton.onmousedown = (e) => {
+  // initialize variables, event listeners, and component values
+  shortBreakLength = getShortBreakLength();
+  longBreakLength = getLongBreakLength();
+  settingsIcon.onclick = openSettingsPopup;
+  sessionButton.onmousedown = (e) => {
     e.preventDefault();
   };
-  startButton.addEventListener('click', async (e) => {
-    if (e.target.innerText === 'Start') {
+  setTimer(60 * pomodoroLength);
+  deselectAllTasks();
+
+  // start session when start button is clicked
+  sessionButton.addEventListener('click', async () => {
+    if (sessionButton.innerText === 'Start') {
       isSessionOngoing = true;
       const changeSessionButton = () => {
-        e.target.innerText = 'End';
-        e.target.className = 'session-button in-session';
+        sessionButton.innerText = 'End';
+        sessionButton.classList.add('session-button', 'in-session');
       };
       const numPomodoros = await startSession(changeSessionButton);
-      // reset progress and give it time to reset (progress-ring transition is 35s)
-      setProgress(100);
-      await tick(0.25);
+
+      // reenable tasklist and hide announcements
       setTasklistUsability(true);
-      endSession(e.target, numPomodoros);
       setButtonVisibility('hidden');
+
+      // reset progress and time
+      setProgress(100);
+      setTimer(60 * pomodoroLength);
+
+      endSession(sessionButton, numPomodoros);
     } else {
-      isSessionOngoing = false;
+      openConfirmationPopup();
     }
   });
 });

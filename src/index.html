@@ -46,10 +46,30 @@
         class="progress-ring"
       ></progress-ring>
       <button class="session-button" id="session-button">Start</button>
+      <div class="confirmation-overlay">
+        <div class="confirmation-popup">
+          <p class="confirmation-question">
+            Are you sure you want to end the session?
+          </p>
+          <div class="confirmation-button-container">
+            <button class="confirmation-button confirmation-no-button">
+              Cancel
+            </button>
+            <button class="confirmation-button confirmation-yes-button">
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="announcement-container">
         <h2 class="announcement">Work on your tasks!</h2>
-        <button class="announcement-button yes-button hidden">Yes</button>
-        <button class="announcement-button no-button hidden">No</button>
+        <button class="announcement-button announcement-yes-button hidden">
+          Yes
+        </button>
+        <button class="announcement-button announcement-no-button hidden">
+          No
+        </button>
       </div>
       <task-list class="task-list"></task-list>
     </div>
@@ -80,13 +100,6 @@
         your long break reward
       </p>
     </div>
-
-    <div class="popup" id="confirmation-popup">    
-      <p>Do you want to end session?</p>
-      <button id="no-button">No</button>
-      <button id="yes-button">Yes</button>
-    </div>
-    <div id="overlay"></div>
 
     <settings-component class="settings"></settings-component>
 
