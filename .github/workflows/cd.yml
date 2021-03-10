@@ -1,5 +1,5 @@
 name: CD (Deploy to GitHub Pages)
-on: 
+on:
   push:
     branches:
       - main
@@ -16,8 +16,19 @@ jobs:
           yarn
           yarn run build
 
-      - name: Deploy
+      - name: Deploy Build to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
           branch: gh-pages
           folder: dist
+
+      - name: Generate docs
+        run: yarn run docs
+
+      - name: Deploy docs to jsdoc branch
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: jsdoc
+          FOLDER: docs
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

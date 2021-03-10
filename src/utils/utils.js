@@ -72,6 +72,17 @@ const checkIfLongInputValid = (input) => {
 };
 
 /**
+ * Check if timer audio src is valid
+ */
+const checkIfTimerAudioValid = (input) => {
+  return [
+    'assets/calm-alarm.mp3',
+    'assets/kanye-stop.mp3',
+    'assets/original-alarm.mp3',
+  ].includes(input);
+};
+
+/**
  * Use promises to tick by specified tickLength
  * NOTE: ticks may be slightly longer than the duration due the single threaded nature of JavaScript
  * @param {number} duration - duration of tick (in seconds)
@@ -100,11 +111,11 @@ const getMinutesAndSeconds = (totalSeconds) => {
 const initializeIntervalLengths = () => {
   let shortBreakLength = window.localStorage.getItem('shortBreakLength');
   let longBreakLength = window.localStorage.getItem('longBreakLength');
-  if (!shortBreakLength) {
+  if (!shortBreakLength || !checkIfShortInputValid(shortBreakLength)) {
     shortBreakLength = DEFAULT_SHORT_BREAK_INTERVAL;
     window.localStorage.setItem('shortBreakLength', shortBreakLength);
   }
-  if (!longBreakLength) {
+  if (!longBreakLength || !checkIfLongInputValid(longBreakLength)) {
     longBreakLength = DEFAULT_LONG_BREAK_INTERVAL;
     window.localStorage.setItem('longBreakLength', longBreakLength);
   }
@@ -116,6 +127,7 @@ export {
   initializeIntervalLengths,
   checkIfShortInputValid,
   checkIfLongInputValid,
+  checkIfTimerAudioValid,
   getMinutesAndSeconds,
   tick,
   checkIfTimeValid,

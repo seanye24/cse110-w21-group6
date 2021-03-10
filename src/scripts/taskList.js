@@ -26,24 +26,6 @@ let taskItemFormContainer;
 let taskItemFormInputs;
 
 /**
- * Initialize element variables for different elements of task list
- * @param {HTMLElement} root - root element of tasklist
- */
-const setRoot = (root) => {
-  taskList = root;
-  taskListContainer = taskList.shadowRoot.querySelector('.container');
-  taskListItemContainer = taskListContainer.querySelector(
-    '.task-item-container',
-  );
-  taskItemForm = taskListContainer.querySelector('.task-item-form');
-  taskItemFormContainer = taskItemForm.shadowRoot.querySelector('.task-form');
-  taskItemFormInputs = {
-    name: taskItemFormContainer.querySelector('#name-input'),
-    pomodoro: taskItemFormContainer.querySelector('#pomodoro-input'),
-  };
-};
-
-/**
  * Save current tasks to localStorage
  */
 const saveTasks = () => {
@@ -292,16 +274,6 @@ const checkDuplicateTask = (e) => {
 };
 
 /**
- * Set tasklist
- * @param {HTMLElement} element - task list element
- */
-const initializeTaskList = (element) => {
-  setRoot(element);
-  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
-  restoreTasks();
-  taskItemFormInputs.name.oninput = checkDuplicateTask;
-};
-/**
  * Increment the usedPomodoros for one task
  * @param {Task} task - task to be incremented
  * @return {Task} - incremented task
@@ -389,6 +361,35 @@ const completeTask = (completedTask) => {
     selected: false,
     completed: true,
   });
+};
+
+/**
+ * Initialize element variables for different elements of task list
+ * @param {HTMLElement} root - tasklist element
+ */
+const initializeElements = (root) => {
+  taskList = root;
+  taskListContainer = taskList.shadowRoot.querySelector('.container');
+  taskListItemContainer = taskListContainer.querySelector(
+    '.task-item-container',
+  );
+  taskItemForm = taskListContainer.querySelector('.task-item-form');
+  taskItemFormContainer = taskItemForm.shadowRoot.querySelector('.task-form');
+  taskItemFormInputs = {
+    name: taskItemFormContainer.querySelector('#name-input'),
+    pomodoro: taskItemFormContainer.querySelector('#pomodoro-input'),
+  };
+};
+
+/**
+ * Set tasklist
+ * @param {HTMLElement} root - task list element
+ */
+const initializeTaskList = (root) => {
+  initializeElements(root);
+  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
+  restoreTasks();
+  taskItemFormInputs.name.oninput = checkDuplicateTask;
 };
 
 export {

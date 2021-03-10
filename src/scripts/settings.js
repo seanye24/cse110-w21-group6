@@ -7,6 +7,7 @@ import {
   initializeIntervalLengths,
   checkIfShortInputValid,
   checkIfLongInputValid,
+  checkIfTimerAudioValid,
 } from '../utils/utils';
 
 let settingsElement;
@@ -60,12 +61,13 @@ const setLongBreakLength = (longBreakLength) => {
  */
 const setTimerAudio = (input) => {
   settingsElement.timerSound = input;
+  window.localStorage.setItem('timerAudio', input);
 };
 
 /**
  * Open settings popup
  */
-const openSettingsPopup = () => {
+const openPopup = () => {
   popupEl.classList.add('active');
   overlay.classList.add('active');
 
@@ -77,7 +79,7 @@ const openSettingsPopup = () => {
 /**
  * Close settings popup
  */
-const closeSettingsPopup = () => {
+const closePopup = () => {
   timerAudio.pause();
   popupEl.classList.remove('active');
   overlay.classList.remove('active');
@@ -85,7 +87,7 @@ const closeSettingsPopup = () => {
 
 /**
  * Save interval length / audio settings, display error if invalid
- * @return {[number, number] | null} - new interval lengths, null if error occurs
+ * @return {(number[] | null)} - new interval lengths, null if error occurs
  */
 const saveSettings = () => {
   const newShortBreakLength = shortBreakInput.value;
@@ -111,7 +113,7 @@ const saveSettings = () => {
  * Initialize element variables for different elements of settings component
  * @param {HTMLElement} root - root element of settings component
  */
-const setRoot = (root) => {
+const initializeElements = (root) => {
   settingsElement = root;
   const { shadowRoot } = settingsElement;
   popupEl = shadowRoot.querySelector('.popup');
@@ -125,24 +127,27 @@ const setRoot = (root) => {
 
 /**
  * Set the initial settings element
- * @param {HTMLElement} element - settings element
- * @param {() => void} saveSettingsCallback - callback for when settings are saved
+ * @param {HTMLElement} root - settings element
+ * @param {Function} saveSettingsCallback - callback for when settings are saved
  */
-const initializeSettings = (element, saveSettingsCallback) => {
+const initializePopup = (root, saveSettingsCallback) => {
   const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
-  setRoot(element);
+  initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
-  setTimerAudio('assets/calm-alarm.mp3'); // TODO: pull from localstorage
+  const savedAudio = window.localStorage.getItem('timerAudio');
+  setTimerAudio(
+    checkIfTimerAudioValid(savedAudio) ? savedAudio : 'assets/calm-alarm.mp3',
+  );
 
-  overlay.onclick = closeSettingsPopup;
+  overlay.onclick = closePopup;
 
   saveButton.addEventListener('click', () => {
     const newBreakLengths = saveSettings();
     if (!newBreakLengths) {
       return;
     }
-    closeSettingsPopup();
+    closePopup();
     saveSettingsCallback(...newBreakLengths);
   });
 
@@ -154,13 +159,13 @@ const initializeSettings = (element, saveSettingsCallback) => {
 };
 
 export {
-  initializeSettings,
+  initializePopup,
+  openPopup,
+  closePopup,
   getShortBreakLength,
   getLongBreakLength,
+  getTimerAudio,
   setShortBreakLength,
   setLongBreakLength,
-  openSettingsPopup,
-  closeSettingsPopup,
-  getTimerAudio,
   setTimerAudio,
 };

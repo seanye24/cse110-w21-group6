@@ -25,10 +25,10 @@ import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
 import { initializePomodoroCircles } from './pomodoroCircles';
 import {
-  initializeSettings,
+  initializePopup as initializeSettingsPopup,
+  openPopup as openSettingsPopup,
   getShortBreakLength,
   getLongBreakLength,
-  openSettingsPopup,
   getTimerAudio,
 } from './settings';
 import {
@@ -39,9 +39,9 @@ import {
   setButtonVisibility,
 } from './announcement';
 import {
-  initializeConfirmation,
-  openConfirmationPopup,
-} from './endSessionConfirmationPopup';
+  initializePopup as initializeConfirmationPopup,
+  openPopup as openConfirmationPopup,
+} from './confirmationPopup';
 import {
   initializePopup as initializeSummaryPopup,
   openPopup as openSummaryPopup,
@@ -209,7 +209,7 @@ const endSession = (sessionButton, numPomodoros) => {
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
   initializeSummaryPopup(
-    document.querySelector('.summary-overlay'),
+    document.querySelector('#summary-overlay'),
     getTasks(),
   );
   openSummaryPopup();
@@ -225,7 +225,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const sessionButton = document.querySelector('.session-button');
   const announcementElement = document.querySelector('.announcement-container');
   const taskListElement = document.querySelector('.task-list');
-  const confirmationOverlay = document.querySelector('.confirmation-overlay');
+  const confirmationOverlay = document.querySelector('#confirmation-overlay');
   const settingsElement = document.querySelector('.settings');
 
   const saveSettingsCallback = (newShortBreakLength, newLongBreakLength) => {
@@ -238,10 +238,10 @@ window.addEventListener('DOMContentLoaded', () => {
   initializePomodoroCircles(circlesElement);
   initializeAnnouncement(announcementElement);
   initializeTaskList(taskListElement);
-  initializeConfirmation(confirmationOverlay, () => {
+  initializeConfirmationPopup(confirmationOverlay, () => {
     isSessionOngoing = false;
   });
-  initializeSettings(settingsElement, saveSettingsCallback);
+  initializeSettingsPopup(settingsElement, saveSettingsCallback);
 
   // adjust nav bar color on scroll
   const navBar = document.querySelector('.navbar');

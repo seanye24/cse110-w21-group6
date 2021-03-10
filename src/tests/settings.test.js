@@ -5,7 +5,7 @@ import {
   checkIfLongInputValid,
 } from '../utils/utils';
 import {
-  initializeSettings,
+  initializePopup,
   getShortBreakLength,
   getLongBreakLength,
   setShortBreakLength,
@@ -27,7 +27,7 @@ describe('testing settings values', () => {
     });
     document.body.appendChild(settingsElement);
     document.body.appendChild(settingsButton);
-    initializeSettings(settingsElement);
+    initializePopup(settingsElement);
   });
 
   test('see if initial values are setting correctly', () => {
