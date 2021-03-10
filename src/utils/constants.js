@@ -24,3 +24,10 @@ export const NO_TASKS_ANNOUNCEMENT = 'No work to be done.';
 export const POMODORO_INTERVAL = 'pomodoroInterval';
 export const SHORT_BREAK_INTERVAL = 'shortBreakInterval';
 export const LONG_BREAK_INTERVAL = 'longBreakInterval';
+
+// timer audio paths
+export const TIMER_AUDIOS = {
+  calm: 'assets/calm-alarm.mp3',
+  annoying: 'assets/original-alarm.mp3',
+  kanye: 'assets/kanye-stop.mp3',
+};
