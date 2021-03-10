@@ -26,22 +26,22 @@ const closePopup = () => {
  * @param {HTMLElement} root - confirmation popup
  * @param {() => void} onAcceptCallback - callback when confirmation is accepted
  */
-const setRoot = (root) => {
+const initializeElements = (root) => {
   confirmationOverlay = root;
   confirmationPopup = confirmationOverlay.querySelector('#confirmation-popup');
   noButton = confirmationPopup.querySelector('.confirmation-no-button');
   yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
-  noButton.onmousedown = (e) => e.preventDefault();
-  yesButton.onmousedown = (e) => e.preventDefault();
 };
 
 /**
  * Initialize popup
- * @param {HTMLElement} element - confirmation element
+ * @param {HTMLElement} root - confirmation element
  * @param {() => void} onAcceptCallback - callback when confirmation is accepted
  */
-const initializePopup = (element, onAcceptCallback) => {
-  setRoot(element);
+const initializePopup = (root, onAcceptCallback) => {
+  initializeElements(root);
+  noButton.onmousedown = (e) => e.preventDefault();
+  yesButton.onmousedown = (e) => e.preventDefault();
   yesButton.onclick = () => {
     closePopup();
     onAcceptCallback();

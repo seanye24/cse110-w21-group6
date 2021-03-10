@@ -113,7 +113,7 @@ const saveSettings = () => {
  * Initialize element variables for different elements of settings component
  * @param {HTMLElement} root - root element of settings component
  */
-const setRoot = (root) => {
+const initializeElements = (root) => {
   settingsElement = root;
   const { shadowRoot } = settingsElement;
   popupEl = shadowRoot.querySelector('.popup');
@@ -127,12 +127,12 @@ const setRoot = (root) => {
 
 /**
  * Set the initial settings element
- * @param {HTMLElement} element - settings element
+ * @param {HTMLElement} root - settings element
  * @param {() => void} saveSettingsCallback - callback for when settings are saved
  */
-const initializePopup = (element, saveSettingsCallback) => {
+const initializePopup = (root, saveSettingsCallback) => {
   const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
-  setRoot(element);
+  initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
   const savedAudio = window.localStorage.getItem('timerAudio');

@@ -77,7 +77,7 @@ const createTaskSummaryList = (taskList) => {
  * @description Access all the shadow root elements and set the summary element
  * @param {HTMLElement} root - the summary element
  */
-const setRoot = (root) => {
+const initializeElements = (root) => {
   summaryOverlay = root;
   summaryPopup = summaryOverlay.querySelector('#summary-popup');
   taskSummaryList = summaryOverlay.querySelector('.task-summary-list');
@@ -90,11 +90,11 @@ const setRoot = (root) => {
 
 /**
  * Initialize popup
- * @param {HTMLElement} element - summary popup element
+ * @param {HTMLElement} root - summary popup element
  * @param {Task[]} tasks - tasks to summarize
  */
-const initializePopup = (element, tasks) => {
-  setRoot(element);
+const initializePopup = (root, tasks) => {
+  initializeElements(root);
   createTaskSummaryList(tasks);
   const { actual, estimated } = tasks.reduce(
     (acc, task) => ({
