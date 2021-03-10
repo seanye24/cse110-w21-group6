@@ -25,5 +25,4 @@ jobs:
       - name: Deploy docs to docs branch
         run: |
           yarn run docs
-          git remote add origin https://github.com/seanye24/cse110-w21-group6.git
           git subtree push --prefix origin jsdoc
