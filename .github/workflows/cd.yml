@@ -16,8 +16,14 @@ jobs:
           yarn
           yarn run build
 
-      - name: Deploy
+      - name: Deploy Build to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.0.0
         with:
           branch: gh-pages
           folder: dist
+          
+      - name: Deploy docs to docs branch
+        run: |
+          yarn run docs
+          git remote add origin https://github.com/seanye24/cse110-w21-group6.git
+          git subtree push --prefix origin jsdoc
