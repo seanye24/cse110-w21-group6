@@ -10,14 +10,14 @@ let yesButton;
 /**
  * Open the confirmation popup
  */
-const openConfirmationPopup = () => {
+const openPopup = () => {
   confirmationOverlay.classList.add('active');
 };
 
 /**
  * Close the confirmation popup
  */
-const closeConfirmationPopup = () => {
+const closePopup = () => {
   confirmationOverlay.classList.remove('active');
 };
 
@@ -40,19 +40,15 @@ const setRoot = (root) => {
  * @param {HTMLElement} element - confirmation element
  * @param {() => void} onAcceptCallback - callback when confirmation is accepted
  */
-const initializeConfirmation = (element, onAcceptCallback) => {
+const initializePopup = (element, onAcceptCallback) => {
   setRoot(element);
   yesButton.onclick = () => {
-    closeConfirmationPopup();
+    closePopup();
     onAcceptCallback();
   };
-  noButton.onclick = closeConfirmationPopup;
-  confirmationOverlay.onclick = closeConfirmationPopup;
+  noButton.onclick = closePopup;
+  confirmationOverlay.onclick = closePopup;
   confirmationPopup.onclick = (e) => e.stopPropagation();
 };
 
-export {
-  initializeConfirmation,
-  openConfirmationPopup,
-  closeConfirmationPopup,
-};
+export { initializePopup, openPopup, closePopup };

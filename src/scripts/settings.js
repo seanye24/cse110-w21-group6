@@ -67,7 +67,7 @@ const setTimerAudio = (input) => {
 /**
  * Open settings popup
  */
-const openSettingsPopup = () => {
+const openPopup = () => {
   popupEl.classList.add('active');
   overlay.classList.add('active');
 
@@ -79,7 +79,7 @@ const openSettingsPopup = () => {
 /**
  * Close settings popup
  */
-const closeSettingsPopup = () => {
+const closePopup = () => {
   timerAudio.pause();
   popupEl.classList.remove('active');
   overlay.classList.remove('active');
@@ -130,7 +130,7 @@ const setRoot = (root) => {
  * @param {HTMLElement} element - settings element
  * @param {() => void} saveSettingsCallback - callback for when settings are saved
  */
-const initializeSettings = (element, saveSettingsCallback) => {
+const initializePopup = (element, saveSettingsCallback) => {
   const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
   setRoot(element);
   setShortBreakLength(shortBreakLength);
@@ -140,14 +140,14 @@ const initializeSettings = (element, saveSettingsCallback) => {
     checkIfTimerAudioValid(savedAudio) ? savedAudio : 'assets/calm-alarm.mp3',
   );
 
-  overlay.onclick = closeSettingsPopup;
+  overlay.onclick = closePopup;
 
   saveButton.addEventListener('click', () => {
     const newBreakLengths = saveSettings();
     if (!newBreakLengths) {
       return;
     }
-    closeSettingsPopup();
+    closePopup();
     saveSettingsCallback(...newBreakLengths);
   });
 
@@ -159,13 +159,10 @@ const initializeSettings = (element, saveSettingsCallback) => {
 };
 
 export {
-  initializeSettings,
+  initializePopup,
+  openPopup,
+  closePopup,
   getShortBreakLength,
   getLongBreakLength,
-  setShortBreakLength,
-  setLongBreakLength,
-  openSettingsPopup,
-  closeSettingsPopup,
   getTimerAudio,
-  setTimerAudio,
 };

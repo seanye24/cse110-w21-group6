@@ -18,10 +18,10 @@ import {
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
 import {
-  initializeSettings,
+  initializePopup as initializeSettingsPopup,
+  openPopup as openSettingsPopup,
   getShortBreakLength,
   getLongBreakLength,
-  openSettingsPopup,
   getTimerAudio,
 } from './settings';
 import {
@@ -32,9 +32,9 @@ import {
   setButtonVisibility,
 } from './announcement';
 import {
-  initializeConfirmation,
-  openConfirmationPopup,
-} from './endSessionConfirmationPopup';
+  initializePopup as initializeConfirmationPopup,
+  openPopup as openConfirmationPopup,
+} from './confirmationPopup';
 import {
   initializePopup as initializeSummaryPopup,
   openPopup as openSummaryPopup,
@@ -226,10 +226,10 @@ window.addEventListener('DOMContentLoaded', () => {
   initializeTimer(timerElement);
   initializeAnnouncement(announcementElement);
   initializeTaskList(taskListElement);
-  initializeConfirmation(confirmationOverlay, () => {
+  initializeConfirmationPopup(confirmationOverlay, () => {
     isSessionOngoing = false;
   });
-  initializeSettings(settingsElement, saveSettingsCallback);
+  initializeSettingsPopup(settingsElement, saveSettingsCallback);
 
   // adjust nav bar color on scroll
   const navBar = document.querySelector('.navbar');
