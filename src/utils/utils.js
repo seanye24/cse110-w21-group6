@@ -39,11 +39,15 @@ const createElement = (elementType, props = {}, options = {}) => {
 /**
  * Tries to convert input to a number
  * @param {any} value - to be converted to number
+ * @param {boolean} shouldTruncate - determine if number should be truncated
  * @return {number | null} - number if successful, null otherwise
  */
-const validateNumber = (value) => {
-  const num = parseFloat(value, 10);
-  return Number.isNaN(num) ? null : num;
+const validateNumber = (value, shouldTruncate = false) => {
+  const number = Number(value);
+  if (Number.isNaN(number)) {
+    return null;
+  }
+  return shouldTruncate ? Math.floor(number) : number;
 };
 
 /**
