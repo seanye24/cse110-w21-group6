@@ -382,7 +382,7 @@ const initializeElements = (root) => {
 };
 
 /**
- * Set tasklist
+ * Initialize task list, add event listeners, restore saved tasks
  * @param {HTMLElement} root - task list element
  */
 const initializeTaskList = (root) => {
