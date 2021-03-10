@@ -69,10 +69,11 @@ class PomodoroCircles extends HTMLElement {
   attributeChangedCallback(name, oldValue, newValue) {
     const newValueNumber = Number(newValue);
     for (let i = 1; i <= newValueNumber; i++) {
-      if (i <= newValueNumber)
+      if (i <= newValueNumber) {
         this[`circle${i}`].classList.add('active');
-      else
+      } else {
         this[`circle${i}`].classList.remove('active');
+      }
     }
   }
 
