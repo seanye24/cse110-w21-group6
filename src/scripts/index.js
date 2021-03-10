@@ -29,6 +29,7 @@ import {
   getShortBreakLength,
   getLongBreakLength,
   openSettingsPopup,
+  getTimerAudio,
 } from './settings';
 import {
   initializeAnnouncement,
@@ -70,6 +71,8 @@ let pomodoroLength = DEFAULT_POMODORO_INTERVAL;
 pomodoroLength = 0.1;
 let shortBreakLength;
 let longBreakLength;
+const timerAudio = new Audio();
+timerAudio.volume = 0.2;
 
 /**
  * Starts and runs interval until interval is completed
@@ -125,6 +128,7 @@ const startSession = async (changeSessionButton) => {
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
+      timerAudio.pause();
       // start pomodoro, stop if interval is interrupted
       const shouldContinue = await startInterval(60 * pomodoroLength);
       if (!shouldContinue) {
@@ -132,6 +136,8 @@ const startSession = async (changeSessionButton) => {
       }
 
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task
+      timerAudio.src = getTimerAudio();
+      timerAudio.play();
 
       // check if break should be short or long
       numPomodoros++;
@@ -139,9 +145,6 @@ const startSession = async (changeSessionButton) => {
       currInterval = shouldBeLongBreak
         ? LONG_BREAK_INTERVAL
         : SHORT_BREAK_INTERVAL;
-
-      // reenable task list
-      setTasklistUsability(true);
     } else {
       // prompt user
       setButtonVisibility('visible');
@@ -161,6 +164,7 @@ const startSession = async (changeSessionButton) => {
         setAnnouncement(currAnnouncement);
         setButtonVisibility('hidden');
         wasAnnouncementButtonClicked = true;
+        setTasklistUsability(true);
       });
       setAnnouncementNoButtonCallback(() => {
         setAnnouncement(currAnnouncement);
@@ -256,6 +260,7 @@ window.addEventListener('DOMContentLoaded', () => {
   sessionButton.onmousedown = (e) => {
     e.preventDefault();
   };
+  timerElement.onclick = () => timerAudio.pause();
   setTimer(60 * pomodoroLength);
   deselectAllTasks();
 

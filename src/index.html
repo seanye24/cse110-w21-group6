@@ -37,7 +37,7 @@
         class="settings-icon"
       />
     </nav>
-    <div id="main">
+    <div id="main" role="main">
       <progress-ring
         progress="100"
         radius="150"
@@ -45,6 +45,7 @@
         class="progress-ring"
       ></progress-ring>
       <button class="session-button" id="session-button">Start</button>
+
       <div class="confirmation-overlay">
         <div class="confirmation-popup">
           <p class="confirmation-question">
@@ -58,6 +59,19 @@
               Confirm
             </button>
           </div>
+        </div>
+      </div>
+
+      <div class="summary-overlay">
+        <div class="summary-popup">
+          <h1 class="summary-title">Summary</h1>
+          <hr class="summary-hr" />
+          <div class="task-summary-list"></div>
+          <div class="summary-stats-container">
+            <span class="summary-actual-pomos"></span>
+            <span class="summary-estimated-pomos"></span>
+          </div>
+          <button class="summary-close-button">CLOSE</button>
         </div>
       </div>
 
@@ -101,19 +115,6 @@
     </div>
 
     <settings-component class="settings"></settings-component>
-
-    <div class="summary-overlay">
-      <div class="summary-popup">
-        <h1 class="summary-title">Summary</h1>
-        <hr class="summary-hr" />
-        <div class="task-summary-list"></div>
-        <div class="summary-stats-container">
-          <span class="summary-actual-pomos"></span>
-          <span class="summary-estimated-pomos"></span>
-        </div>
-        <button class="summary-close-button">CLOSE</button>
-      </div>
-    </div>
 
     <footer>
       <p>
