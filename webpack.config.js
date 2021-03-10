@@ -10,6 +10,7 @@ module.exports = (env, argv) => {
   const config = {
     entry: ['./src/scripts/index.js'],
     mode: argv.mode || 'production',
+    target: 'web',
     output: {
       filename: 'main.js',
       path: path.join(__dirname, 'dist'),
