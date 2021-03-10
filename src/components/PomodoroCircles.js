@@ -29,9 +29,17 @@ class PomodoroCircles extends HTMLElement {
         width: 15px;
         border: 1px solid white;
         border-radius: 50%;
-        margin-left: 7px;
-        margin-right: 7px;
-        margin-top: 15px;
+        margin: 15px 7px 0px;
+        display: inline-block;
+      }
+
+      .circle.active {
+        height: 15px;
+        width: 15px;
+        border: 1px solid white;
+        background-color: #FFF;
+        border-radius: 50%;
+        margin: 15px 7px 0px;
         display: inline-block;
       }
       `,
