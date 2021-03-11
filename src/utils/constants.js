@@ -2,11 +2,6 @@
  * @file Constants file
  */
 
-// default interval durations (in minutes)
-export const DEFAULT_POMODORO_INTERVAL = 25;
-export const DEFAULT_SHORT_BREAK_INTERVAL = 5;
-export const DEFAULT_LONG_BREAK_INTERVAL = 15;
-
 // announcements
 export const POMODORO_ANNOUNCEMENT = 'Focus.';
 export const SHORT_BREAK_ANNOUNCEMENT = 'Enjoy your short break!';
@@ -31,3 +26,9 @@ export const TIMER_AUDIOS = {
   annoying: 'assets/original-alarm.mp3',
   kanye: 'assets/kanye-stop.mp3',
 };
+
+// default settings
+export const DEFAULT_POMODORO_LENGTH = 25;
+export const DEFAULT_SHORT_BREAK_LENGTH = 5;
+export const DEFAULT_LONG_BREAK_LENGTH = 15;
+export const DEFAULT_TIMER_AUDIO = TIMER_AUDIOS.calm;
