@@ -1,54 +1,11 @@
 /* eslint-disable no-await-in-loop */
 import {
-  DEFAULT_LONG_BREAK_LENGTH,
-  DEFAULT_SHORT_BREAK_LENGTH,
-} from '../utils/constants';
-import {
   tick,
   validateString,
   validateNumber,
   getMinutesAndSeconds,
   createElement,
 } from '../utils/helpers';
-import { initializeIntervalLengths } from '../utils/settings';
-
-describe('testing initializeIntervalLengths', () => {
-  beforeEach(() => {
-    window.localStorage.clear();
-  });
-
-  test('default lengths are set correctly', () => {
-    const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
-
-    expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
-    expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
-  });
-
-  test('saved lengths are retrieved correctly', () => {
-    window.localStorage.setItem('shortBreakLength', 3);
-    window.localStorage.setItem('longBreakLength', 30);
-
-    const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
-    expect(shortBreakLength).toBe(3);
-    expect(longBreakLength).toBe(30);
-  });
-
-  test('if invalid lengths are saved, correctly fallback to defaults', () => {
-    window.localStorage.setItem('shortBreakLength', 10);
-    window.localStorage.setItem('longBreakLength', 35);
-
-    let { shortBreakLength, longBreakLength } = initializeIntervalLengths();
-    expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
-    expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
-
-    window.localStorage.setItem('shortBreakLength', '$@#$');
-    window.localStorage.setItem('longBreakLength', true);
-
-    ({ shortBreakLength, longBreakLength } = initializeIntervalLengths());
-    expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
-    expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
-  });
-});
 
 describe('testing validateString', () => {
   test('valid inputs are returned', () => {
