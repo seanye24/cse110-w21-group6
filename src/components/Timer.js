@@ -3,7 +3,6 @@
  */
 
 import {
-  checkIfTimeValid,
   createElement,
   getMinutesAndSeconds,
   validateNumber,
