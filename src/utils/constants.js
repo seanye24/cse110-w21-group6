@@ -15,10 +15,11 @@ export const TASK_COMPLETION_QUESTION = 'Did you finish the task?';
 export const END_OF_SESSION_ANNOUNCEMENT = 'Good work today!';
 export const NO_TASKS_ANNOUNCEMENT = 'No work to be done.';
 
-// interval names
+// various names (mainly for localStorage)
 export const POMODORO_INTERVAL = 'pomodoroInterval';
 export const SHORT_BREAK_INTERVAL = 'shortBreakInterval';
 export const LONG_BREAK_INTERVAL = 'longBreakInterval';
+export const TIMER_AUDIO = 'timerAudio';
 
 // timer audio paths
 export const TIMER_AUDIOS = {
