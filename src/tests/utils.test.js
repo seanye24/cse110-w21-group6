@@ -5,6 +5,7 @@ import {
 } from '../utils/constants';
 import {
   tick,
+  validateString,
   validateNumber,
   getMinutesAndSeconds,
   createElement,
@@ -46,6 +47,26 @@ describe('testing initializeIntervalLengths', () => {
     ({ shortBreakLength, longBreakLength } = initializeIntervalLengths());
     expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
     expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
+  });
+});
+
+describe('testing validateString', () => {
+  test('valid inputs are returned', () => {
+    expect(validateString('')).toBe('');
+    expect(validateString('abc')).toBe('abc');
+    expect(validateString('#$%!#')).toBe('#$%!#');
+  });
+
+  test('invalid inputs return null', () => {
+    expect(validateString(1234)).toBe(null);
+    expect(validateString(0xabc)).toBe(null);
+    expect(validateString(true)).toBe(null);
+    expect(validateString(false)).toBe(null);
+    expect(validateString(null)).toBe(null);
+    expect(validateString(undefined)).toBe(null);
+    expect(validateString(NaN)).toBe(null);
+    expect(validateString(0 / 0)).toBe(null);
+    expect(validateString({})).toBe(null);
   });
 });
 
