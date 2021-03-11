@@ -1,4 +1,4 @@
-import { Settings } from '../components';
+import { Settings as SettingsPopup } from '../components';
 import { createElement } from '../utils/helpers';
 import {
   initializePopup,
@@ -11,6 +11,7 @@ import {
   openPopup,
   closePopup,
   saveSettings,
+  popupFunctions,
 } from '../scripts/settings';
 import {
   DEFAULT_LONG_BREAK_LENGTH,
@@ -26,19 +27,18 @@ window.HTMLMediaElement.prototype.play = () => {};
 window.HTMLMediaElement.prototype.pause = () => {};
 window.HTMLMediaElement.prototype.addTextTrack = () => {};
 
-customElements.define('settings-component', Settings);
+customElements.define('settings-component', SettingsPopup);
 
 describe('testing settings component', () => {
   // initialize settings popup element
   let settingsElement;
-  const mockSaveSettingsCallback = jest.fn();
   beforeEach(() => {
     window.localStorage.clear();
     settingsElement = createElement('settings-component', {
       className: 'settings',
     });
     document.body.append(settingsElement);
-    initializePopup(settingsElement, mockSaveSettingsCallback);
+    initializePopup(settingsElement);
   });
 
   test('initial values are correct', () => {
@@ -73,20 +73,6 @@ describe('testing settings component', () => {
     expect(settingsElement.shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
     expect(settingsElement.longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
     expect(settingsElement.timerAudio).toBe(DEFAULT_TIMER_AUDIO);
-  });
-
-  test('save button correctly saves settings and closes popup', () => {
-    openPopup();
-    settingsElement.shadowRoot.querySelector('.save-button').click();
-    /*
-    expect(saveSettings).toHaveBeenCalled();
-    expect(closePopup).toHaveBeenCalled();
-    */
-    expect(mockSaveSettingsCallback).toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).toHaveBeenCalledWith(
-      DEFAULT_SHORT_BREAK_LENGTH,
-      DEFAULT_LONG_BREAK_LENGTH,
-    );
   });
 });
 
@@ -297,8 +283,6 @@ describe('testing closePopup', () => {
 
 describe('testing saveSettings', () => {
   let settingsPopupElement;
-  let popupElement;
-  let overlayElement;
   let shortBreakInputElement;
   let longBreakInputElement;
   let timerAudioInputElement;
@@ -309,8 +293,6 @@ describe('testing saveSettings', () => {
     settingsPopupElement = createElement('settings-component');
     initializePopup(settingsPopupElement);
     const { shadowRoot } = settingsPopupElement;
-    popupElement = shadowRoot.querySelector('.popup');
-    overlayElement = shadowRoot.querySelector('#overlay');
     shortBreakInputElement = shadowRoot.querySelector('#short-number');
     longBreakInputElement = shadowRoot.querySelector('#long-number');
     timerAudioInputElement = shadowRoot.querySelector('#sound');
@@ -374,5 +356,30 @@ describe('testing saveSettings', () => {
     saveSettings();
     errorMessageElements[0].style.visibility = 'hidden';
     errorMessageElements[1].style.visibility = 'visible';
+  });
+});
+
+describe('testing settings popup save button', () => {
+  test('save button correctly saves settings and closes popup', () => {
+    const mockSaveSettingsCallback = jest.fn();
+    const saveSettingsSpy = jest.spyOn(popupFunctions, 'saveSettings');
+    const closePopupSpy = jest.spyOn(popupFunctions, 'closePopup');
+
+    const settingsElement = createElement('settings-component');
+    initializePopup(settingsElement, mockSaveSettingsCallback);
+    openPopup();
+
+    settingsElement.shadowRoot.querySelector('.save-button').click();
+    expect(saveSettingsSpy).toHaveBeenCalled();
+    expect(saveSettingsSpy.mock.results[0]).toEqual({
+      type: 'return',
+      value: [DEFAULT_SHORT_BREAK_LENGTH, DEFAULT_LONG_BREAK_LENGTH],
+    });
+    expect(closePopupSpy).toHaveBeenCalled();
+    expect(mockSaveSettingsCallback).toHaveBeenCalled();
+    expect(mockSaveSettingsCallback).toHaveBeenCalledWith(
+      DEFAULT_SHORT_BREAK_LENGTH,
+      DEFAULT_LONG_BREAK_LENGTH,
+    );
   });
 });
