@@ -56,7 +56,7 @@ import {
   END_OF_SESSION_ANNOUNCEMENT,
   TASK_COMPLETION_QUESTION,
   NO_TASKS_ANNOUNCEMENT,
-  DEFAULT_POMODORO_INTERVAL,
+  DEFAULT_POMODORO_LENGTH,
 } from '../utils/constants';
 import { tick } from '../utils/utils';
 
@@ -67,7 +67,7 @@ customElements.define('settings-component', Settings);
 customElements.define('pomodoro-circles', PomodoroCircles);
 
 let isSessionOngoing = false;
-let pomodoroLength = DEFAULT_POMODORO_INTERVAL;
+let pomodoroLength = DEFAULT_POMODORO_LENGTH;
 pomodoroLength = 0.05; // TODO: FOR TESTING, remove later
 let shortBreakLength;
 let longBreakLength;
