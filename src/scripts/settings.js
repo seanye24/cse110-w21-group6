@@ -109,7 +109,8 @@ const closePopup = () => {
  * Save interval length / audio settings, display error if invalid
  * @return {(number[] | null)} - new interval lengths, null if error occurs
  */
-const saveSettings = () => {
+// const saveSettings = () => {
+function saveSettings() {
   const newShortBreakLength = validateShortBreakLength(shortBreakInput.value);
   const newLongBreakLength = validateLongBreakLength(longBreakInput.value);
   const timerAudio = validateTimerAudio(timerAudioInput.value);
@@ -133,6 +134,12 @@ const saveSettings = () => {
   window.localStorage.setItem('longBreakLength', newLongBreakLength);
   window.localStorage.setItem('timerAudio', timerAudio);
   return [newShortBreakLength, newLongBreakLength];
+}
+
+const popupFunctions = {
+  openPopup,
+  closePopup,
+  saveSettings,
 };
 
 /**
@@ -174,11 +181,11 @@ const initializePopup = (root, saveSettingsCallback) => {
   overlay.onclick = closePopup;
 
   saveButton.addEventListener('click', () => {
-    const newBreakLengths = saveSettings();
+    const newBreakLengths = popupFunctions.saveSettings();
     if (!newBreakLengths) {
       return;
     }
-    closePopup();
+    popupFunctions.closePopup();
     saveSettingsCallback(...newBreakLengths);
   });
 
@@ -193,10 +200,11 @@ export {
   initializePopup,
   openPopup,
   closePopup,
+  saveSettings,
+  popupFunctions,
   getShortBreakLength,
   getLongBreakLength,
   getTimerAudio,
-  saveSettings,
   setShortBreakLength,
   setLongBreakLength,
   setTimerAudio,
