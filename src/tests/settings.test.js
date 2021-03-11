@@ -1,9 +1,5 @@
 import { Settings } from '../components';
-import {
-  createElement,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
-} from '../utils/utils';
+import { createElement } from '../utils/utils';
 import {
   initializePopup,
   getShortBreakLength,
@@ -13,46 +9,53 @@ import {
   getTimerAudio,
   setTimerAudio,
 } from '../scripts/settings';
+import {
+  DEFAULT_LONG_BREAK_LENGTH,
+  DEFAULT_SHORT_BREAK_LENGTH,
+  DEFAULT_TIMER_AUDIO,
+  TIMER_AUDIOS,
+} from '../utils/constants';
 
 customElements.define('settings-component', Settings);
 
-describe('testing settings values', () => {
-  // initialize settings element before each test
+describe('testing settings component', () => {
+  // initialize settings popup element
   beforeEach(() => {
+    window.localStorage.clear();
     const settingsElement = createElement('settings-component', {
       className: 'settings',
     });
-    const settingsButton = createElement('button', {
-      id: 'open-popup',
-    });
-    document.body.appendChild(settingsElement);
-    document.body.appendChild(settingsButton);
+    document.body.append(settingsElement);
     initializePopup(settingsElement);
   });
 
-  test('see if initial values are setting correctly', () => {
-    expect(Number(getShortBreakLength())).toBe(5);
-    expect(Number(getLongBreakLength())).toBe(15);
-    expect(getTimerAudio()).toBe('assets/calm-alarm.mp3');
+  test('initial values are correct', () => {
+    expect(getShortBreakLength()).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+    expect(getLongBreakLength()).toBe(DEFAULT_LONG_BREAK_LENGTH);
+    expect(getTimerAudio()).toBe(DEFAULT_TIMER_AUDIO);
   });
 
-  test('testing change in input', () => {
+  test('valid input changes are reflected', () => {
     setShortBreakLength(4);
-    expect(Number(getShortBreakLength())).toBe(4);
+    expect(getShortBreakLength()).toBe(4);
     setLongBreakLength(17);
-    expect(Number(getLongBreakLength())).toBe(17);
-    setTimerAudio('assets/kanye-stop.mp3');
-    expect(getTimerAudio()).toBe('assets/kanye-stop.mp3');
+    expect(getLongBreakLength()).toBe(17);
+    setTimerAudio(TIMER_AUDIOS.kanye);
+    expect(getTimerAudio()).toBe(TIMER_AUDIOS.kanye);
   });
 
-  test('invalid entries are captured', () => {
-    setShortBreakLength(120);
-    expect(checkIfShortInputValid(Number(getShortBreakLength()))).toBe(false);
-    setShortBreakLength(360);
-    expect(checkIfShortInputValid(Number(getShortBreakLength()))).toBe(false);
-    setLongBreakLength(1860);
-    expect(checkIfLongInputValid(Number(getLongBreakLength()))).toBe(false);
-    setLongBreakLength(840);
-    expect(checkIfLongInputValid(Number(getLongBreakLength()))).toBe(false);
+  test('invalid input changes are ignored', () => {
+    setShortBreakLength(1);
+    expect(getShortBreakLength()).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+    setShortBreakLength(10);
+    expect(getShortBreakLength()).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+
+    setLongBreakLength(10);
+    expect(getLongBreakLength()).toBe(DEFAULT_LONG_BREAK_LENGTH);
+    setLongBreakLength(50);
+    expect(getLongBreakLength()).toBe(DEFAULT_LONG_BREAK_LENGTH);
+
+    setTimerAudio('assets/invalid-item.mp3');
+    expect(getTimerAudio()).toBe(DEFAULT_TIMER_AUDIO);
   });
 });
