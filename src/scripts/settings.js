@@ -3,6 +3,12 @@
  */
 
 import {
+  LONG_BREAK_INTERVAL,
+  SHORT_BREAK_INTERVAL,
+  TIMER_AUDIO,
+  TIMER_AUDIOS,
+} from '../utils/constants';
+import {
   validateShortBreakLength,
   validateLongBreakLength,
   validateTimerAudio,
@@ -15,6 +21,7 @@ let saveButton;
 let overlay;
 let shortBreakInput;
 let longBreakInput;
+let timerAudioInput;
 let soundInput;
 let errorMessages;
 const timerAudioElement = new Audio();
@@ -75,7 +82,6 @@ const setTimerAudio = (value) => {
   }
 
   settingsElement.timerAudio = timerAudio;
-  window.localStorage.setItem('timerAudio', timerAudio);
 };
 
 /**
@@ -104,12 +110,11 @@ const closePopup = () => {
  * @return {(number[] | null)} - new interval lengths, null if error occurs
  */
 const saveSettings = () => {
-  const newShortBreakLength = shortBreakInput.value;
-  const newLongBreakLength = longBreakInput.value;
-  const isNewShortBreakLengthValid =
-    validateShortBreakLength(newShortBreakLength) === null;
-  const isNewLongBreakLengthValid =
-    validateLongBreakLength(newLongBreakLength) === null;
+  const newShortBreakLength = validateShortBreakLength(shortBreakInput.value);
+  const newLongBreakLength = validateLongBreakLength(longBreakInput.value);
+  const timerAudio = validateTimerAudio(timerAudioInput.value);
+  const isNewShortBreakLengthValid = newShortBreakLength !== null;
+  const isNewLongBreakLengthValid = newLongBreakLength !== null;
 
   errorMessages[0].style.visibility = isNewShortBreakLengthValid
     ? 'hidden'
@@ -124,8 +129,9 @@ const saveSettings = () => {
   setTimerAudio(soundInput.value);
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
-  localStorage.setItem('shortBreakLength', newShortBreakLength);
-  localStorage.setItem('longBreakLength', newLongBreakLength);
+  window.localStorage.setItem('shortBreakLength', newShortBreakLength);
+  window.localStorage.setItem('longBreakLength', newLongBreakLength);
+  window.localStorage.setItem('timerAudio', timerAudio);
   return [newShortBreakLength, newLongBreakLength];
 };
 
@@ -141,6 +147,7 @@ const initializeElements = (root) => {
   overlay = shadowRoot.querySelector('#overlay');
   shortBreakInput = shadowRoot.querySelector('#short-number');
   longBreakInput = shadowRoot.querySelector('#long-number');
+  timerAudioInput = shadowRoot.querySelector('#sound');
   soundInput = shadowRoot.querySelector('#sound');
   errorMessages = shadowRoot.querySelectorAll('.error');
 };
@@ -155,12 +162,14 @@ const initializePopup = (root, saveSettingsCallback) => {
   initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
+
   const savedTimerAudio = window.localStorage.getItem('timerAudio');
-  setTimerAudio(
-    validateTimerAudio(savedTimerAudio) === null
-      ? 'assets/calm-alarm.mp3'
-      : savedTimerAudio,
-  );
+  if (validateTimerAudio(savedTimerAudio) === null) {
+    setTimerAudio(TIMER_AUDIOS.calm);
+    window.localStorage.setItem('timerAudio', TIMER_AUDIOS.calm);
+  } else {
+    setTimerAudio(savedTimerAudio);
+  }
 
   overlay.onclick = closePopup;
 
@@ -187,6 +196,7 @@ export {
   getShortBreakLength,
   getLongBreakLength,
   getTimerAudio,
+  saveSettings,
   setShortBreakLength,
   setLongBreakLength,
   setTimerAudio,
