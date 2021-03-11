@@ -3,8 +3,8 @@
  */
 
 import {
-  DEFAULT_SHORT_BREAK_INTERVAL,
-  DEFAULT_LONG_BREAK_INTERVAL,
+  DEFAULT_SHORT_BREAK_LENGTH,
+  DEFAULT_LONG_BREAK_LENGTH,
 } from './constants';
 
 /**
@@ -128,11 +128,11 @@ const initializeIntervalLengths = () => {
   let shortBreakLength = window.localStorage.getItem('shortBreakLength');
   let longBreakLength = window.localStorage.getItem('longBreakLength');
   if (!shortBreakLength || !checkIfShortInputValid(shortBreakLength)) {
-    shortBreakLength = DEFAULT_SHORT_BREAK_INTERVAL;
+    shortBreakLength = DEFAULT_SHORT_BREAK_LENGTH;
     window.localStorage.setItem('shortBreakLength', shortBreakLength);
   }
   if (!longBreakLength || !checkIfLongInputValid(longBreakLength)) {
-    longBreakLength = DEFAULT_LONG_BREAK_INTERVAL;
+    longBreakLength = DEFAULT_LONG_BREAK_LENGTH;
     window.localStorage.setItem('longBreakLength', longBreakLength);
   }
   return { shortBreakLength, longBreakLength };
