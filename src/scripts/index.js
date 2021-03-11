@@ -209,17 +209,21 @@ const startSession = async (changeSessionButton) => {
  * @param {number} numPomodoros - number of pomodoros completed during the session
  */
 const endSession = (sessionButton, numPomodoros) => {
-  setAnnouncement(
-    numPomodoros === -1 ? NO_TASKS_ANNOUNCEMENT : END_OF_SESSION_ANNOUNCEMENT,
-  );
+  if (numPomodoros === -1) {
+    setAnnouncement(NO_TASKS_ANNOUNCEMENT);
+  } else {
+    setAnnouncement(END_OF_SESSION_ANNOUNCEMENT);
+  }
   deselectAllTasks();
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
-  initializeSummaryPopup(
-    document.querySelector('#summary-overlay'),
-    getTasks(),
-  );
-  openSummaryPopup();
+  if (numPomodoros > 0) {
+    initializeSummaryPopup(
+      document.querySelector('#summary-overlay'),
+      getTasks(),
+    );
+    openSummaryPopup();
+  }
 };
 
 window.addEventListener('DOMContentLoaded', () => {
