@@ -2,7 +2,7 @@
  * @file progress-ring web component
  */
 
-import { createElement, validateNumber } from '../utils/utils';
+import { createElement, validateNumber } from '../utils/helpers';
 
 /**
  * Custom web component representing a progress ring.

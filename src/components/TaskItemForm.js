@@ -2,7 +2,7 @@
  * @file task-item-form web component
  */
 
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 
 /**
  * Custom web component representing a task item form.

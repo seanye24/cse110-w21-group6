@@ -1,5 +1,5 @@
 import { PomodoroCircles } from '../components';
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 import {
   getCircleCount,
   initializePomodoroCircles,

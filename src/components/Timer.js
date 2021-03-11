@@ -6,7 +6,7 @@ import {
   createElement,
   getMinutesAndSeconds,
   validateNumber,
-} from '../utils/utils';
+} from '../utils/helpers';
 
 /**
  * Validate if input is number, between 0s and 3600s (1 hr)
