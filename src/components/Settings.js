@@ -2,64 +2,12 @@
  * @file settings web component
  */
 
-import { TIMER_AUDIOS } from '../utils/constants';
+import { createElement } from '../utils/utils';
 import {
-  createElement,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
-  validateString,
-  validateNumber,
-} from '../utils/utils';
-
-/**
- * Validate if input is number, between 3 - 5
- * @param {any} value - value to check
- * @return {number | null} - short break length if valid, null otherwise
- */
-const validateShortBreakLength = (value) => {
-  const shortBreakLength = validateNumber(value, true);
-  if (
-    shortBreakLength === null ||
-    shortBreakLength < 3 ||
-    shortBreakLength > 5
-  ) {
-    return null;
-  }
-  return shortBreakLength;
-};
-
-/**
- * Validate if input is number, between 15 - 30
- * @param {any} value - value to check
- * @return {number | null} - long break length if valid, null otherwise
- */
-const validateLongBreakLength = (value) => {
-  const longBreakLength = validateNumber(value, true);
-  if (
-    longBreakLength === null ||
-    longBreakLength < 15 ||
-    longBreakLength > 30
-  ) {
-    return null;
-  }
-  return longBreakLength;
-};
-
-/**
- * Validate if input is valid audio file path
- * @param {any} value - value to check
- * @return {string | null} - path if valid, null otherwise
- */
-const validateTimerAudio = (value) => {
-  const timerAudio = validateString(value);
-  if (
-    timerAudio === null ||
-    !Object.values(TIMER_AUDIOS).includes(timerAudio)
-  ) {
-    return null;
-  }
-  return timerAudio;
-};
+  validateShortBreakLength,
+  validateLongBreakLength,
+  validateTimerAudio,
+} from '../utils/settings';
 
 /**
  * Custom web component representing the settings popup
