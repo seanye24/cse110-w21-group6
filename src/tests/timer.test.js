@@ -1,5 +1,5 @@
 import { Timer } from '../components';
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 import { initializeTimer, setTimer, getTime } from '../scripts/timer';
 
 customElements.define('timer-component', Timer);

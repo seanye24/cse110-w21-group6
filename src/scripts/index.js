@@ -58,7 +58,7 @@ import {
   NO_TASKS_ANNOUNCEMENT,
   DEFAULT_POMODORO_LENGTH,
 } from '../utils/constants';
-import { tick } from '../utils/utils';
+import { tick } from '../utils/helpers';
 
 customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);

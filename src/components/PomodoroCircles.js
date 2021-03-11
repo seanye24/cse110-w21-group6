@@ -2,7 +2,7 @@
  * @file pomodoro-circles web component
  */
 
-import { createElement, validateNumber } from '../utils/utils';
+import { createElement, validateNumber } from '../utils/helpers';
 
 /**
  * Validate if input is valid circle count (is Number and in range)

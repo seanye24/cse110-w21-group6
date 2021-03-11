@@ -12,7 +12,7 @@
  * @property {boolean} completed          - whether task is completed
  */
 
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 import '../components/TaskItem';
 import '../components/TaskItemForm';
 import '../components/TaskList';

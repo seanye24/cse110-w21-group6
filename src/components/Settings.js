@@ -2,7 +2,7 @@
  * @file settings web component
  */
 
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 import {
   validateShortBreakLength,
   validateLongBreakLength,

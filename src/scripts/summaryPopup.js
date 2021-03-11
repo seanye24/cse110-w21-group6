@@ -12,7 +12,7 @@
  * @property {boolean} completed          - whether task is completed
  */
 
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 
 let summaryOverlay;
 let summaryPopup;

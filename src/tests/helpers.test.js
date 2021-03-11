@@ -9,7 +9,7 @@ import {
   validateNumber,
   getMinutesAndSeconds,
   createElement,
-} from '../utils/utils';
+} from '../utils/helpers';
 import { initializeIntervalLengths } from '../utils/settings';
 
 describe('testing initializeIntervalLengths', () => {

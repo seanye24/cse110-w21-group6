@@ -7,7 +7,7 @@ import {
   DEFAULT_SHORT_BREAK_LENGTH,
   TIMER_AUDIOS,
 } from './constants';
-import { validateNumber, validateString } from './utils';
+import { validateNumber, validateString } from './helpers';
 
 /**
  * Validate if input is number, between 3 - 5
