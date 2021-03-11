@@ -2,7 +2,11 @@
  * @file utility functions for settings popup component
  */
 
-import { TIMER_AUDIOS } from './constants';
+import {
+  DEFAULT_LONG_BREAK_LENGTH,
+  DEFAULT_SHORT_BREAK_LENGTH,
+  TIMER_AUDIOS,
+} from './constants';
 import { validateNumber, validateString } from './utils';
 
 /**
@@ -53,4 +57,36 @@ export const validateTimerAudio = (value) => {
     return null;
   }
   return timerAudio;
+};
+
+/**
+ * Initialize interval lengths, retrieve from localStorage if possible
+ * @return {{shortBreakLength: number, longBreakLength: number}} - lengths of intervals
+ */
+export const initializeIntervalLengths = () => {
+  let shortBreakLength;
+  let longBreakLength;
+  try {
+    shortBreakLength = JSON.parse(
+      window.localStorage.getItem('shortBreakLength'),
+    );
+    longBreakLength = JSON.parse(
+      window.localStorage.getItem('longBreakLength'),
+    );
+  } catch (error) {
+    shortBreakLength = null;
+    longBreakLength = null;
+  }
+  if (
+    !shortBreakLength ||
+    validateShortBreakLength(shortBreakLength) === null
+  ) {
+    shortBreakLength = DEFAULT_SHORT_BREAK_LENGTH;
+    window.localStorage.setItem('shortBreakLength', shortBreakLength);
+  }
+  if (!longBreakLength || validateLongBreakLength(longBreakLength) === null) {
+    longBreakLength = DEFAULT_LONG_BREAK_LENGTH;
+    window.localStorage.setItem('longBreakLength', longBreakLength);
+  }
+  return { shortBreakLength, longBreakLength };
 };

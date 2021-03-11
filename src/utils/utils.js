@@ -2,11 +2,6 @@
  * @file Various utility methods
  */
 
-import {
-  DEFAULT_SHORT_BREAK_LENGTH,
-  DEFAULT_LONG_BREAK_LENGTH,
-} from './constants';
-
 /**
  * Creates an HTMLElement and set its attributes
  * Created to reduce boilerplate from element creation
@@ -37,20 +32,6 @@ const createElement = (elementType, props = {}, options = {}) => {
 };
 
 /**
- * Tries to convert input to a number
- * @param {any} value - to be converted to number
- * @param {boolean} shouldTruncate - determine if number should be truncated
- * @return {number | null} - number if successful, null otherwise
- */
-const validateNumber = (value, shouldTruncate = false) => {
-  const number = Number(value);
-  if (Number.isNaN(number)) {
-    return null;
-  }
-  return shouldTruncate ? Math.floor(number) : number;
-};
-
-/**
  * Validate if input is string
  * @param {any} value - value to to check
  * @return {string | null} - string if input is a valid string, null otherwise
@@ -63,39 +44,21 @@ const validateString = (value) => {
 };
 
 /**
- * Checks if time is valid for timer, between 0 seconds and 1 hour
- * @param {number} time - time to be checked (in seconds)
+ * Tries to convert input to a number
+ * @param {any} value - to be converted to number
+ * @param {boolean} shouldTruncate - determine if number should be truncated
+ * @return {number | null} - number if successful, null otherwise
  */
-const checkIfTimeValid = (time) => {
-  const secondsInAnHour = 60 * 60;
-  return time >= 0 && time < secondsInAnHour;
-};
-
-/**
- * Checks if short break length is valid
- * @param {number} input - short break input to be checked (in minutes)
- */
-const checkIfShortInputValid = (input) => {
-  return input >= 3 && input <= 5;
-};
-
-/**
- * Checks if long break length is valid
- * @param {number} input - long break input to be checked (in minutes)
- */
-const checkIfLongInputValid = (input) => {
-  return input >= 15 && input <= 30;
-};
-
-/**
- * Check if timer audio src is valid
- */
-const checkIfTimerAudioValid = (input) => {
-  return [
-    'assets/calm-alarm.mp3',
-    'assets/kanye-stop.mp3',
-    'assets/original-alarm.mp3',
-  ].includes(input);
+const validateNumber = (value, shouldTruncate = false) => {
+  const isNumberOrString =
+    typeof value === 'number' ||
+    value instanceof Number ||
+    validateString(value) !== null;
+  const number = Number(value);
+  if (!isNumberOrString || Number.isNaN(number)) {
+    return null;
+  }
+  return shouldTruncate ? Math.floor(number) : number;
 };
 
 /**
@@ -120,33 +83,10 @@ const getMinutesAndSeconds = (totalSeconds) => {
   return `${minutes}:${seconds}`;
 };
 
-/**
- * Initialize interval lengths, retrieve from localStorage if possible
- * @return {{shortBreakLength: number, longBreakLength: number}} - lengths of intervals
- */
-const initializeIntervalLengths = () => {
-  let shortBreakLength = window.localStorage.getItem('shortBreakLength');
-  let longBreakLength = window.localStorage.getItem('longBreakLength');
-  if (!shortBreakLength || !checkIfShortInputValid(shortBreakLength)) {
-    shortBreakLength = DEFAULT_SHORT_BREAK_LENGTH;
-    window.localStorage.setItem('shortBreakLength', shortBreakLength);
-  }
-  if (!longBreakLength || !checkIfLongInputValid(longBreakLength)) {
-    longBreakLength = DEFAULT_LONG_BREAK_LENGTH;
-    window.localStorage.setItem('longBreakLength', longBreakLength);
-  }
-  return { shortBreakLength, longBreakLength };
-};
-
 export {
   createElement,
-  initializeIntervalLengths,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
-  checkIfTimerAudioValid,
   getMinutesAndSeconds,
   tick,
-  checkIfTimeValid,
   validateNumber,
   validateString,
 };

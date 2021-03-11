@@ -1,64 +1,79 @@
 /* eslint-disable no-await-in-loop */
 import {
-  initializeIntervalLengths,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
+  DEFAULT_LONG_BREAK_LENGTH,
+  DEFAULT_SHORT_BREAK_LENGTH,
+} from '../utils/constants';
+import {
   tick,
   validateNumber,
   getMinutesAndSeconds,
-  checkIfTimeValid,
   createElement,
 } from '../utils/utils';
+import { initializeIntervalLengths } from '../utils/settings';
 
-describe('test intervals', () => {
+describe('testing initializeIntervalLengths', () => {
   beforeEach(() => {
-    localStorage.removeItem('shortBreakLength');
-    localStorage.removeItem('longBreakLength');
+    window.localStorage.clear();
   });
 
-  test('default pomodoro intervals', () => {
-    initializeIntervalLengths();
+  test('default lengths are set correctly', () => {
+    const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
 
-    expect(window.localStorage.getItem('shortBreakLength')).toBe('5');
-    expect(window.localStorage.getItem('longBreakLength')).toBe('15');
+    expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+    expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
   });
 
-  test('custum intervals', () => {
+  test('saved lengths are retrieved correctly', () => {
     window.localStorage.setItem('shortBreakLength', 3);
     window.localStorage.setItem('longBreakLength', 30);
 
-    initializeIntervalLengths();
+    const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
+    expect(shortBreakLength).toBe(3);
+    expect(longBreakLength).toBe(30);
+  });
 
-    expect(window.localStorage.getItem('shortBreakLength')).toBe('3');
-    expect(window.localStorage.getItem('longBreakLength')).toBe('30');
+  test('if invalid lengths are saved, correctly fallback to defaults', () => {
+    window.localStorage.setItem('shortBreakLength', 10);
+    window.localStorage.setItem('longBreakLength', 35);
+
+    let { shortBreakLength, longBreakLength } = initializeIntervalLengths();
+    expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+    expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
+
+    window.localStorage.setItem('shortBreakLength', '$@#$');
+    window.localStorage.setItem('longBreakLength', true);
+
+    ({ shortBreakLength, longBreakLength } = initializeIntervalLengths());
+    expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+    expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
   });
 });
 
-describe('valid time and number', () => {
-  test('validate number', () => {
+describe('testing validateNumber', () => {
+  test('valid inputs are returned', () => {
     expect(validateNumber(5)).toBe(5);
-    expect(validateNumber(1555)).toBe(1555);
-    expect(validateNumber(35)).toBe(35);
-    expect(validateNumber('5')).toBe(5);
+    expect(validateNumber(5.3)).toBe(5.3);
+    expect(validateNumber('10')).toBe(10);
+    expect(validateNumber('10.5')).toBe(10.5);
     expect(validateNumber(0)).toBe(0);
+    expect(validateNumber(-10)).toBe(-10);
+    expect(validateNumber(0xabc)).toBe(2748);
+    expect(validateNumber(0o567)).toBe(375);
+    expect(validateNumber(0b101010)).toBe(42);
+  });
+
+  test('invalid inputs are returned null', () => {
     expect(validateNumber('p')).toBe(null);
-    expect(validateNumber(-1)).toBe(-1);
-    expect(validateNumber('#')).toBe(null);
+    expect(validateNumber('#@!')).toBe(null);
+    expect(validateNumber(NaN)).toBe(null);
+    expect(validateNumber(0 / 0)).toBe(null);
+    expect(validateNumber(null)).toBe(null);
+    expect(validateNumber(undefined)).toBe(null);
   });
+});
 
-  test('check if valid time', () => {
-    expect(checkIfTimeValid(5)).toBe(true);
-    expect(checkIfTimeValid(1500)).toBe(true);
-    expect(checkIfTimeValid(59)).toBe(true);
-    expect(checkIfTimeValid(569)).toBe(true);
-    expect(checkIfTimeValid('5')).toBe(true);
-    expect(checkIfTimeValid(-5)).toBe(false);
-    expect(checkIfTimeValid(-1)).toBe(false);
-    expect(checkIfTimeValid('p')).toBe(false);
-    expect(checkIfTimeValid('#')).toBe(false);
-  });
-
-  test('test for correct time string', () => {
+describe('testing getMinutesAndSeconds', () => {
+  test('input correctly returns time of format MM:SS', () => {
     expect(getMinutesAndSeconds(0)).toBe('00:00');
     expect(getMinutesAndSeconds(25)).toBe('00:25');
     expect(getMinutesAndSeconds(60)).toBe('01:00');
@@ -66,31 +81,9 @@ describe('valid time and number', () => {
     expect(getMinutesAndSeconds(7)).toBe('00:07');
     expect(getMinutesAndSeconds(1499)).toBe('24:59');
   });
-
-  test('check if long interval is valid', () => {
-    expect(checkIfLongInputValid(15)).toBe(true);
-    expect(checkIfLongInputValid(30)).toBe(true);
-    expect(checkIfLongInputValid(17)).toBe(true);
-    expect(checkIfLongInputValid(25)).toBe(true);
-    expect(checkIfLongInputValid(14)).toBe(false);
-    expect(checkIfLongInputValid(31)).toBe(false);
-    expect(checkIfLongInputValid(100)).toBe(false);
-    expect(checkIfLongInputValid(1)).toBe(false);
-  });
-
-  test('check if short interval is valid', () => {
-    expect(checkIfShortInputValid(3)).toBe(true);
-    expect(checkIfShortInputValid(4)).toBe(true);
-    expect(checkIfShortInputValid(5)).toBe(true);
-    expect(checkIfShortInputValid(0)).toBe(false);
-    expect(checkIfShortInputValid(1)).toBe(false);
-    expect(checkIfShortInputValid(2)).toBe(false);
-    expect(checkIfShortInputValid(6)).toBe(false);
-    expect(checkIfShortInputValid(7)).toBe(false);
-  });
 });
 
-describe('test ticking', () => {
+describe('testing tick', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -99,7 +92,7 @@ describe('test ticking', () => {
     return new Promise((resolve) => setImmediate(resolve));
   };
 
-  test('call tick multiple times', async () => {
+  test('tick correctly waits the specified amount of time', async () => {
     let a = 0;
     tick(1)
       .then(() => {
@@ -129,24 +122,27 @@ describe('test ticking', () => {
   });
 });
 
-describe('test createElement', () => {
-  test('create paragraph Element', () => {
-    const pElement = createElement('p');
-    pElement.innerHTML = 'Pomodoro timer';
-    pElement.style.color = 'black';
+describe('testing createElement', () => {
+  test('p element is created correctly', () => {
+    const pElement = createElement('p', {
+      innerHTML: 'Pomodoro timer',
+      style: 'color: black',
+    });
 
     expect(pElement.innerHTML).toBe('Pomodoro timer');
     expect(pElement.style.color).toBe('black');
   });
 
-  test('create div element', () => {
-    const divElement = createElement('div');
-
-    divElement.style.width = '50px';
-    divElement.style.height = '50px';
-    divElement.style.background = 'red';
-    divElement.style.color = 'green';
-    divElement.innerHTML = 'Pomodoro timer';
+  test('div element is created correctly', () => {
+    const divElement = createElement('div', {
+      style: `
+        width: 50px;
+        height: 50px;
+        background: red;
+        color: green;
+      `,
+      innerHTML: 'Pomodoro timer',
+    });
 
     expect(divElement.innerHTML).toBe('Pomodoro timer');
     expect(divElement.style.height).toBe('50px');
@@ -155,17 +151,17 @@ describe('test createElement', () => {
     expect(divElement.style.color).toBe('green');
   });
 
-  test('create button element', () => {
-    const startBtnElement = createElement('Button');
-    startBtnElement.innerHTML = 'Start';
+  test('button element is created correctly', () => {
+    const startBtnElement = createElement('button', {
+      innerHTML: 'Start',
+    });
     document.body.appendChild(startBtnElement);
-
     expect(startBtnElement.innerHTML).toBe('Start');
 
-    const endBtnElement = createElement('Button');
-    endBtnElement.innerHTML = 'End';
+    const endBtnElement = createElement('Button', {
+      innerHTML: 'End',
+    });
     document.body.appendChild(endBtnElement);
-
     expect(endBtnElement.innerHTML).toBe('End');
     expect(document.hasChildNodes()).toBe(true);
   });
