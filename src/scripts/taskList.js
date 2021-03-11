@@ -93,13 +93,6 @@ const removeTaskFromDom = (taskToRemove) => {
  * @return {Task} - updated task
  */
 const updateTask = (prevTask, nextTask) => {
-  const {
-    name: nextName,
-    usedPomodoros,
-    estimatedPomodoros,
-    selected,
-    completed,
-  } = nextTask;
   const { taskIndex, taskElement } = getTask(prevTask);
 
   // update localStorage
@@ -107,12 +100,9 @@ const updateTask = (prevTask, nextTask) => {
   saveTasks();
 
   // update task in dom
-  taskElement.setAttribute('name', nextName);
-  taskElement.setAttribute('used-pomodoros', usedPomodoros);
-  taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
-  taskElement.setAttribute('selected', selected);
-  taskElement.setAttribute('completed', completed);
-  return nextTask;
+  Object.getOwnPropertyNames(nextTask).forEach((key) => {
+    taskElement[key] = nextTask[key];
+  });
 };
 
 /**
@@ -172,8 +162,8 @@ const createTaskElement = (newTask) => {
   // create html element
   const newTaskElement = createElement('task-item', {
     name,
-    'used-pomodoros': usedPomodoros,
-    'estimated-pomodoros': estimatedPomodoros,
+    usedPomodoros,
+    estimatedPomodoros,
     selected,
   });
 
@@ -347,8 +337,8 @@ const completeTask = (completedTask) => {
   // mark task as completed and move it to end of DOM list
   removeTaskFromDom(completedTask);
   addTaskToDom(taskElement, 'end');
-  taskElement.setAttribute('selected', false);
-  taskElement.setAttribute('completed', true);
+  taskElement.selected = false;
+  taskElement.completed = true;
   taskElement.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array

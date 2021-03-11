@@ -2,7 +2,12 @@
  * @file task-item web component
  */
 
-import { createElement } from '../utils/helpers';
+import {
+  createElement,
+  validateBoolean,
+  validateString,
+} from '../utils/helpers';
+import { validatePomodoros } from '../utils/taskList';
 
 /**
  * Custom web component representing a task item.
@@ -27,8 +32,11 @@ class TaskItem extends HTMLElement {
   constructor() {
     super();
 
-    this.usedPomodoros = 0;
-    this.estimatedPomodoros = 0;
+    this._name = '';
+    this._usedPomodoros = 0;
+    this._estimatedPomodoros = 0;
+    this._selected = false;
+    this._completed = false;
 
     // create shadow root
     this.shadow = this.attachShadow({ mode: 'open' });
@@ -233,30 +241,126 @@ class TaskItem extends HTMLElement {
       case 'name':
         this.nameElement.innerText = newValue;
         break;
-      case 'used-pomodoros':
-        this.usedPomodoros = newValue;
+      case 'used-pomodoros': {
+        const usedPomodoros = validatePomodoros(newValue);
+        if (usedPomodoros === null) {
+          return;
+        }
+
+        this._usedPomodoros = usedPomodoros;
         this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
         break;
-      case 'estimated-pomodoros':
-        this.estimatedPomodoros = newValue;
+      }
+      case 'estimated-pomodoros': {
+        const estimatedPomodoros = validatePomodoros(newValue);
+        if (estimatedPomodoros === null) {
+          return;
+        }
+
+        this._estimatedPomodoros = estimatedPomodoros;
         this.pomodoroElement.innerText = `${this.usedPomodoros}/${this.estimatedPomodoros}`;
         break;
-      case 'selected':
-        if (newValue === 'true') {
+      }
+      case 'selected': {
+        const selected = validateBoolean(newValue);
+        if (selected === null) {
+          return;
+        }
+
+        this._selected = selected;
+        if (selected) {
           this.itemContainerElement.classList.add('selected');
         } else {
           this.itemContainerElement.classList.remove('selected');
         }
         break;
-      case 'completed':
-        if (newValue === 'true') {
+      }
+      case 'completed': {
+        const completed = validateBoolean(newValue);
+        if (completed === null) {
+          return;
+        }
+
+        this._completed = completed;
+        if (completed) {
           this.itemContainerElement.classList.add('completed');
         } else {
           this.itemContainerElement.classList.remove('completed');
         }
         break;
+      }
       default:
     }
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  set name(value) {
+    const name = validateString(value);
+    if (name === null) {
+      return;
+    }
+
+    this._name = name;
+    this.setAttribute('name', this._name);
+  }
+
+  get usedPomodoros() {
+    return this._usedPomodoros;
+  }
+
+  set usedPomodoros(value) {
+    const usedPomodoros = validatePomodoros(value);
+    if (usedPomodoros === null) {
+      return;
+    }
+
+    this._usedPomodoros = usedPomodoros;
+    this.setAttribute('used-pomodoros', this._usedPomodoros);
+  }
+
+  get estimatedPomodoros() {
+    return this._estimatedPomodoros;
+  }
+
+  set estimatedPomodoros(value) {
+    const estimatedPomodoros = validatePomodoros(value);
+    if (estimatedPomodoros === null) {
+      return;
+    }
+
+    this._estimatedPomodoros = estimatedPomodoros;
+    this.setAttribute('estimated-pomodoros', this._estimatedPomodoros);
+  }
+
+  get selected() {
+    return this._selected;
+  }
+
+  set selected(value) {
+    const selected = validateBoolean(value);
+    if (selected === null) {
+      return;
+    }
+
+    this._selected = selected;
+    this.setAttribute('selected', this._selected);
+  }
+
+  get completed() {
+    return this._completed;
+  }
+
+  set completed(value) {
+    const completed = validateBoolean(value);
+    if (completed === null) {
+      return;
+    }
+
+    this._completed = completed;
+    this.setAttribute('completed', this._completed);
   }
 }
 
