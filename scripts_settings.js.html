@@ -28,15 +28,20 @@
         <article>
             <pre class="prettyprint source linenums"><code>/**
  * @file Manage tasklist for page
- * @author Dillan Merchant
  */
 
 import {
+  LONG_BREAK_INTERVAL,
+  SHORT_BREAK_INTERVAL,
+  TIMER_AUDIO,
+  TIMER_AUDIOS,
+} from '../utils/constants';
+import {
+  validateShortBreakLength,
+  validateLongBreakLength,
+  validateTimerAudio,
   initializeIntervalLengths,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
-  checkIfTimerAudioValid,
-} from '../utils/utils';
+} from '../utils/settings';
 
 let settingsElement;
 let popupEl;
@@ -44,10 +49,11 @@ let saveButton;
 let overlay;
 let shortBreakInput;
 let longBreakInput;
+let timerAudioInput;
 let soundInput;
 let errorMessages;
-const timerAudio = new Audio();
-timerAudio.volume = 0.2;
+const timerAudioElement = new Audio();
+timerAudioElement.volume = 0.2;
 
 /**
  * Get short break length
@@ -65,13 +71,18 @@ const getLongBreakLength = () => settingsElement.longBreakLength;
  * Get pathway to sound file
  * @return {string} - audio url
  */
-const getTimerAudio = () => settingsElement.timerSound;
+const getTimerAudio = () => settingsElement.timerAudio;
 
 /**
  * Set short break length
- * @param {number} shortBreakLength - new short break length
+ * @param {number} value - new short break length
  */
-const setShortBreakLength = (shortBreakLength) => {
+const setShortBreakLength = (value) => {
+  const shortBreakLength = validateShortBreakLength(value);
+  if (shortBreakLength === null) {
+    return;
+  }
+
   settingsElement.shortBreakLength = shortBreakLength;
 };
 
@@ -79,7 +90,12 @@ const setShortBreakLength = (shortBreakLength) => {
  * Set long break length
  * @param {number} longBreakLength - new long break length
  */
-const setLongBreakLength = (longBreakLength) => {
+const setLongBreakLength = (value) => {
+  const longBreakLength = validateLongBreakLength(value);
+  if (longBreakLength === null) {
+    return;
+  }
+
   settingsElement.longBreakLength = longBreakLength;
 };
 
@@ -87,9 +103,13 @@ const setLongBreakLength = (longBreakLength) => {
  * Set url of audio
  * @param {number} input - pathway to sound
  */
-const setTimerAudio = (input) => {
-  settingsElement.timerSound = input;
-  window.localStorage.setItem('timerAudio', input);
+const setTimerAudio = (value) => {
+  const timerAudio = validateTimerAudio(value);
+  if (timerAudio === null) {
+    return;
+  }
+
+  settingsElement.timerAudio = timerAudio;
 };
 
 /**
@@ -108,7 +128,7 @@ const openPopup = () => {
  * Close settings popup
  */
 const closePopup = () => {
-  timerAudio.pause();
+  timerAudioElement.pause();
   popupEl.classList.remove('active');
   overlay.classList.remove('active');
 };
@@ -117,24 +137,37 @@ const closePopup = () => {
  * Save interval length / audio settings, display error if invalid
  * @return {(number[] | null)} - new interval lengths, null if error occurs
  */
-const saveSettings = () => {
-  const newShortBreakLength = shortBreakInput.value;
-  const newLongBreakLength = longBreakInput.value;
-  const isShortInputValid = checkIfShortInputValid(newShortBreakLength);
-  const isLongInputValid = checkIfLongInputValid(newLongBreakLength);
+// const saveSettings = () => {
+function saveSettings() {
+  const newShortBreakLength = validateShortBreakLength(shortBreakInput.value);
+  const newLongBreakLength = validateLongBreakLength(longBreakInput.value);
+  const timerAudio = validateTimerAudio(timerAudioInput.value);
+  const isNewShortBreakLengthValid = newShortBreakLength !== null;
+  const isNewLongBreakLengthValid = newLongBreakLength !== null;
 
-  errorMessages[0].style.visibility = isShortInputValid ? 'hidden' : 'visible';
-  errorMessages[1].style.visibility = isLongInputValid ? 'hidden' : 'visible';
-  if (!isShortInputValid || !isLongInputValid) {
+  errorMessages[0].style.visibility = isNewShortBreakLengthValid
+    ? 'hidden'
+    : 'visible';
+  errorMessages[1].style.visibility = isNewLongBreakLengthValid
+    ? 'hidden'
+    : 'visible';
+  if (!isNewShortBreakLengthValid || !isNewLongBreakLengthValid) {
     return null;
   }
 
   setTimerAudio(soundInput.value);
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
-  localStorage.setItem('shortBreakLength', newShortBreakLength);
-  localStorage.setItem('longBreakLength', newLongBreakLength);
+  window.localStorage.setItem('shortBreakLength', newShortBreakLength);
+  window.localStorage.setItem('longBreakLength', newLongBreakLength);
+  window.localStorage.setItem('timerAudio', timerAudio);
   return [newShortBreakLength, newLongBreakLength];
+}
+
+const popupFunctions = {
+  openPopup,
+  closePopup,
+  saveSettings,
 };
 
 /**
@@ -149,6 +182,7 @@ const initializeElements = (root) => {
   overlay = shadowRoot.querySelector('#overlay');
   shortBreakInput = shadowRoot.querySelector('#short-number');
   longBreakInput = shadowRoot.querySelector('#long-number');
+  timerAudioInput = shadowRoot.querySelector('#sound');
   soundInput = shadowRoot.querySelector('#sound');
   errorMessages = shadowRoot.querySelectorAll('.error');
 };
@@ -163,26 +197,30 @@ const initializePopup = (root, saveSettingsCallback) => {
   initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
-  const savedAudio = window.localStorage.getItem('timerAudio');
-  setTimerAudio(
-    checkIfTimerAudioValid(savedAudio) ? savedAudio : 'assets/calm-alarm.mp3',
-  );
+
+  const savedTimerAudio = window.localStorage.getItem('timerAudio');
+  if (validateTimerAudio(savedTimerAudio) === null) {
+    setTimerAudio(TIMER_AUDIOS.calm);
+    window.localStorage.setItem('timerAudio', TIMER_AUDIOS.calm);
+  } else {
+    setTimerAudio(savedTimerAudio);
+  }
 
   overlay.onclick = closePopup;
 
   saveButton.addEventListener('click', () => {
-    const newBreakLengths = saveSettings();
+    const newBreakLengths = popupFunctions.saveSettings();
     if (!newBreakLengths) {
       return;
     }
-    closePopup();
+    popupFunctions.closePopup();
     saveSettingsCallback(...newBreakLengths);
   });
 
   soundInput.onchange = () => {
-    timerAudio.pause();
-    timerAudio.src = soundInput.value;
-    timerAudio.play();
+    timerAudioElement.pause();
+    timerAudioElement.src = soundInput.value;
+    timerAudioElement.play();
   };
 };
 
@@ -190,6 +228,8 @@ export {
   initializePopup,
   openPopup,
   closePopup,
+  saveSettings,
+  popupFunctions,
   getShortBreakLength,
   getLongBreakLength,
   getTimerAudio,
@@ -207,13 +247,13 @@ export {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#checkIfLongInputValid">checkIfLongInputValid</a></li><li><a href="global.html#checkIfShortInputValid">checkIfShortInputValid</a></li><li><a href="global.html#checkIfTimerAudioValid">checkIfTimerAudioValid</a></li><li><a href="global.html#checkIfTimeValid">checkIfTimeValid</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadiusStroke">setRadiusStroke</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateNumber">validateNumber</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadiusStroke">setRadiusStroke</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Mar 11 2021 18:22:25 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Mar 11 2021 18:29:08 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

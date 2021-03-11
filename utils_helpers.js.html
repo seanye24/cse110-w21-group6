@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/progressRing.js</title>
+    <title>JSDoc: Source: utils/helpers.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/progressRing.js</h1>
+    <h1 class="page-title">Source: utils/helpers.js</h1>
 
     
 
@@ -27,61 +27,96 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage progress ring for page
+ * @file Various utility methods
  */
-
-let progressRingElement;
 
 /**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
+ * Creates an HTMLElement and set its attributes
+ * Created to reduce boilerplate from element creation
+ * @param {string} elementType - element tag name
+ * @param {{key: string}} props - element's attributes/properties
+ * @param {{option: string}} options - element options such as namespace
+ * @return element - new HTMLElement created
  */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
+const createElement = (elementType, props = {}, options = {}) => {
+  const { namespace } = options;
+  let element;
+  if (namespace) {
+    element = document.createElementNS(namespace, elementType);
+  } else {
+    element = document.createElement(elementType);
+  } // create element
+
+  // set attributes/properties
+  Object.entries(props).forEach(([key, value]) => {
+    if (namespace || !(key in element)) {
+      element.setAttribute(key, value);
+    } else {
+      element[key] = value;
+    }
+  });
+
+  return element;
 };
 
 /**
- * Get progress
- * @return {number} - current progress
+ * Validate if input is string
+ * @param {any} value - value to to check
+ * @return {string | null} - string if input is a valid string, null otherwise
  */
-const getProgress = () => progressRingElement.progress;
-
-/**
- * Set progress
- * @param {number} progress - progress to set
- */
-const setProgress = (progress) => {
-  progressRingElement.progress = JSON.stringify(progress);
+const validateString = (value) => {
+  if (typeof value === 'string' || value instanceof String) {
+    return value;
+  }
+  return null;
 };
 
 /**
- * Set radius of ring
- * @param {number} radius - new radius to set
+ * Tries to convert input to a number
+ * @param {any} value - to be converted to number
+ * @param {boolean} shouldTruncate - determine if number should be truncated
+ * @return {number | null} - number if successful, null otherwise
  */
-const setRadiusStroke = (radius, stroke) => {
-  progressRingElement.radius = radius;
-  progressRingElement.stroke = stroke;
+const validateNumber = (value, shouldTruncate = false) => {
+  const isNumberOrString =
+    typeof value === 'number' ||
+    value instanceof Number ||
+    validateString(value) !== null;
+  const number = Number(value);
+  if (!isNumberOrString || Number.isNaN(number)) {
+    return null;
+  }
+  return shouldTruncate ? Math.floor(number) : number;
 };
 
 /**
- * Get radius of ring
- * @return {number} radius
+ * Use promises to tick by specified tickLength
+ * NOTE: ticks may be slightly longer than the duration due the single threaded nature of JavaScript
+ * @param {number} duration - duration of tick (in seconds)
+ * @return {Promise&lt;void>} - promise that resolves after tick duration
  */
-const getRadius = () => progressRingElement.radius;
+const tick = async (duration) =>
+  new Promise((res) => setTimeout(res, 1000 * duration));
 
 /**
- * Get stroke of ring
- * @return {number} stroke
+ * Converts seconds into MM : SS
+ * @param {string} seconds - seconds to convert
+ * @return {string} - time in format MM:SS
  */
-const getStroke = () => progressRingElement.stroke;
+const getMinutesAndSeconds = (totalSeconds) => {
+  const [minutes, seconds] = [
+    Math.floor(totalSeconds / 60),
+    Math.floor(totalSeconds % 60),
+  ].map((t) => (t &lt; 10 ? `0${t}` : t)); // left time unit with 0 if necessary
+  return `${minutes}:${seconds}`;
+};
 
 export {
-  initializeProgressRing,
-  getProgress,
-  setProgress,
-  setRadiusStroke,
-  getRadius,
-  getStroke,
+  createElement,
+  getMinutesAndSeconds,
+  tick,
+  validateNumber,
+  validateString,
 };
 </code></pre>
         </article>
