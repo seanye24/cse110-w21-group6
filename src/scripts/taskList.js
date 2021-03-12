@@ -103,6 +103,7 @@ const updateTask = (prevTask, nextTask) => {
   Object.getOwnPropertyNames(nextTask).forEach((key) => {
     taskElement[key] = nextTask[key];
   });
+  return nextTask;
 };
 
 /**
