@@ -22,10 +22,10 @@ import {
 import { initializeIntervalLengths } from '../utils/settings';
 
 // add audio element api (jsdom doens't support video/audio elements right now)
-window.HTMLMediaElement.prototype.load = () => {};
-window.HTMLMediaElement.prototype.play = () => {};
-window.HTMLMediaElement.prototype.pause = () => {};
-window.HTMLMediaElement.prototype.addTextTrack = () => {};
+window.HTMLMediaElement.prototype.load = jest.fn();
+window.HTMLMediaElement.prototype.play = jest.fn();
+window.HTMLMediaElement.prototype.pause = jest.fn();
+window.HTMLMediaElement.prototype.addTextTrack = jest.fn();
 
 customElements.define('settings-component', SettingsPopup);
 
@@ -114,7 +114,7 @@ describe('testing initializeIntervalLengths', () => {
   });
 });
 
-describe('testing getShortBreakLength', () => {
+describe('testing get functions from script file', () => {
   let settingsPopupElement;
   beforeEach(() => {
     settingsPopupElement = createElement('settings-component');
@@ -128,9 +128,25 @@ describe('testing getShortBreakLength', () => {
     settingsPopupElement.shortBreakLength = 5;
     expect(getShortBreakLength()).toBe(5);
   });
+
+  test('longBreakLength is retrieved correctly', () => {
+    settingsPopupElement.longBreakLength = 15;
+    expect(getLongBreakLength()).toBe(15);
+
+    settingsPopupElement.longBreakLength = 20;
+    expect(getLongBreakLength()).toBe(20);
+  });
+
+  test('timerAudio is retrieved correctly', () => {
+    settingsPopupElement.timerAudio = TIMER_AUDIOS.calm;
+    expect(getTimerAudio()).toBe(TIMER_AUDIOS.calm);
+
+    settingsPopupElement.timerAudio = TIMER_AUDIOS.kanye;
+    expect(getTimerAudio()).toBe(TIMER_AUDIOS.kanye);
+  });
 });
 
-describe('testing setShortBreakLength', () => {
+describe('testing set functions from script file', () => {
   let settingsPopupElement;
   beforeEach(() => {
     settingsPopupElement = createElement('settings-component');
@@ -147,30 +163,6 @@ describe('testing setShortBreakLength', () => {
     setShortBreakLength(7);
     expect(settingsPopupElement.shortBreakLength).toBe(5);
   });
-});
-
-describe('testing getLongBreakLength', () => {
-  let settingsPopupElement;
-  beforeEach(() => {
-    settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement);
-  });
-
-  test('longBreakLength is retrieved correctly', () => {
-    settingsPopupElement.longBreakLength = 15;
-    expect(getLongBreakLength()).toBe(15);
-
-    settingsPopupElement.longBreakLength = 20;
-    expect(getLongBreakLength()).toBe(20);
-  });
-});
-
-describe('testing setLongBreakLength', () => {
-  let settingsPopupElement;
-  beforeEach(() => {
-    settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement);
-  });
 
   test('longBreakLength is set correctly', () => {
     setLongBreakLength(15);
@@ -181,30 +173,6 @@ describe('testing setLongBreakLength', () => {
 
     setLongBreakLength(35);
     expect(settingsPopupElement.longBreakLength).toBe(20);
-  });
-});
-
-describe('testing getTimerAudio', () => {
-  let settingsPopupElement;
-  beforeEach(() => {
-    settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement);
-  });
-
-  test('timerAudio is retrieved correctly', () => {
-    settingsPopupElement.timerAudio = TIMER_AUDIOS.calm;
-    expect(getTimerAudio()).toBe(TIMER_AUDIOS.calm);
-
-    settingsPopupElement.timerAudio = TIMER_AUDIOS.kanye;
-    expect(getTimerAudio()).toBe(TIMER_AUDIOS.kanye);
-  });
-});
-
-describe('testing setTimerAudio', () => {
-  let settingsPopupElement;
-  beforeEach(() => {
-    settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement);
   });
 
   test('timerAudio is set correctly', () => {
@@ -219,23 +187,28 @@ describe('testing setTimerAudio', () => {
   });
 });
 
-describe('testing openPopup', () => {
+describe('testing popup actions', () => {
   let settingsPopupElement;
   let popupElement;
   let overlayElement;
   let shortBreakInputElement;
   let longBreakInputElement;
   let timerAudioInputElement;
+  let saveButton;
+  const mockSaveSettingsCallback = jest.fn();
+  const saveSettingsSpy = jest.spyOn(popupFunctions, 'saveSettings');
+  const closePopupSpy = jest.spyOn(popupFunctions, 'closePopup');
   beforeEach(() => {
     window.localStorage.clear();
     settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement);
+    initializePopup(settingsPopupElement, mockSaveSettingsCallback);
     const { shadowRoot } = settingsPopupElement;
     popupElement = shadowRoot.querySelector('.popup');
     overlayElement = shadowRoot.querySelector('#overlay');
     shortBreakInputElement = shadowRoot.querySelector('#short-number');
     longBreakInputElement = shadowRoot.querySelector('#long-number');
     timerAudioInputElement = shadowRoot.querySelector('#sound');
+    saveButton = shadowRoot.querySelector('.save-button');
   });
 
   test('popup opens correctly with default settings', () => {
@@ -261,27 +234,55 @@ describe('testing openPopup', () => {
     expect(longBreakInputElement.value).toBe('20');
     expect(timerAudioInputElement.value).toBe(TIMER_AUDIOS.kanye);
   });
-});
-
-describe('testing closePopup', () => {
-  let settingsPopupElement;
-  let popupElement;
-  let overlayElement;
-  beforeEach(() => {
-    settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement);
-    popupElement = settingsPopupElement.shadowRoot.querySelector('.popup');
-    overlayElement = settingsPopupElement.shadowRoot.querySelector('#overlay');
-  });
 
   test('popup closes correctly', () => {
     closePopup();
     expect(popupElement.classList.contains('active')).toBe(false);
     expect(overlayElement.classList.contains('active')).toBe(false);
+    expect(window.HTMLMediaElement.prototype.pause).toHaveBeenCalled();
+  });
+
+  test('changing audio plays sound', () => {
+    timerAudioInputElement.dispatchEvent(new Event('change'));
+    expect(window.HTMLMediaElement.prototype.pause).toHaveBeenCalled();
+    expect(window.HTMLMediaElement.prototype.play).toHaveBeenCalled();
+  });
+
+  test('save button saves and closes when no errors are present', () => {
+    openPopup();
+    saveButton.click();
+
+    expect(saveSettingsSpy).toHaveBeenCalled();
+    expect(saveSettingsSpy.mock.results[0]).toEqual({
+      type: 'return',
+      value: [DEFAULT_SHORT_BREAK_LENGTH, DEFAULT_LONG_BREAK_LENGTH],
+    });
+    expect(closePopupSpy).toHaveBeenCalled();
+    expect(mockSaveSettingsCallback).toHaveBeenCalled();
+    expect(mockSaveSettingsCallback).toHaveBeenCalledWith(
+      DEFAULT_SHORT_BREAK_LENGTH,
+      DEFAULT_LONG_BREAK_LENGTH,
+    );
+  });
+
+  test("save button doesn't close when errors are present", () => {
+    const nullSaveSettingsSpy = jest
+      .spyOn(popupFunctions, 'saveSettings')
+      .mockImplementation(() => null);
+    openPopup();
+    saveButton.click();
+
+    expect(nullSaveSettingsSpy).toHaveBeenCalled();
+    expect(nullSaveSettingsSpy.mock.results[0]).toEqual({
+      type: 'return',
+      value: null,
+    });
+    expect(closePopupSpy).not.toHaveBeenCalled();
+    expect(mockSaveSettingsCallback).not.toHaveBeenCalled();
   });
 });
 
-describe('testing saveSettings', () => {
+describe('testing save actions', () => {
   let settingsPopupElement;
   let shortBreakInputElement;
   let longBreakInputElement;
@@ -356,30 +357,5 @@ describe('testing saveSettings', () => {
     saveSettings();
     errorMessageElements[0].style.visibility = 'hidden';
     errorMessageElements[1].style.visibility = 'visible';
-  });
-});
-
-describe('testing settings popup save button', () => {
-  test('save button correctly saves settings and closes popup', () => {
-    const mockSaveSettingsCallback = jest.fn();
-    const saveSettingsSpy = jest.spyOn(popupFunctions, 'saveSettings');
-    const closePopupSpy = jest.spyOn(popupFunctions, 'closePopup');
-
-    const settingsElement = createElement('settings-component');
-    initializePopup(settingsElement, mockSaveSettingsCallback);
-    openPopup();
-
-    settingsElement.shadowRoot.querySelector('.save-button').click();
-    expect(saveSettingsSpy).toHaveBeenCalled();
-    expect(saveSettingsSpy.mock.results[0]).toEqual({
-      type: 'return',
-      value: [DEFAULT_SHORT_BREAK_LENGTH, DEFAULT_LONG_BREAK_LENGTH],
-    });
-    expect(closePopupSpy).toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).toHaveBeenCalledWith(
-      DEFAULT_SHORT_BREAK_LENGTH,
-      DEFAULT_LONG_BREAK_LENGTH,
-    );
   });
 });
