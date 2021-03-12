@@ -104,8 +104,7 @@ const closePopup = () => {
  * Save interval length / audio settings, display error if invalid
  * @return {(number[] | null)} - new interval lengths, null if error occurs
  */
-// const saveSettings = () => {
-function saveSettings() {
+const saveSettings = () => {
   const newShortBreakLength = validateShortBreakLength(shortBreakInput.value);
   const newLongBreakLength = validateLongBreakLength(longBreakInput.value);
   const timerAudio = validateTimerAudio(timerAudioInput.value);
@@ -129,7 +128,7 @@ function saveSettings() {
   window.localStorage.setItem('longBreakLength', newLongBreakLength);
   window.localStorage.setItem('timerAudio', timerAudio);
   return [newShortBreakLength, newLongBreakLength];
-}
+};
 
 // object to hold function references
 // mainly for mocking in jest
