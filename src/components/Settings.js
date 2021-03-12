@@ -2,30 +2,31 @@
  * @file settings web component
  */
 
+import { createElement } from '../utils/helpers';
 import {
-  createElement,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
-} from '../utils/utils';
+  validateShortBreakLength,
+  validateLongBreakLength,
+  validateTimerAudio,
+} from '../utils/settings';
 
 /**
  * Custom web component representing the settings popup
  * @extends HTMLElement
  * @param {number} shortBreakLength - short break time
  * @param {number} longBreakLength - long break time
- * @param {string} timerSound - pathway to sound file
+ * @param {string} timerAudio - pathway to sound file
  */
 class Settings extends HTMLElement {
   static get observedAttributes() {
-    return ['shortBreakLength', 'longBreakLength', 'timerSound'];
+    return ['shortBreakLength', 'longBreakLength', 'timerAudio'];
   }
 
   constructor() {
     super();
 
-    this._shortBreak = this.getAttribute('shortBreakLength');
-    this._longBreak = this.getAttribute('longBreakLength');
-    this._timerSound = this.getAttribute('timerSound');
+    this._shortBreakLength = this.getAttribute('shortBreakLength');
+    this._longBreakLength = this.getAttribute('longBreakLength');
+    this._timerAudio = this.getAttribute('timerAudio');
 
     this.styleElement = createElement('style', {
       innerText: `
@@ -182,7 +183,7 @@ class Settings extends HTMLElement {
       type: 'number',
       min: '3',
       max: '5',
-      value: this._shortBreak,
+      value: this._shortBreakLength,
     });
     this.inputBoundShort = createElement('span', {
       className: 'bounds',
@@ -206,7 +207,7 @@ class Settings extends HTMLElement {
       type: 'number',
       min: '15',
       max: '30',
-      value: this._longBreak,
+      value: this._longBreakLength,
     });
     this.inputBoundLong = createElement('span', {
       className: 'bounds',
@@ -286,53 +287,82 @@ class Settings extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'shortBreakLength':
-        if (checkIfShortInputValid(newValue)) {
-          this._shortBreak = newValue;
-          this.inputBoxShort.value = newValue;
-          this.inputErrorShort.visibility = 'hidden';
+      case 'shortBreakLength': {
+        const shortBreakLength = validateShortBreakLength(newValue);
+        if (shortBreakLength === null) {
+          return;
         }
+
+        this._shortBreakLength = shortBreakLength;
+        this.inputBoxShort.value = this._shortBreakLength;
+        this.inputErrorShort.visibility = 'hidden';
         break;
-      case 'longBreakLength':
-        if (checkIfLongInputValid(newValue)) {
-          this._longBreak = newValue;
-          this.inputBoxLong.value = newValue;
-          this.inputErrorLong.visibility = 'hidden';
+      }
+      case 'longBreakLength': {
+        const longBreakLength = validateLongBreakLength(newValue);
+        if (longBreakLength === null) {
+          return;
         }
+
+        this._longBreakLength = longBreakLength;
+        this.inputBoxLong.value = this._longBreakLength;
+        this.inputErrorLong.visibility = 'hidden';
         break;
-      case 'timerSound':
-        this._timerSound = newValue;
-        this.inputBoxSound.value = newValue;
+      }
+      case 'timerAudio': {
+        const timerAudio = validateTimerAudio(newValue);
+        if (timerAudio === null) {
+          return;
+        }
+
+        this._timerAudio = timerAudio;
+        this.inputBoxSound.value = this._timerAudio;
         break;
+      }
       default:
     }
   }
 
-  get shortBreak() {
-    return this._shortBreak;
+  get shortBreakLength() {
+    return this._shortBreakLength;
   }
 
-  set shortBreak(shortBreak) {
-    this._shortBreak = shortBreak;
-    this.setAttribute('shortBreakLength', this._shortBreak);
+  set shortBreakLength(value) {
+    const shortBreakLength = validateShortBreakLength(value);
+    if (shortBreakLength === null) {
+      return;
+    }
+
+    this._shortBreakLength = shortBreakLength;
+    this.setAttribute('shortBreakLength', this._shortBreakLength);
   }
 
-  get longBreak() {
-    return this._longBreak;
+  get longBreakLength() {
+    return this._longBreakLength;
   }
 
-  set longBreak(longBreak) {
-    this._longBreak = longBreak;
-    this.setAttribute('longBreakLength', this._longBreak);
+  set longBreakLength(value) {
+    const longBreakLength = validateLongBreakLength(value);
+    if (longBreakLength === null) {
+      return;
+    }
+
+    this._longBreakLength = longBreakLength;
+    this.setAttribute('longBreakLength', this._longBreakLength);
   }
 
-  get timerSound() {
-    return this._timerSound;
+  get timerAudio() {
+    return this._timerAudio;
   }
 
-  set timerSound(timerSound) {
-    this._timerSound = timerSound;
-    this.setAttribute('timerSound', this._timerSound);
+  set timerAudio(value) {
+    const timerAudio = validateTimerAudio(value);
+    if (timerAudio === null) {
+      return;
+    }
+
+    this._timerAudio = timerAudio;
+    this.setAttribute('timerAudio', this._timerAudio);
   }
 }
 

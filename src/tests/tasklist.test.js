@@ -10,7 +10,7 @@ import {
   incrementPomodoro,
   selectTask,
 } from '../scripts/taskList';
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 
 customElements.define('task-list', TaskList);
 

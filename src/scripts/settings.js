@@ -1,13 +1,19 @@
 /**
  * @file Manage tasklist for page
- * @author Dillan Merchant
  */
 
 import {
+  LONG_BREAK_INTERVAL,
+  SHORT_BREAK_INTERVAL,
+  TIMER_AUDIO,
+  TIMER_AUDIOS,
+} from '../utils/constants';
+import {
+  validateShortBreakLength,
+  validateLongBreakLength,
+  validateTimerAudio,
   initializeIntervalLengths,
-  checkIfShortInputValid,
-  checkIfLongInputValid,
-} from '../utils/utils';
+} from '../utils/settings';
 
 let settingsElement;
 let popupEl;
@@ -15,8 +21,11 @@ let saveButton;
 let overlay;
 let shortBreakInput;
 let longBreakInput;
+let timerAudioInput;
 let soundInput;
 let errorMessages;
+const timerAudioElement = new Audio();
+timerAudioElement.volume = 0.2;
 
 /**
  * Get short break length
@@ -34,13 +43,18 @@ const getLongBreakLength = () => settingsElement.longBreakLength;
  * Get pathway to sound file
  * @return {string} - audio url
  */
-const getTimerAudio = () => settingsElement.getAttribute('timerSound');
+const getTimerAudio = () => settingsElement.timerAudio;
 
 /**
  * Set short break length
- * @param {number} shortBreakLength - new short break length
+ * @param {number} value - new short break length
  */
-const setShortBreakLength = (shortBreakLength) => {
+const setShortBreakLength = (value) => {
+  const shortBreakLength = validateShortBreakLength(value);
+  if (shortBreakLength === null) {
+    return;
+  }
+
   settingsElement.shortBreakLength = shortBreakLength;
 };
 
@@ -48,7 +62,12 @@ const setShortBreakLength = (shortBreakLength) => {
  * Set long break length
  * @param {number} longBreakLength - new long break length
  */
-const setLongBreakLength = (longBreakLength) => {
+const setLongBreakLength = (value) => {
+  const longBreakLength = validateLongBreakLength(value);
+  if (longBreakLength === null) {
+    return;
+  }
+
   settingsElement.longBreakLength = longBreakLength;
 };
 
@@ -56,14 +75,19 @@ const setLongBreakLength = (longBreakLength) => {
  * Set url of audio
  * @param {number} input - pathway to sound
  */
-const setTimerAudio = (input) => {
-  settingsElement.timerSound = input;
+const setTimerAudio = (value) => {
+  const timerAudio = validateTimerAudio(value);
+  if (timerAudio === null) {
+    return;
+  }
+
+  settingsElement.timerAudio = timerAudio;
 };
 
 /**
  * Open settings popup
  */
-const openSettingsPopup = () => {
+const openPopup = () => {
   popupEl.classList.add('active');
   overlay.classList.add('active');
 
@@ -75,40 +99,54 @@ const openSettingsPopup = () => {
 /**
  * Close settings popup
  */
-const closeSettingsPopup = () => {
+const closePopup = () => {
+  timerAudioElement.pause();
   popupEl.classList.remove('active');
   overlay.classList.remove('active');
 };
 
 /**
  * Save interval length / audio settings, display error if invalid
- * @return {[number, number] | null} - new interval lengths, null if error occurs
+ * @return {(number[] | null)} - new interval lengths, null if error occurs
  */
-const saveSettings = () => {
-  const newShortBreakLength = shortBreakInput.value;
-  const newLongBreakLength = longBreakInput.value;
-  const isShortInputValid = checkIfShortInputValid(newShortBreakLength);
-  const isLongInputValid = checkIfLongInputValid(newLongBreakLength);
+// const saveSettings = () => {
+function saveSettings() {
+  const newShortBreakLength = validateShortBreakLength(shortBreakInput.value);
+  const newLongBreakLength = validateLongBreakLength(longBreakInput.value);
+  const timerAudio = validateTimerAudio(timerAudioInput.value);
+  const isNewShortBreakLengthValid = newShortBreakLength !== null;
+  const isNewLongBreakLengthValid = newLongBreakLength !== null;
 
-  errorMessages[0].style.visibility = isShortInputValid ? 'hidden' : 'visible';
-  errorMessages[1].style.visibility = isLongInputValid ? 'hidden' : 'visible';
-  if (!isShortInputValid || !isLongInputValid) {
+  errorMessages[0].style.visibility = isNewShortBreakLengthValid
+    ? 'hidden'
+    : 'visible';
+  errorMessages[1].style.visibility = isNewLongBreakLengthValid
+    ? 'hidden'
+    : 'visible';
+  if (!isNewShortBreakLengthValid || !isNewLongBreakLengthValid) {
     return null;
   }
 
   setTimerAudio(soundInput.value);
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
-  localStorage.setItem('shortBreakLength', newShortBreakLength);
-  localStorage.setItem('longBreakLength', newLongBreakLength);
+  window.localStorage.setItem('shortBreakLength', newShortBreakLength);
+  window.localStorage.setItem('longBreakLength', newLongBreakLength);
+  window.localStorage.setItem('timerAudio', timerAudio);
   return [newShortBreakLength, newLongBreakLength];
+}
+
+const popupFunctions = {
+  openPopup,
+  closePopup,
+  saveSettings,
 };
 
 /**
  * Initialize element variables for different elements of settings component
  * @param {HTMLElement} root - root element of settings component
  */
-const setRoot = (root) => {
+const initializeElements = (root) => {
   settingsElement = root;
   const { shadowRoot } = settingsElement;
   popupEl = shadowRoot.querySelector('.popup');
@@ -116,48 +154,58 @@ const setRoot = (root) => {
   overlay = shadowRoot.querySelector('#overlay');
   shortBreakInput = shadowRoot.querySelector('#short-number');
   longBreakInput = shadowRoot.querySelector('#long-number');
+  timerAudioInput = shadowRoot.querySelector('#sound');
   soundInput = shadowRoot.querySelector('#sound');
   errorMessages = shadowRoot.querySelectorAll('.error');
 };
 
 /**
  * Set the initial settings element
- * @param {HTMLElement} element - settings element
- * @param {() => void} saveSettingsCallback - callback for when settings are saved
+ * @param {HTMLElement} root - settings element
+ * @param {Function} saveSettingsCallback - callback for when settings are saved
  */
-const initializeSettings = (element, saveSettingsCallback) => {
+const initializePopup = (root, saveSettingsCallback) => {
   const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
-  setRoot(element);
+  initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
-  setTimerAudio('assets/calm-alarm.mp3'); // TODO: pull from localstorage
 
-  overlay.onclick = closeSettingsPopup;
+  const savedTimerAudio = window.localStorage.getItem('timerAudio');
+  if (validateTimerAudio(savedTimerAudio) === null) {
+    setTimerAudio(TIMER_AUDIOS.calm);
+    window.localStorage.setItem('timerAudio', TIMER_AUDIOS.calm);
+  } else {
+    setTimerAudio(savedTimerAudio);
+  }
+
+  overlay.onclick = closePopup;
 
   saveButton.addEventListener('click', () => {
-    const newBreakLengths = saveSettings();
+    const newBreakLengths = popupFunctions.saveSettings();
     if (!newBreakLengths) {
       return;
     }
-    closeSettingsPopup();
+    popupFunctions.closePopup();
     saveSettingsCallback(...newBreakLengths);
   });
 
   soundInput.onchange = () => {
-    const audio = new Audio(soundInput.value);
-    audio.volume = 0.2;
-    audio.play();
+    timerAudioElement.pause();
+    timerAudioElement.src = soundInput.value;
+    timerAudioElement.play();
   };
 };
 
 export {
-  initializeSettings,
+  initializePopup,
+  openPopup,
+  closePopup,
+  saveSettings,
+  popupFunctions,
   getShortBreakLength,
   getLongBreakLength,
+  getTimerAudio,
   setShortBreakLength,
   setLongBreakLength,
-  openSettingsPopup,
-  closeSettingsPopup,
-  getTimerAudio,
   setTimerAudio,
 };

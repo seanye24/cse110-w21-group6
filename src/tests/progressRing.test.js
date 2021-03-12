@@ -1,9 +1,12 @@
 import { ProgressRing } from '../components';
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 import {
   getProgress,
   initializeProgressRing,
   setProgress,
+  setRadiusStroke,
+  getRadius,
+  getStroke,
 } from '../scripts/progressRing';
 
 customElements.define('progress-ring', ProgressRing);
@@ -30,5 +33,19 @@ describe('testing progress ring', () => {
     expect(getProgress()).toBe(50);
     setProgress(25);
     expect(getProgress()).toBe(25);
+  });
+
+  test('setRadiusStroke sets radius and stroke correctly', () => {
+    setRadiusStroke(50, 5);
+    expect(getRadius()).toBe(50);
+    expect(getStroke()).toBe(5);
+
+    setRadiusStroke(75, 7);
+    expect(getRadius()).toBe(75);
+    expect(getStroke()).toBe(7);
+
+    setRadiusStroke(100, 19);
+    expect(getRadius()).toBe(100);
+    expect(getStroke()).toBe(19);
   });
 });

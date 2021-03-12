@@ -2,7 +2,7 @@
  * @file progress-ring web component
  */
 
-import { createElement, validateNumber } from '../utils/utils';
+import { createElement, validateNumber } from '../utils/helpers';
 
 /**
  * Custom web component representing a progress ring.
@@ -52,6 +52,10 @@ class ProgressRing extends HTMLElement {
       className: 'timer',
       time: 0,
     });
+    this.circleComponent = createElement('pomodoro-circles', {
+      className: 'circles',
+      circleCount: 0,
+    });
 
     this.root.append(this.styleElement, this.svgElement);
     this.svgElement.append(
@@ -60,7 +64,10 @@ class ProgressRing extends HTMLElement {
       this.foreignObjectElement,
     );
     this.foreignObjectElement.appendChild(this.foreignObjectContainer);
-    this.foreignObjectContainer.append(this.timerComponent);
+    this.foreignObjectContainer.append(
+      this.timerComponent,
+      this.circleComponent,
+    );
 
     this._radius = 0;
     this._stroke = 0;

@@ -30,7 +30,7 @@ const setAnnouncement = (announcement) => {
 
 /**
  * Set yes button on click callback
- * @param {() => void} callback - yes button onclick callback
+ * @param {Function} callback - yes button onclick callback
  */
 const setYesButtonCallback = (callback) => {
   yesButton.onclick = callback;
@@ -38,7 +38,7 @@ const setYesButtonCallback = (callback) => {
 
 /**
  * Set no button on click callback
- * @param {() => void} callback - no button onclick callback
+ * @param {Function} callback - no button onclick callback
  */
 const setNoButtonCallback = (callback) => {
   noButton.onclick = callback;

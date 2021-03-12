@@ -4,11 +4,18 @@
  */
 
 import '../styles/style.css';
-import { Timer, ProgressRing, TaskList, Settings } from '../components';
+import {
+  Timer,
+  ProgressRing,
+  TaskList,
+  PomodoroCircles,
+  Settings,
+} from '../components';
 import {
   completeTask,
   deselectAllTasks,
   getCurrentlySelectedTask,
+  getTasks,
   incrementPomodoro,
   initializeTaskList,
   selectFirstTask,
@@ -16,11 +23,13 @@ import {
 } from './taskList';
 import { initializeProgressRing, setProgress } from './progressRing';
 import { initializeTimer, setTimer } from './timer';
+import { initializePomodoroCircles, setCircleCount } from './pomodoroCircles';
 import {
-  initializeSettings,
+  initializePopup as initializeSettingsPopup,
+  openPopup as openSettingsPopup,
   getShortBreakLength,
   getLongBreakLength,
-  openSettingsPopup,
+  getTimerAudio,
 } from './settings';
 import {
   initializeAnnouncement,
@@ -30,10 +39,13 @@ import {
   setButtonVisibility,
 } from './announcement';
 import {
-  initializeConfirmation,
-  openConfirmationPopup,
-  closeConfirmationPopup,
-} from './endSessionConfirmationPopup';
+  initializePopup as initializeConfirmationPopup,
+  openPopup as openConfirmationPopup,
+} from './confirmationPopup';
+import {
+  initializePopup as initializeSummaryPopup,
+  openPopup as openSummaryPopup,
+} from './summaryPopup';
 import {
   POMODORO_ANNOUNCEMENT,
   SHORT_BREAK_ANNOUNCEMENT,
@@ -44,20 +56,23 @@ import {
   END_OF_SESSION_ANNOUNCEMENT,
   TASK_COMPLETION_QUESTION,
   NO_TASKS_ANNOUNCEMENT,
-  DEFAULT_POMODORO_INTERVAL,
+  DEFAULT_POMODORO_LENGTH,
 } from '../utils/constants';
-import { tick } from '../utils/utils';
+import { tick } from '../utils/helpers';
 
 customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);
 customElements.define('task-list', TaskList);
 customElements.define('settings-component', Settings);
+customElements.define('pomodoro-circles', PomodoroCircles);
 
 let isSessionOngoing = false;
-let pomodoroLength = DEFAULT_POMODORO_INTERVAL;
-pomodoroLength = 0.1;
+let pomodoroLength = DEFAULT_POMODORO_LENGTH;
+pomodoroLength = 0.05; // TODO: FOR TESTING, remove later
 let shortBreakLength;
 let longBreakLength;
+const timerAudio = new Audio();
+timerAudio.volume = 0.2;
 
 /**
  * Starts and runs interval until interval is completed
@@ -109,10 +124,16 @@ const startSession = async (changeSessionButton) => {
         changeSessionButton();
       }
 
+      // reset circles if starting new set of 4 pomos
+      if (numPomodoros % 4 === 0) {
+        setCircleCount(0);
+      }
+
       // disable tasklist
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
+      timerAudio.pause();
       // start pomodoro, stop if interval is interrupted
       const shouldContinue = await startInterval(60 * pomodoroLength);
       if (!shouldContinue) {
@@ -120,16 +141,17 @@ const startSession = async (changeSessionButton) => {
       }
 
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task
+      timerAudio.src = getTimerAudio();
+      timerAudio.play();
 
       // check if break should be short or long
       numPomodoros++;
+      const circleCount = ((numPomodoros - 1) % 4) + 1; // number of circles to display
+      setCircleCount(circleCount);
       const shouldBeLongBreak = numPomodoros > 0 && numPomodoros % 4 === 0;
       currInterval = shouldBeLongBreak
         ? LONG_BREAK_INTERVAL
         : SHORT_BREAK_INTERVAL;
-
-      // reenable task list
-      setTasklistUsability(true);
     } else {
       // prompt user
       setButtonVisibility('visible');
@@ -138,7 +160,7 @@ const startSession = async (changeSessionButton) => {
       // copy curr selected task due to weird loop closures
       const currSelectedTaskCopy = currSelectedTask;
       const currAnnouncement =
-        currInterval === LONG_BREAK_ANNOUNCEMENT
+        currInterval === LONG_BREAK_INTERVAL
           ? LONG_BREAK_ANNOUNCEMENT
           : SHORT_BREAK_ANNOUNCEMENT;
 
@@ -149,6 +171,7 @@ const startSession = async (changeSessionButton) => {
         setAnnouncement(currAnnouncement);
         setButtonVisibility('hidden');
         wasAnnouncementButtonClicked = true;
+        setTasklistUsability(true);
       });
       setAnnouncementNoButtonCallback(() => {
         setAnnouncement(currAnnouncement);
@@ -186,23 +209,34 @@ const startSession = async (changeSessionButton) => {
  * @param {number} numPomodoros - number of pomodoros completed during the session
  */
 const endSession = (sessionButton, numPomodoros) => {
-  setAnnouncement(
-    numPomodoros === -1 ? NO_TASKS_ANNOUNCEMENT : END_OF_SESSION_ANNOUNCEMENT,
-  );
+  if (numPomodoros === -1) {
+    setAnnouncement(NO_TASKS_ANNOUNCEMENT);
+  } else {
+    setAnnouncement(END_OF_SESSION_ANNOUNCEMENT);
+  }
   deselectAllTasks();
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
-  // TODO: display session summary
+  if (numPomodoros > 0) {
+    initializeSummaryPopup(
+      document.querySelector('#summary-overlay'),
+      getTasks(),
+    );
+    openSummaryPopup();
+  }
 };
 
 window.addEventListener('DOMContentLoaded', () => {
   const settingsIcon = document.querySelector('.settings-icon');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
+  const circlesElement = progressRingElement.shadowRoot.querySelector(
+    '.circles',
+  );
   const sessionButton = document.querySelector('.session-button');
   const announcementElement = document.querySelector('.announcement-container');
   const taskListElement = document.querySelector('.task-list');
-  const confirmationOverlay = document.querySelector('.confirmation-overlay');
+  const confirmationOverlay = document.querySelector('#confirmation-overlay');
   const settingsElement = document.querySelector('.settings');
 
   const saveSettingsCallback = (newShortBreakLength, newLongBreakLength) => {
@@ -212,12 +246,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
+  initializePomodoroCircles(circlesElement);
   initializeAnnouncement(announcementElement);
   initializeTaskList(taskListElement);
-  initializeConfirmation(confirmationOverlay, () => {
+  initializeConfirmationPopup(confirmationOverlay, () => {
     isSessionOngoing = false;
   });
-  initializeSettings(settingsElement, saveSettingsCallback);
+  initializeSettingsPopup(settingsElement, saveSettingsCallback);
 
   // adjust nav bar color on scroll
   const navBar = document.querySelector('.navbar');
@@ -232,10 +267,13 @@ window.addEventListener('DOMContentLoaded', () => {
   // initialize variables, event listeners, and component values
   shortBreakLength = getShortBreakLength();
   longBreakLength = getLongBreakLength();
+  shortBreakLength = 0.05; // TODO: FOR TESTING, remove later
+  longBreakLength = 0.1; // TODO: FOR TESTING, remove later
   settingsIcon.onclick = openSettingsPopup;
   sessionButton.onmousedown = (e) => {
     e.preventDefault();
   };
+  timerElement.onclick = () => timerAudio.pause();
   setTimer(60 * pomodoroLength);
   deselectAllTasks();
 
@@ -253,9 +291,10 @@ window.addEventListener('DOMContentLoaded', () => {
       setTasklistUsability(true);
       setButtonVisibility('hidden');
 
-      // reset progress and time
+      // reset progress, time, and circles
       setProgress(100);
       setTimer(60 * pomodoroLength);
+      setCircleCount(0);
 
       endSession(sessionButton, numPomodoros);
     } else {

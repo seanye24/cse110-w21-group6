@@ -1,6 +1,5 @@
 /**
  * @file Manage tasklist for page
- * @author Sean Ye
  */
 
 /**
@@ -13,7 +12,7 @@
  * @property {boolean} completed          - whether task is completed
  */
 
-import { createElement } from '../utils/utils';
+import { createElement } from '../utils/helpers';
 import '../components/TaskItem';
 import '../components/TaskItemForm';
 import '../components/TaskList';
@@ -25,24 +24,6 @@ let taskListItemContainer;
 let taskItemForm;
 let taskItemFormContainer;
 let taskItemFormInputs;
-
-/**
- * Initialize element variables for different elements of task list
- * @param {HTMLElement} root - root element of tasklist
- */
-const setRoot = (root) => {
-  taskList = root;
-  taskListContainer = taskList.shadowRoot.querySelector('.container');
-  taskListItemContainer = taskListContainer.querySelector(
-    '.task-item-container',
-  );
-  taskItemForm = taskListContainer.querySelector('.task-item-form');
-  taskItemFormContainer = taskItemForm.shadowRoot.querySelector('.task-form');
-  taskItemFormInputs = {
-    name: taskItemFormContainer.querySelector('#name-input'),
-    pomodoro: taskItemFormContainer.querySelector('#pomodoro-input'),
-  };
-};
 
 /**
  * Save current tasks to localStorage
@@ -246,10 +227,9 @@ const handleTaskFormSubmit = (e) => {
   const { value: pomodoro } = pomodoroInput;
 
   const trimmedName = name.trim();
+  const pomodoroNumber = Number(pomodoro);
 
-  // check if task already exists
-  if (tasks.some((task) => task.name === trimmedName)) {
-    // TODO: Update name label
+  if (Number.isNaN(pomodoroNumber)) {
     return;
   }
 
@@ -257,7 +237,7 @@ const handleTaskFormSubmit = (e) => {
 
   addTask({
     name: trimmedName,
-    estimatedPomodoros: pomodoro,
+    estimatedPomodoros: pomodoroNumber,
     usedPomodoros: 0,
     selected: false,
     completed: false,
@@ -293,16 +273,6 @@ const checkDuplicateTask = (e) => {
   }
 };
 
-/**
- * Set tasklist
- * @param {HTMLElement} element - task list element
- */
-const initializeTaskList = (element) => {
-  setRoot(element);
-  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
-  restoreTasks();
-  taskItemFormInputs.name.oninput = checkDuplicateTask;
-};
 /**
  * Increment the usedPomodoros for one task
  * @param {Task} task - task to be incremented
@@ -391,6 +361,35 @@ const completeTask = (completedTask) => {
     selected: false,
     completed: true,
   });
+};
+
+/**
+ * Initialize element variables for different elements of task list
+ * @param {HTMLElement} root - tasklist element
+ */
+const initializeElements = (root) => {
+  taskList = root;
+  taskListContainer = taskList.shadowRoot.querySelector('.container');
+  taskListItemContainer = taskListContainer.querySelector(
+    '.task-item-container',
+  );
+  taskItemForm = taskListContainer.querySelector('.task-item-form');
+  taskItemFormContainer = taskItemForm.shadowRoot.querySelector('.task-form');
+  taskItemFormInputs = {
+    name: taskItemFormContainer.querySelector('#name-input'),
+    pomodoro: taskItemFormContainer.querySelector('#pomodoro-input'),
+  };
+};
+
+/**
+ * Initialize task list, add event listeners, restore saved tasks
+ * @param {HTMLElement} root - task list element
+ */
+const initializeTaskList = (root) => {
+  initializeElements(root);
+  taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
+  restoreTasks();
+  taskItemFormInputs.name.oninput = checkDuplicateTask;
 };
 
 export {

@@ -188,10 +188,11 @@ footer {
   height: 1.75em;
   border-radius: 50%;
   vertical-align: bottom;
+  background: #fff;
 }
 
-.confirmation-overlay {
-  transition: 200ms ease-in;
+.overlay {
+  transition: 200ms;
   z-index: 4;
   cursor: pointer;
   visibility: hidden;
@@ -203,15 +204,16 @@ footer {
   background: rgba(0, 0, 0, 0.5);
 }
 
-.confirmation-overlay.active {
+.overlay.active {
   visibility: visible;
 }
 
-.confirmation-popup {
+.popup {
   transition: 200ms ease-in;
   cursor: initial;
   position: fixed;
-  width: 40%;
+  min-width: 500px;
+  max-width: 600px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
@@ -220,11 +222,20 @@ footer {
   padding: 1em;
 }
 
-.confirmation-overlay.active .confirmation-popup {
+#summary-popup {
+  min-height: 500px;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.overlay.active .popup {
   transform: translate(-50%, -50%) scale(1);
 }
 
 .confirmation-question {
+  margin: 1em auto 0 auto;
   text-align: center;
   font-size: 1.5em;
   color: #555;
@@ -235,17 +246,76 @@ footer {
   justify-content: center;
 }
 
-.confirmation-button {
+.confirmation-button,
+.summary-close-button {
   cursor: pointer;
   margin: 1em;
   padding: 0.375em 0.75em;
   border: none;
   border-radius: 0.25rem;
   background-color: rgba(176, 176, 176, 1);
-  color: #fff;
+  color: #2b2b2b;
   font: 1.25em 'Source Sans Pro', sans-serif;
 }
 
 .confirmation-button:hover {
+  background-color: rgba(176, 176, 176, 0.8);
+}
+
+.summary-title {
+  margin: 0;
+  text-align: center;
+  color: #555;
+}
+
+.summary-hr {
+  margin-top: 0;
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+.task-summary-list {
+  margin-bottom: 1em;
+  overflow: auto;
+  width: 100%;
+  flex: 1;
+}
+
+.task-summary-item {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  margin-bottom: 0.5em;
+  padding: 0.75em;
+  color: #2b2b2b;
+}
+
+.task-summary-item.completed {
+  background: #6be770;
+}
+
+.task-summary-item.incompleted {
+  background: #ec8181;
+}
+
+.summary-stats-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1em;
+}
+
+.summary-actual-pomos,
+.summary-estimated-pomos {
+  color: #555;
+  font-size: 1.2rem;
+}
+
+.summary-close-button {
+  margin: 0 auto 0.5em auto;
+  color: #2b2b2b;
+}
+
+.summary-close-button:hover {
   background-color: rgba(176, 176, 176, 0.8);
 }

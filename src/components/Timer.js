@@ -3,10 +3,36 @@
  */
 
 import {
-  checkIfTimeValid,
   createElement,
   getMinutesAndSeconds,
-} from '../utils/utils';
+  validateNumber,
+} from '../utils/helpers';
+
+/**
+ * Validate if input is number, between 0s and 3600s (1 hr)
+ * @param {any} value - value to check
+ * @return {number | null} - time if valid, null otherwise
+ */
+const validateTime = (value) => {
+  const time = validateNumber(value, true);
+  if (time === null || time < 0 || time >= 60 * 60) {
+    return null;
+  }
+  return time;
+};
+
+/**
+ * Validate if input is number and positive
+ * @param {any} value - value to check
+ * @return {number | null} - radius if valid, null otherwise
+ */
+const validateContainerRadius = (value) => {
+  const containerRadius = validateNumber(value);
+  if (containerRadius === null || containerRadius < 0) {
+    return null;
+  }
+  return containerRadius;
+};
 
 /**
  * Custom web component representing a timer
@@ -22,8 +48,8 @@ class Timer extends HTMLElement {
   constructor() {
     super();
 
-    this._time = this.getAttribute('time');
-    this._containerRadius = this.getAttribute('container-radius');
+    this._time = 0;
+    this._containerRadius = 0;
 
     this.styleElement = createElement('style', {
       innerText: `
@@ -43,21 +69,22 @@ class Timer extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    const newVal = parseInt(newValue, 10);
-    if (Number.isNaN(newVal)) {
-      return;
-    }
     switch (name) {
       case 'time': {
-        const isTimeValid = checkIfTimeValid(newValue);
-        if (isTimeValid) {
-          this._time = newVal;
-          this.timerContainer.innerText = getMinutesAndSeconds(this._time);
+        const time = validateTime(newValue);
+        if (time === null) {
+          return;
         }
+        this._time = time;
+        this.timerContainer.innerText = getMinutesAndSeconds(this._time);
         break;
       }
       case 'container-radius': {
-        this._containerRadius = newVal;
+        const containerRadius = validateTime(newValue);
+        if (containerRadius === null) {
+          return;
+        }
+        this._containerRadius = containerRadius;
         // scale font relative to progress ring radius
         this.styleElement.innerText = `
             .container {
@@ -75,7 +102,12 @@ class Timer extends HTMLElement {
     return this._time;
   }
 
-  set time(time) {
+  set time(value) {
+    const time = validateTime(value);
+    if (time === null) {
+      return;
+    }
+
     this._time = time;
     this.setAttribute('time', this._time);
   }
@@ -84,8 +116,13 @@ class Timer extends HTMLElement {
     return this._containerRadius;
   }
 
-  set containerRadius(radius) {
-    this._containerRadius = radius;
+  set containerRadius(value) {
+    const containerRadius = validateContainerRadius(value);
+    if (containerRadius === null) {
+      return;
+    }
+
+    this._containerRadius = containerRadius;
     this.setAttribute('container-radius', this._containerRadius);
   }
 }
