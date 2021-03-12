@@ -87,6 +87,8 @@ describe('testing setTime and setContainerRadius of timer component', () => {
     expect(timerElement.time).toBe(1500);
     timerElement.time = 1000000;
     expect(timerElement.time).toBe(1500);
+    timerElement.time = null;
+    expect(timerElement.time).toBe(1500);
   });
 
   test('valid container radius inputs are saved', () => {
