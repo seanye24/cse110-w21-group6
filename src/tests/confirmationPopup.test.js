@@ -7,7 +7,6 @@ import { createElement } from '../utils/helpers';
 
 describe('testing popup functionality', () => {
   let confirmationOverlay;
-  let confirmationPopup;
   let noButton;
   let yesButton;
 
@@ -33,7 +32,6 @@ describe('testing popup functionality', () => {
     });
 
     confirmationOverlay = popupElement.querySelector('#confirmation-overlay');
-    confirmationPopup = popupElement.querySelector('#confirmation-popup');
     noButton = popupElement.querySelector('.confirmation-no-button');
     yesButton = popupElement.querySelector('.confirmation-yes-button');
   });
