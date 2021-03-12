@@ -61,7 +61,7 @@ class Timer extends HTMLElement {
         // scale font relative to progress ring radius
         this.styleElement.innerText = `
             .container {
-              font: ${this._containerRadius / 30}em 'Duru-Sans', sans-serif; 
+              font: ${this._containerRadius / 2}px 'Duru-Sans', sans-serif; 
               color: #fff;
             }
           `;
