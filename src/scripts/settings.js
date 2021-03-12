@@ -2,12 +2,7 @@
  * @file Manage tasklist for page
  */
 
-import {
-  LONG_BREAK_INTERVAL,
-  SHORT_BREAK_INTERVAL,
-  TIMER_AUDIO,
-  TIMER_AUDIOS,
-} from '../utils/constants';
+import { TIMER_AUDIOS } from '../utils/constants';
 import {
   validateShortBreakLength,
   validateLongBreakLength,
@@ -136,6 +131,8 @@ function saveSettings() {
   return [newShortBreakLength, newLongBreakLength];
 }
 
+// object to hold function references
+// mainly for mocking in jest
 const popupFunctions = {
   openPopup,
   closePopup,
