@@ -13,9 +13,6 @@
  */
 
 import { createElement } from '../utils/helpers';
-import '../components/TaskItem';
-import '../components/TaskItemForm';
-import '../components/TaskList';
 
 let tasks = [];
 let taskList;

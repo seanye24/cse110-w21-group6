@@ -364,5 +364,4 @@ class TaskItem extends HTMLElement {
   }
 }
 
-customElements.define('task-item', TaskItem);
 export default TaskItem;

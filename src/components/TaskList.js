@@ -3,6 +3,11 @@
  */
 
 import { createElement } from '../utils/helpers';
+import TaskItem from './TaskItem';
+import TaskItemForm from './TaskItemForm';
+
+customElements.define('task-item', TaskItem);
+customElements.define('task-item-form', TaskItemForm);
 
 /**
  * Custom web component representing a task list.
