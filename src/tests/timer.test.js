@@ -4,49 +4,99 @@ import { initializeTimer, setTimer, getTime } from '../scripts/timer';
 
 customElements.define('timer-component', Timer);
 
-describe('testing script setTimer', () => {
-  // initialize progress ring before each test
-  beforeEach(() => {
+describe('testing setTimer', () => {
+  test('setting valid inputs are saved', () => {
     const timerElement = createElement('timer-component', {
       time: 1500,
       containerRadius: 10,
       className: 'timer',
     });
     initializeTimer(timerElement);
+
+    setTimer(0);
+    expect(timerElement.time).toBe(0);
+    setTimer(25);
+    expect(timerElement.time).toBe(25);
+    setTimer(60);
+    expect(timerElement.time).toBe(60);
+    setTimer(1000);
+    expect(timerElement.time).toBe(1000);
+    setTimer('7');
+    expect(timerElement.time).toBe(7);
+    setTimer(1499);
+    expect(timerElement.time).toBe(1499);
   });
 
-  test('valid inputs are saved', () => {
-    setTimer(0);
+  test('invalid inputs are not saved', () => {
+    const timerElement = createElement('timer-component', {
+      time: 1500,
+      containerRadius: 10,
+      className: 'timer',
+    });
+    initializeTimer(timerElement);
+
+    setTimer(-100);
+    expect(timerElement.time).toBe(1500);
+    setTimer(3600);
+    expect(timerElement.time).toBe(1500);
+    setTimer(1000000);
+    expect(timerElement.time).toBe(1500);
+    setTimer('#%$%$#%');
+    expect(timerElement.time).toBe(1500);
+    setTimer('hello');
+    expect(timerElement.time).toBe(1500);
+    setTimer(NaN);
+    expect(timerElement.time).toBe(1500);
+  });
+});
+
+describe('testing getTime', () => {
+  test('setting valid inputs are saved', () => {
+    const timerElement = createElement('timer-component', {
+      time: 1500,
+      containerRadius: 10,
+      className: 'timer',
+    });
+    initializeTimer(timerElement);
+
+    timerElement.time = 0;
     expect(getTime()).toBe(0);
-    setTimer(25);
+    timerElement.time = 25;
     expect(getTime()).toBe(25);
-    setTimer(60);
+    timerElement.time = 60;
     expect(getTime()).toBe(60);
-    setTimer(1000);
+    timerElement.time = 1000;
     expect(getTime()).toBe(1000);
-    setTimer('7');
+    timerElement.time = '7';
     expect(getTime()).toBe(7);
-    setTimer(1499);
+    timerElement.time = 1499;
     expect(getTime()).toBe(1499);
   });
 
   test('invalid inputs are not saved', () => {
-    setTimer(-100);
+    const timerElement = createElement('timer-component', {
+      time: 1500,
+      containerRadius: 10,
+      className: 'timer',
+    });
+    initializeTimer(timerElement);
+
+    timerElement.time = -100;
     expect(getTime()).toBe(1500);
-    setTimer(3600);
+    timerElement.time = 3600;
     expect(getTime()).toBe(1500);
-    setTimer(1000000);
+    timerElement.time = 1000000;
     expect(getTime()).toBe(1500);
-    setTimer('#%$%$#%');
+    timerElement.time = '#%$%$#%';
     expect(getTime()).toBe(1500);
-    setTimer('hello');
+    timerElement.time = 'hello';
     expect(getTime()).toBe(1500);
-    setTimer(NaN);
+    timerElement.time = NaN;
     expect(getTime()).toBe(1500);
   });
 });
 
-describe('testing setTime and setContainerRadius of timer component', () => {
+describe('testing getter/setter functions of timer component', () => {
   test('valid time inputs are saved', () => {
     const timerElement = createElement('timer-component', {
       time: 1500,
