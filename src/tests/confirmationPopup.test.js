@@ -48,19 +48,25 @@ describe('testing popup functionality', () => {
     expect(confirmationOverlay.classList.contains('active')).toBe(false);
   });
 
-  test('button click closes popop', () => {
+  test('no button closes popop', () => {
+    const mockCallback = jest.fn();
+
+    initializePopup(confirmationOverlay, mockCallback);
+
+    openPopup();
+    expect(confirmationOverlay.classList.contains('active')).toBe(true);
+    noButton.click();
+    expect(confirmationOverlay.classList.contains('active')).toBe(false);
+    expect(mockCallback).not.toHaveBeenCalled();
+  });
+
+  test('yes button closes popop', () => {
     const mockCallback = jest.fn();
 
     initializePopup(confirmationOverlay, mockCallback);
     openPopup();
     expect(confirmationOverlay.classList.contains('active')).toBe(true);
     yesButton.click();
-    expect(confirmationOverlay.classList.contains('active')).toBe(false);
-    expect(mockCallback).toHaveBeenCalled();
-
-    openPopup();
-    expect(confirmationOverlay.classList.contains('active')).toBe(true);
-    noButton.click();
     expect(confirmationOverlay.classList.contains('active')).toBe(false);
     expect(mockCallback).toHaveBeenCalled();
   });
