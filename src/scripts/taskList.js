@@ -13,6 +13,7 @@
  */
 
 import { createElement } from '../utils/helpers';
+import { validateTask } from '../utils/taskList';
 
 let tasks = [];
 let taskList;
@@ -217,10 +218,6 @@ const handleTaskFormSubmit = (e) => {
   const trimmedName = name.trim();
   const pomodoroNumber = Number(pomodoro);
 
-  if (Number.isNaN(pomodoroNumber)) {
-    return;
-  }
-
   nameInput.focus();
 
   addTask({
@@ -239,10 +236,19 @@ const handleTaskFormSubmit = (e) => {
  * Retrieve tasks from localStorage
  */
 const restoreTasks = () => {
-  if (!JSON.parse(window.localStorage.getItem('tasks'))) {
-    window.localStorage.setItem('tasks', JSON.stringify([]));
+  let restoredTasks;
+  try {
+    restoredTasks = JSON.parse(window.localStorage.getItem('tasks'));
+  } catch (e) {
+    restoredTasks = null;
   }
-  tasks = JSON.parse(window.localStorage.getItem('tasks'));
+  if (!restoredTasks) {
+    window.localStorage.setItem('tasks', JSON.stringify([]));
+    restoredTasks = [];
+  }
+
+  restoredTasks = restoredTasks.filter(validateTask);
+  tasks = restoredTasks;
   tasks.forEach((task) => addTaskToDom(createTaskElement(task)));
 };
 
