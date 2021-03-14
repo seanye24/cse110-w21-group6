@@ -63,14 +63,15 @@ body {
   text-decoration: none;
 }
 
-.settings-icon {
-  width: 2em;
-  height: 2em;
+.material-icons {
+  font-size: 2em;
   margin-right: 1em;
+  color: white;
 }
 
-.settings-icon:hover {
+.material-icons:hover {
   cursor: pointer;
+  color: #eee;
 }
 
 .progress-ring {
