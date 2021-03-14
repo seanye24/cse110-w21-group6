@@ -19,7 +19,12 @@ import {
   DEFAULT_TIMER_AUDIO,
   TIMER_AUDIOS,
 } from '../utils/constants';
-import { initializeIntervalLengths } from '../utils/settings';
+import {
+  initializeIntervalLengths,
+  validateShortBreakLength,
+  validateLongBreakLength,
+  validateTimerAudio,
+} from '../utils/settings';
 
 // add audio element api (jsdom doens't support video/audio elements right now)
 window.HTMLMediaElement.prototype.load = jest.fn();
@@ -28,6 +33,49 @@ window.HTMLMediaElement.prototype.pause = jest.fn();
 window.HTMLMediaElement.prototype.addTextTrack = jest.fn();
 
 customElements.define('settings-component', SettingsPopup);
+
+describe('testing settings utils', () => {
+  test('validateShortBreakLength returns short break length on valid input', () => {
+    const lengths = [3, 4, 5];
+    lengths.forEach((value) => {
+      expect(validateShortBreakLength(value)).toBe(value);
+    });
+  });
+
+  test('validateShortBreakLength returns null on invalid input', () => {
+    const invalidLengths = ['as', null, undefined, NaN, {}, -10, true, false];
+    invalidLengths.forEach((value) => {
+      expect(validateShortBreakLength(value)).toBe(null);
+    });
+  });
+
+  test('validateLongBreakLength returns short break length on valid input', () => {
+    const lengths = new Array(16).fill(null).map((l, i) => i + 15);
+    lengths.forEach((value) => {
+      expect(validateLongBreakLength(value)).toBe(value);
+    });
+  });
+
+  test('validateLongBreakLength returns null on invalid input', () => {
+    const invalidLengths = ['as', null, undefined, NaN, {}, -10, true, false];
+    invalidLengths.forEach((value) => {
+      expect(validateLongBreakLength(value)).toBe(null);
+    });
+  });
+
+  test('validateTimerAudio returns short break length on valid input', () => {
+    Object.values(TIMER_AUDIOS).forEach((value) => {
+      expect(validateTimerAudio(value)).toBe(value);
+    });
+  });
+
+  test('validateTimerAudio returns null on invalid input', () => {
+    const invalidAudios = ['as', null, undefined, NaN, {}, -10, true, false];
+    invalidAudios.forEach((value) => {
+      expect(validateTimerAudio(value)).toBe(null);
+    });
+  });
+});
 
 describe('testing settings component', () => {
   // initialize settings popup element
@@ -39,6 +87,116 @@ describe('testing settings component', () => {
     });
     document.body.append(settingsElement);
     initializePopup(settingsElement);
+  });
+
+  test('get attribute', () => {
+    expect(settingsElement.getAttribute('short-break-length')).toBe(
+      `${DEFAULT_SHORT_BREAK_LENGTH}`,
+    );
+    expect(settingsElement.getAttribute('long-break-length')).toBe(
+      `${DEFAULT_LONG_BREAK_LENGTH}`,
+    );
+    expect(settingsElement.getAttribute('timer-audio')).toBe(
+      DEFAULT_TIMER_AUDIO,
+    );
+  });
+
+  test('if input valid, set attribute changes attribute and property', () => {
+    const values = [
+      [4, 20, TIMER_AUDIOS.annoying],
+      [3, 29, TIMER_AUDIOS.kanye],
+      [5, 17, TIMER_AUDIOS.calm],
+    ];
+
+    values.forEach(([sbl, lbl, ta]) => {
+      settingsElement.setAttribute('short-break-length', sbl);
+      expect(settingsElement.getAttribute('short-break-length')).toBe(`${sbl}`);
+      expect(settingsElement.shortBreakLength).toBe(sbl);
+
+      settingsElement.setAttribute('long-break-length', lbl);
+      expect(settingsElement.getAttribute('long-break-length')).toBe(`${lbl}`);
+      expect(settingsElement.longBreakLength).toBe(lbl);
+
+      settingsElement.setAttribute('timer-audio', ta);
+      expect(settingsElement.getAttribute('timer-audio')).toBe(ta);
+      expect(settingsElement.timerAudio).toBe(ta);
+    });
+  });
+
+  test("if input invalid, set attribute doesn't change attribute and property", () => {
+    const invalidValues = ['as', null, undefined, NaN, {}, -10, true, false];
+
+    invalidValues.forEach((value) => {
+      settingsElement.setAttribute('short-break-length', value);
+      expect(settingsElement.getAttribute('short-break-length')).toBe(
+        `${DEFAULT_SHORT_BREAK_LENGTH}`,
+      );
+      expect(settingsElement.shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+
+      settingsElement.setAttribute('long-break-length', value);
+      expect(settingsElement.getAttribute('long-break-length')).toBe(
+        `${DEFAULT_LONG_BREAK_LENGTH}`,
+      );
+      expect(settingsElement.longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
+
+      settingsElement.setAttribute('timer-audio', value);
+      expect(settingsElement.getAttribute('timer-audio')).toBe(
+        DEFAULT_TIMER_AUDIO,
+      );
+      expect(settingsElement.timerAudio).toBe(DEFAULT_TIMER_AUDIO);
+    });
+  });
+
+  test('getter functions', () => {
+    expect(settingsElement.shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+    expect(settingsElement.longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
+    expect(settingsElement.timerAudio).toBe(DEFAULT_TIMER_AUDIO);
+  });
+
+  test('if input valid, setter function changes attribute and property', () => {
+    const values = [
+      [4, 20, TIMER_AUDIOS.annoying],
+      [3, 29, TIMER_AUDIOS.kanye],
+      [5, 17, TIMER_AUDIOS.calm],
+    ];
+
+    values.forEach(([sbl, lbl, ta]) => {
+      settingsElement.shortBreakLength = sbl;
+      expect(settingsElement.getAttribute('short-break-length')).toBe(`${sbl}`);
+      expect(settingsElement.shortBreakLength).toBe(sbl);
+
+      settingsElement.longBreakLength = lbl;
+      expect(settingsElement.getAttribute('long-break-length')).toBe(`${lbl}`);
+      expect(settingsElement.longBreakLength).toBe(lbl);
+
+      settingsElement.timerAudio = ta;
+      expect(settingsElement.getAttribute('timer-audio')).toBe(ta);
+      expect(settingsElement.timerAudio).toBe(ta);
+    });
+  });
+
+  test("if input invalid, setter function doesn't change attribute and property", () => {
+    const invalidValues = ['as', null, undefined, NaN, {}, -10, true, false];
+
+    invalidValues.forEach((value) => {
+      settingsElement.shortBreakLength = value;
+      expect(settingsElement.getAttribute('short-break-length')).toBe(
+        `${DEFAULT_SHORT_BREAK_LENGTH}`,
+      );
+      expect(settingsElement.shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
+
+      settingsElement.longBreakLength = value;
+      expect(settingsElement.getAttribute('long-break-length')).toBe(
+        `${DEFAULT_LONG_BREAK_LENGTH}`,
+      );
+      expect(settingsElement.longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
+
+      settingsElement.timerAudio = value;
+      expect(settingsElement.getAttribute('timer-audio')).toBe(
+        DEFAULT_TIMER_AUDIO,
+      );
+      expect(settingsElement.timerAudio).toBe(DEFAULT_TIMER_AUDIO);
+    });
   });
 
   test('initial values are correct', () => {
