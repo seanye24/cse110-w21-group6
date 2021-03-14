@@ -40,7 +40,7 @@ describe('testing taskItem component', () => {
     expect(taskItem.getAttribute('completed')).toBe('false');
   });
 
-  test('setting valid attribute changes attribute and property', () => {
+  test('if input valid, set attribute changes attribute and property', () => {
     taskItem.setAttribute('name', 'task2');
     expect(taskItem.getAttribute('name')).toBe('task2');
     expect(taskItem.name).toBe('task2');
@@ -82,7 +82,7 @@ describe('testing taskItem component', () => {
     expect(taskItem.completed).toBe(false);
   });
 
-  test('invalid attributes are ignored', () => {
+  test("if input invalid, set attribute doesn't change attribute and property", () => {
     const invalidPomodoros = ['as', null, undefined, NaN, {}, -10, true, false];
     const invalidBooleans = ['as', null, undefined, NaN, {}, -10, -1, 10, 1000];
 
@@ -115,12 +115,13 @@ describe('testing taskItem component', () => {
     expect(taskItem.completed).toBe(false);
   });
 
-  test('setter method sets property and attribute when valid', () => {
+  test('if input valid, setter function changes attribute and property', () => {
     taskItem.name = 'task2';
     expect(taskItem.getAttribute('name')).toBe('task2');
     expect(taskItem.name).toBe('task2');
 
     taskItem.name = 'task3';
+    // localhost:5000
     expect(taskItem.getAttribute('name')).toBe('task3');
     expect(taskItem.name).toBe('task3');
 
@@ -157,7 +158,7 @@ describe('testing taskItem component', () => {
     expect(taskItem.completed).toBe(false);
   });
 
-  test('setter ignores invalid inputs', () => {
+  test("if input invalid, setter function doesn't change attribute and property", () => {
     const invalidStrings = [null, undefined, NaN, {}, -10, true, false];
     const invalidPomodoros = ['as', null, undefined, NaN, {}, -10, true, false];
     const invalidBooleans = ['as', null, undefined, NaN, {}, -10, -1, 10, 1000];
