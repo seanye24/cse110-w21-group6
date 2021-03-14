@@ -65,32 +65,23 @@ describe('testing progress ring', () => {
   });
 
   test('if input valid, set attribute changes attribute and property', () => {
-    progressRingElement.setAttribute('radius', 50);
-    expect(progressRingElement.getAttribute('radius')).toBe('50');
-    expect(progressRingElement.radius).toBe(50);
+    const values = new Array(101).fill(null).map((e, i) => i);
+    values.forEach((value) => {
+      progressRingElement.setAttribute('radius', value);
+      expect(progressRingElement.getAttribute('radius')).toBe(`${value}`);
+      expect(progressRingElement.radius).toBe(value);
 
-    progressRingElement.setAttribute('radius', 25);
-    expect(progressRingElement.getAttribute('radius')).toBe('25');
-    expect(progressRingElement.radius).toBe(25);
+      progressRingElement.setAttribute('stroke', value);
+      expect(progressRingElement.getAttribute('stroke')).toBe(`${value}`);
+      expect(progressRingElement.stroke).toBe(value);
 
-    progressRingElement.setAttribute('stroke', 50);
-    expect(progressRingElement.getAttribute('stroke')).toBe('50');
-    expect(progressRingElement.stroke).toBe(50);
-
-    progressRingElement.setAttribute('stroke', 25);
-    expect(progressRingElement.getAttribute('stroke')).toBe('25');
-    expect(progressRingElement.stroke).toBe(25);
-
-    progressRingElement.setAttribute('progress', 50);
-    expect(progressRingElement.getAttribute('progress')).toBe('50');
-    expect(progressRingElement.progress).toBe(50);
-
-    progressRingElement.setAttribute('progress', 25);
-    expect(progressRingElement.getAttribute('progress')).toBe('25');
-    expect(progressRingElement.progress).toBe(25);
+      progressRingElement.setAttribute('progress', value);
+      expect(progressRingElement.getAttribute('progress')).toBe(`${value}`);
+      expect(progressRingElement.progress).toBe(value);
+    });
   });
 
-  test('invalid attributes are ignored', () => {
+  test("if input invalid, set attribute doesn't change attribute and property", () => {
     const invalidLengths = ['as', null, undefined, NaN, {}, -10, true, false];
 
     invalidLengths.forEach((value) => {
@@ -114,21 +105,20 @@ describe('testing progress ring', () => {
     expect(progressRingElement.progress).toBe(0);
   });
 
-  test('invalid attributes are ignored', () => {
-    const invalidLengths = ['as', null, undefined, NaN, {}, -10, true, false];
+  test('if input valid, setter function changes attribute and property', () => {
+    const values = new Array(101).fill(null).map((e, i) => i);
+    values.forEach((value) => {
+      progressRingElement.radius = value;
+      expect(progressRingElement.getAttribute('radius')).toBe(`${value}`);
+      expect(progressRingElement.radius).toBe(value);
 
-    invalidLengths.forEach((value) => {
-      progressRingElement.setAttribute('radius', value);
-      expect(progressRingElement.getAttribute('radius')).toBe('100');
-      expect(progressRingElement.radius).toBe(100);
+      progressRingElement.stroke = value;
+      expect(progressRingElement.getAttribute('stroke')).toBe(`${value}`);
+      expect(progressRingElement.stroke).toBe(value);
 
-      progressRingElement.setAttribute('stroke', value);
-      expect(progressRingElement.getAttribute('stroke')).toBe('20');
-      expect(progressRingElement.stroke).toBe(20);
-
-      progressRingElement.setAttribute('progress', value);
-      expect(progressRingElement.getAttribute('progress')).toBe('0');
-      expect(progressRingElement.progress).toBe(0);
+      progressRingElement.progress = value;
+      expect(progressRingElement.getAttribute('progress')).toBe(`${value}`);
+      expect(progressRingElement.progress).toBe(value);
     });
   });
 
