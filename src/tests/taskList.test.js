@@ -148,6 +148,11 @@ describe('testing tasklist', () => {
     expect(getTasks()).toStrictEqual(tasks);
   });
 
+  test('when no pomodoros are available, select first returns null', () => {
+    tasks.forEach(completeTask);
+    expect(selectFirstTask()).toBeNull();
+  });
+
   test('deselect all tasks', () => {
     selectTask(tasks[0]);
     selectTask(tasks[1]);
@@ -234,7 +239,7 @@ describe('testing tasklist', () => {
     expect(getTasks()).toStrictEqual(tasks);
   });
 
-  test('submitting task form', () => {
+  test('submitting valid task form adds new task', () => {
     const taskForm = taskListElement.shadowRoot.querySelector(
       '.task-item-form',
     );
@@ -254,6 +259,19 @@ describe('testing tasklist', () => {
     expect(getTasks()).toStrictEqual(tasks);
   });
 
+  test('submitting blank task triggers validity error', () => {
+    const taskForm = taskListElement.shadowRoot.querySelector(
+      '.task-item-form',
+    );
+    const nameInput = taskForm.shadowRoot.querySelector('#name-input');
+    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
+    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
+
+    nameInput.value = '';
+    nameInput.dispatchEvent(new Event('input'));
+    expect(nameInput.validity.valid).toBe(false);
+  });
+
   test('submitting duplicate task triggers validity error', () => {
     const taskForm = taskListElement.shadowRoot.querySelector(
       '.task-item-form',
@@ -261,11 +279,9 @@ describe('testing tasklist', () => {
     const nameInput = taskForm.shadowRoot.querySelector('#name-input');
     const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
     const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
+
     nameInput.value = 'task4';
-    expect(nameInput.validity.valid).toBe(true);
     nameInput.dispatchEvent(new Event('input'));
-    pomoInput.value = 7;
-    submitInput.click();
     expect(nameInput.validity.valid).toBe(false);
   });
 
@@ -276,11 +292,27 @@ describe('testing tasklist', () => {
     const nameInput = taskForm.shadowRoot.querySelector('#name-input');
     const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
     const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
+
     expect(pomoInput.validity.valid).toBe(false); // initial blank value should be invalid too
-    nameInput.value = 'task6';
     pomoInput.value = 'asdf';
     pomoInput.dispatchEvent(new Event('input'));
-    submitInput.click();
     expect(pomoInput.validity.valid).toBe(false);
+  });
+
+  test('fixing duplicate task resolves validity error', () => {
+    const taskForm = taskListElement.shadowRoot.querySelector(
+      '.task-item-form',
+    );
+    const nameInput = taskForm.shadowRoot.querySelector('#name-input');
+    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
+    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
+
+    nameInput.value = 'task4';
+    nameInput.dispatchEvent(new Event('input'));
+    expect(nameInput.validity.valid).toBe(false);
+
+    nameInput.value = 'task6';
+    nameInput.dispatchEvent(new Event('input'));
+    expect(nameInput.validity.valid).toBe(true);
   });
 });
