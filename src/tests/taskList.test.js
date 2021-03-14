@@ -207,7 +207,6 @@ describe('testing taskList script', () => {
     taskListElement = createElement('task-list', {
       className: 'task-list',
     });
-    const { shadowRoot } = taskListElement;
     document.body.innerHTML = '';
     document.body.appendChild(taskListElement);
     initializeTaskList(taskListElement);
@@ -435,8 +434,6 @@ describe('testing taskList script', () => {
       '.task-item-form',
     );
     const nameInput = taskForm.shadowRoot.querySelector('#name-input');
-    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
-    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
 
     nameInput.value = '';
     nameInput.dispatchEvent(new Event('input'));
@@ -448,8 +445,6 @@ describe('testing taskList script', () => {
       '.task-item-form',
     );
     const nameInput = taskForm.shadowRoot.querySelector('#name-input');
-    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
-    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
 
     nameInput.value = 'task4';
     nameInput.dispatchEvent(new Event('input'));
@@ -460,9 +455,7 @@ describe('testing taskList script', () => {
     const taskForm = taskListElement.shadowRoot.querySelector(
       '.task-item-form',
     );
-    const nameInput = taskForm.shadowRoot.querySelector('#name-input');
     const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
-    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
 
     expect(pomoInput.validity.valid).toBe(false); // initial blank value should be invalid too
     pomoInput.value = 'asdf';
@@ -475,8 +468,6 @@ describe('testing taskList script', () => {
       '.task-item-form',
     );
     const nameInput = taskForm.shadowRoot.querySelector('#name-input');
-    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
-    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
 
     nameInput.value = 'task4';
     nameInput.dispatchEvent(new Event('input'));
