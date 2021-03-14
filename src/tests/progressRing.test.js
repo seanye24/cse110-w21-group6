@@ -9,8 +9,39 @@ import {
   setRadius,
   setStroke,
 } from '../scripts/progressRing';
+import { validateLength, validateProgress } from '../utils/progressRing';
 
 customElements.define('progress-ring', ProgressRing);
+
+describe('testing progress ring utils', () => {
+  test('validateLength returns length on valid input', () => {
+    const lengths = new Array(1000).fill(null).map((e, i) => i);
+    lengths.forEach((value) => {
+      expect(validateLength(value)).toBe(value);
+    });
+  });
+
+  test('validateLength returns null on invalid input', () => {
+    const invalidLengths = ['as', null, undefined, NaN, {}, -10, true, false];
+    invalidLengths.forEach((value) => {
+      expect(validateLength(value)).toBe(null);
+    });
+  });
+
+  test('validateProgress returns progress on valid input', () => {
+    const lengths = new Array(101).fill(null).map((e, i) => i);
+    lengths.forEach((value) => {
+      expect(validateProgress(value)).toBe(value);
+    });
+  });
+
+  test('validateProgress returns null on invalid input', () => {
+    const invalidLengths = ['as', null, undefined, NaN, {}, -10, true, false];
+    invalidLengths.forEach((value) => {
+      expect(validateProgress(value)).toBe(null);
+    });
+  });
+});
 
 describe('testing progress ring', () => {
   let progressRingElement;
