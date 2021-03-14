@@ -392,4 +392,5 @@ export {
   getCurrentlySelectedTask,
   setTasklistUsability,
   completeTask,
+  handleTaskFormSubmit,
 };

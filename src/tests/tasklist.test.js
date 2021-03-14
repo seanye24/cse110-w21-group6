@@ -188,4 +188,39 @@ describe('testing tasklist', () => {
     tasks.push({ ...completedTask, selected: false, completed: true });
     expect(getTasks()).toStrictEqual(tasks);
   });
+
+  test('submitting task form', () => {
+    const taskForm = taskListElement.shadowRoot.querySelector(
+      '.task-item-form',
+    );
+    const nameInput = taskForm.shadowRoot.querySelector('#name-input');
+    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
+    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
+    nameInput.value = 'task7';
+    pomoInput.value = 7;
+    submitInput.click();
+    tasks.push({
+      name: 'task7',
+      usedPomodoros: 0,
+      estimatedPomodoros: 7,
+      completed: false,
+      selected: false,
+    });
+    expect(getTasks()).toStrictEqual(tasks);
+  });
+
+  test("submitting duplicate task doesn't add new task", () => {
+    const taskForm = taskListElement.shadowRoot.querySelector(
+      '.task-item-form',
+    );
+    const nameInput = taskForm.shadowRoot.querySelector('#name-input');
+    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
+    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
+    nameInput.value = 'task4';
+    expect(nameInput.validity.valid).toBe(true);
+    nameInput.dispatchEvent(new Event('input'));
+    pomoInput.value = 7;
+    submitInput.click();
+    expect(nameInput.validity.valid).toBe(false);
+  });
 });
