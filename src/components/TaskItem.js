@@ -7,7 +7,7 @@ import {
   validateBoolean,
   validateString,
 } from '../utils/helpers';
-import { validatePomodoros } from '../utils/taskList';
+import { validatePomodoro } from '../utils/taskList';
 
 /**
  * Custom web component representing a task item.
@@ -242,7 +242,7 @@ class TaskItem extends HTMLElement {
         this.nameElement.innerText = newValue;
         break;
       case 'used-pomodoros': {
-        const usedPomodoros = validatePomodoros(newValue);
+        const usedPomodoros = validatePomodoro(newValue);
         if (usedPomodoros === null) {
           return;
         }
@@ -252,7 +252,7 @@ class TaskItem extends HTMLElement {
         break;
       }
       case 'estimated-pomodoros': {
-        const estimatedPomodoros = validatePomodoros(newValue);
+        const estimatedPomodoros = validatePomodoro(newValue);
         if (estimatedPomodoros === null) {
           return;
         }
@@ -312,7 +312,7 @@ class TaskItem extends HTMLElement {
   }
 
   set usedPomodoros(value) {
-    const usedPomodoros = validatePomodoros(value);
+    const usedPomodoros = validatePomodoro(value);
     if (usedPomodoros === null) {
       return;
     }
@@ -326,7 +326,7 @@ class TaskItem extends HTMLElement {
   }
 
   set estimatedPomodoros(value) {
-    const estimatedPomodoros = validatePomodoros(value);
+    const estimatedPomodoros = validatePomodoro(value);
     if (estimatedPomodoros === null) {
       return;
     }
