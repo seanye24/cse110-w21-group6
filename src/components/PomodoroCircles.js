@@ -56,6 +56,7 @@ class PomodoroCircles extends HTMLElement {
     if (name === 'circle-count') {
       const circleCount = validateCircleCount(newValue);
       if (circleCount === null) {
+        this.setAttribute(name, oldValue);
         return;
       }
 
