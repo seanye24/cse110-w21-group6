@@ -138,6 +138,7 @@ class ProgressRing extends HTMLElement {
       case 'radius': {
         const radius = validateLength(newValue);
         if (radius === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -147,6 +148,7 @@ class ProgressRing extends HTMLElement {
       case 'stroke': {
         const stroke = validateLength(newValue);
         if (stroke === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -156,6 +158,7 @@ class ProgressRing extends HTMLElement {
       case 'progress': {
         const progress = validateProgress(newValue);
         if (progress === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -163,7 +166,6 @@ class ProgressRing extends HTMLElement {
         break;
       }
       default:
-        return;
     }
 
     this.updateComponent(this._radius, this._stroke, this._progress);
