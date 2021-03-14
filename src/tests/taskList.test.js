@@ -42,23 +42,68 @@ describe('testing tasklist', () => {
     initializeTaskList(taskListElement);
   });
 
+  test('if localStorage is empty, use an empty array', () => {
+    window.localStorage.clear();
+    initializeTaskList(taskListElement);
+    expect(JSON.parse(window.localStorage.getItem('tasks'))).toStrictEqual([]);
+    expect(getTasks()).toStrictEqual([]);
+  });
+
+  test('if localStorage is corrupted, use an empty array', () => {
+    window.localStorage.setItem('tasks', 'asd;fjlka[fasdf;lkj;kl]}');
+    initializeTaskList(taskListElement);
+    expect(JSON.parse(window.localStorage.getItem('tasks'))).toStrictEqual([]);
+    expect(getTasks()).toStrictEqual([]);
+  });
+
+  test('if retrieved task has corrupted field, ignore it', () => {
+    tasks[1].selected = 'asdf';
+    delete tasks[2].usedPomodoros;
+    tasks[3].estimatedPomodoros = 'asdf';
+    window.localStorage.setItem('tasks', JSON.stringify(tasks));
+    expect(JSON.parse(window.localStorage.getItem('tasks'))).toStrictEqual(
+      tasks,
+    );
+
+    initializeTaskList(taskListElement);
+    tasks.splice(1, 3);
+    expect(getTasks()).toStrictEqual(tasks);
+  });
+
   test('retrieves tasks from localStorage', () => {
     expect(getTasks()).toStrictEqual(tasks);
   });
 
-  test('add new task', () => {
+  test('adding new task', () => {
     const newTask = {
-      title: 'task6',
+      name: 'task6',
+      usedPomodoros: 0,
+      estimatedPomodoros: 6,
+      selected: false,
+      completed: false,
+    };
+    tasks.push(newTask);
+    addTask(newTask);
+    expect(getTasks()).toStrictEqual(tasks);
+  });
+
+  test('adding new task will put task before completed tasks', () => {
+    completeTask(tasks[1]);
+    tasks.push({ ...tasks.splice(1, 1)[0], completed: true });
+
+    const newTask = {
+      name: 'task6',
       usedPomodoros: 0,
       estimatedPomodoros: 6,
       selected: false,
       completed: false,
     };
     addTask(newTask);
-    expect(getTasks()).toStrictEqual([...tasks, newTask]);
+    tasks.splice(4, 0, newTask);
+    expect(getTasks()).toStrictEqual(tasks);
   });
 
-  test('update existing task', () => {
+  test('updating existing task', () => {
     const updatedTask = {
       ...tasks[1],
       usedPomodoros: 2,
@@ -209,7 +254,7 @@ describe('testing tasklist', () => {
     expect(getTasks()).toStrictEqual(tasks);
   });
 
-  test("submitting duplicate task doesn't add new task", () => {
+  test('submitting duplicate task triggers validity error', () => {
     const taskForm = taskListElement.shadowRoot.querySelector(
       '.task-item-form',
     );
@@ -222,5 +267,20 @@ describe('testing tasklist', () => {
     pomoInput.value = 7;
     submitInput.click();
     expect(nameInput.validity.valid).toBe(false);
+  });
+
+  test('submitting invalid pomodoro number triggers validity error', () => {
+    const taskForm = taskListElement.shadowRoot.querySelector(
+      '.task-item-form',
+    );
+    const nameInput = taskForm.shadowRoot.querySelector('#name-input');
+    const pomoInput = taskForm.shadowRoot.querySelector('#pomodoro-input');
+    const submitInput = taskForm.shadowRoot.querySelector('#submit-input');
+    expect(pomoInput.validity.valid).toBe(false); // initial blank value should be invalid too
+    nameInput.value = 'task6';
+    pomoInput.value = 'asdf';
+    pomoInput.dispatchEvent(new Event('input'));
+    submitInput.click();
+    expect(pomoInput.validity.valid).toBe(false);
   });
 });
