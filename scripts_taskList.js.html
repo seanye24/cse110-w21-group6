@@ -41,9 +41,7 @@
  */
 
 import { createElement } from '../utils/helpers';
-import '../components/TaskItem';
-import '../components/TaskItemForm';
-import '../components/TaskList';
+import { validateTask } from '../utils/taskList';
 
 let tasks = [];
 let taskList;
@@ -121,13 +119,6 @@ const removeTaskFromDom = (taskToRemove) => {
  * @return {Task} - updated task
  */
 const updateTask = (prevTask, nextTask) => {
-  const {
-    name: nextName,
-    usedPomodoros,
-    estimatedPomodoros,
-    selected,
-    completed,
-  } = nextTask;
   const { taskIndex, taskElement } = getTask(prevTask);
 
   // update localStorage
@@ -135,11 +126,9 @@ const updateTask = (prevTask, nextTask) => {
   saveTasks();
 
   // update task in dom
-  taskElement.setAttribute('name', nextName);
-  taskElement.setAttribute('used-pomodoros', usedPomodoros);
-  taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
-  taskElement.setAttribute('selected', selected);
-  taskElement.setAttribute('completed', completed);
+  Object.getOwnPropertyNames(nextTask).forEach((key) => {
+    taskElement[key] = nextTask[key];
+  });
   return nextTask;
 };
 
@@ -200,8 +189,8 @@ const createTaskElement = (newTask) => {
   // create html element
   const newTaskElement = createElement('task-item', {
     name,
-    'used-pomodoros': usedPomodoros,
-    'estimated-pomodoros': estimatedPomodoros,
+    usedPomodoros,
+    estimatedPomodoros,
     selected,
   });
 
@@ -257,10 +246,6 @@ const handleTaskFormSubmit = (e) => {
   const trimmedName = name.trim();
   const pomodoroNumber = Number(pomodoro);
 
-  if (Number.isNaN(pomodoroNumber)) {
-    return;
-  }
-
   nameInput.focus();
 
   addTask({
@@ -279,10 +264,19 @@ const handleTaskFormSubmit = (e) => {
  * Retrieve tasks from localStorage
  */
 const restoreTasks = () => {
-  if (!JSON.parse(window.localStorage.getItem('tasks'))) {
-    window.localStorage.setItem('tasks', JSON.stringify([]));
+  let restoredTasks;
+  try {
+    restoredTasks = JSON.parse(window.localStorage.getItem('tasks'));
+  } catch (e) {
+    restoredTasks = null;
   }
-  tasks = JSON.parse(window.localStorage.getItem('tasks'));
+  if (!restoredTasks) {
+    window.localStorage.setItem('tasks', JSON.stringify([]));
+    restoredTasks = [];
+  }
+
+  restoredTasks = restoredTasks.filter(validateTask);
+  tasks = restoredTasks;
   tasks.forEach((task) => addTaskToDom(createTaskElement(task)));
 };
 
@@ -337,9 +331,8 @@ const deselectAllTasks = () => {
  */
 const setTasklistUsability = (shouldTasklistBeUsable) => {
   tasks.forEach((task) => {
-    const {
-      taskElement: { shadowRoot },
-    } = getTask(task);
+    const { taskElement } = getTask(task);
+    const { shadowRoot } = taskElement;
     const itemContainer = shadowRoot.querySelector('.item-container');
     const textContainer = shadowRoot.querySelector('.text-container');
 
@@ -358,7 +351,7 @@ const setTasklistUsability = (shouldTasklistBeUsable) => {
     }
 
     // disable buttons
-    const buttons = getTaskItemButtons(getTask(task).taskElement);
+    const buttons = getTaskItemButtons(taskElement);
     Object.values(buttons).forEach((btn) => {
       btn.disabled = !shouldTasklistBeUsable;
     });
@@ -375,17 +368,17 @@ const completeTask = (completedTask) => {
   // mark task as completed and move it to end of DOM list
   removeTaskFromDom(completedTask);
   addTaskToDom(taskElement, 'end');
-  taskElement.setAttribute('selected', false);
-  taskElement.setAttribute('completed', true);
+  taskElement.selected = false;
+  taskElement.completed = true;
   taskElement.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array
-  tasks.splice(taskIndex, 1);
-  tasks.push(completedTask);
+  const [removedTask] = tasks.splice(taskIndex, 1);
+  tasks.push({ ...removedTask, selected: false, completed: true });
 
   // update selected property of task
   updateTask(completedTask, {
-    ...completedTask,
+    ...removedTask,
     selected: false,
     completed: true,
   });
@@ -433,6 +426,7 @@ export {
   getCurrentlySelectedTask,
   setTasklistUsability,
   completeTask,
+  handleTaskFormSubmit,
 };
 </code></pre>
         </article>
@@ -444,13 +438,13 @@ export {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadiusStroke">setRadiusStroke</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 12 2021 01:54:48 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Mar 14 2021 20:03:12 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/confirmationPopup.js</title>
+    <title>JSDoc: Source: utils/pomodoroCircles.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/confirmationPopup.js</h1>
+    <h1 class="page-title">Source: utils/pomodoroCircles.js</h1>
 
     
 
@@ -26,60 +26,20 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/**
- * @file Manage Confirmation Pop-up for page
- */
-
-let confirmationOverlay;
-let confirmationPopup;
-let noButton;
-let yesButton;
+            <pre class="prettyprint source linenums"><code>import { validateNumber } from './helpers';
 
 /**
- * Open the confirmation popup
+ * Validate if input is valid circle count (is Number and in range)
+ * @param {any} value - value to check
+ * @return {number | null} - circle count if valid, otherwise null
  */
-const openPopup = () => {
-  confirmationOverlay.classList.add('active');
+export const validateCircleCount = (value) => {
+  const circleCount = validateNumber(value, true);
+  if (circleCount === null || circleCount &lt; 0 || circleCount > 4) {
+    return null;
+  }
+  return circleCount;
 };
-
-/**
- * Close the confirmation popup
- */
-const closePopup = () => {
-  confirmationOverlay.classList.remove('active');
-};
-
-/**
- * Initialize element variables for different elements of confirmation popup
- * @param {HTMLElement} root - confirmation popup
- * @param {Function} onAcceptCallback - callback when confirmation is accepted
- */
-const initializeElements = (root) => {
-  confirmationOverlay = root;
-  confirmationPopup = confirmationOverlay.querySelector('#confirmation-popup');
-  noButton = confirmationPopup.querySelector('.confirmation-no-button');
-  yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
-};
-
-/**
- * Initialize popup
- * @param {HTMLElement} root - confirmation element
- * @param {Function} onAcceptCallback - callback when confirmation is accepted
- */
-const initializePopup = (root, onAcceptCallback) => {
-  initializeElements(root);
-  noButton.onmousedown = (e) => e.preventDefault();
-  yesButton.onmousedown = (e) => e.preventDefault();
-  yesButton.onclick = () => {
-    closePopup();
-    onAcceptCallback();
-  };
-  noButton.onclick = closePopup;
-  confirmationOverlay.onclick = closePopup;
-  confirmationPopup.onclick = (e) => e.stopPropagation();
-};
-
-export { initializePopup, openPopup, closePopup };
 </code></pre>
         </article>
     </section>

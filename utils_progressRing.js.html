@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/confirmationPopup.js</title>
+    <title>JSDoc: Source: utils/progressRing.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/confirmationPopup.js</h1>
+    <h1 class="page-title">Source: utils/progressRing.js</h1>
 
     
 
@@ -27,59 +27,36 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage Confirmation Pop-up for page
+ * @file utility functions for progress ring component
  */
 
-let confirmationOverlay;
-let confirmationPopup;
-let noButton;
-let yesButton;
+import { validateNumber } from './helpers';
 
 /**
- * Open the confirmation popup
+ * Validate if input is number, nonnegative
+ * @param {any} value - value to check
+ * @return {number | null} - time if valid, null otherwise
  */
-const openPopup = () => {
-  confirmationOverlay.classList.add('active');
+export const validateLength = (value) => {
+  const length = validateNumber(value);
+  if (length === null || length &lt; 0) {
+    return null;
+  }
+  return length;
 };
 
 /**
- * Close the confirmation popup
+ * Validate if input is number and between 0 - 100
+ * @param {any} value - value to check
+ * @return {number | null} - progress if valid, null otherwise
  */
-const closePopup = () => {
-  confirmationOverlay.classList.remove('active');
+export const validateProgress = (value) => {
+  const progress = validateNumber(value);
+  if (progress === null || progress &lt; 0 || progress > 100) {
+    return null;
+  }
+  return progress;
 };
-
-/**
- * Initialize element variables for different elements of confirmation popup
- * @param {HTMLElement} root - confirmation popup
- * @param {Function} onAcceptCallback - callback when confirmation is accepted
- */
-const initializeElements = (root) => {
-  confirmationOverlay = root;
-  confirmationPopup = confirmationOverlay.querySelector('#confirmation-popup');
-  noButton = confirmationPopup.querySelector('.confirmation-no-button');
-  yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
-};
-
-/**
- * Initialize popup
- * @param {HTMLElement} root - confirmation element
- * @param {Function} onAcceptCallback - callback when confirmation is accepted
- */
-const initializePopup = (root, onAcceptCallback) => {
-  initializeElements(root);
-  noButton.onmousedown = (e) => e.preventDefault();
-  yesButton.onmousedown = (e) => e.preventDefault();
-  yesButton.onclick = () => {
-    closePopup();
-    onAcceptCallback();
-  };
-  noButton.onclick = closePopup;
-  confirmationOverlay.onclick = closePopup;
-  confirmationPopup.onclick = (e) => e.stopPropagation();
-};
-
-export { initializePopup, openPopup, closePopup };
 </code></pre>
         </article>
     </section>

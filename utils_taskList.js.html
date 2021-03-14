@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: scripts/confirmationPopup.js</title>
+    <title>JSDoc: Source: utils/taskList.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: scripts/confirmationPopup.js</h1>
+    <h1 class="page-title">Source: utils/taskList.js</h1>
 
     
 
@@ -27,59 +27,66 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * @file Manage Confirmation Pop-up for page
+ * @file utility functions for taskList component
  */
 
-let confirmationOverlay;
-let confirmationPopup;
-let noButton;
-let yesButton;
+import { validateBoolean, validateNumber, validateString } from './helpers';
 
 /**
- * Open the confirmation popup
+ * Validate if input is number, greater than 0
+ * @param {any} value - value to check
+ * @return {number | null} - short break length if valid, null otherwise
  */
-const openPopup = () => {
-  confirmationOverlay.classList.add('active');
+export const validatePomodoro = (value) => {
+  const pomodoros = validateNumber(value, true);
+  if (pomodoros === null || pomodoros &lt; 0) {
+    return null;
+  }
+  return pomodoros;
 };
 
 /**
- * Close the confirmation popup
+ * Validate if input is valid task
+ * @param {any} value - value to check
+ * @return {Task | null} - Task if valid, null otherwise
  */
-const closePopup = () => {
-  confirmationOverlay.classList.remove('active');
-};
+export const validateTask = (value) => {
+  try {
+    const {
+      name,
+      usedPomodoros,
+      estimatedPomodoros,
+      selected,
+      completed,
+    } = value;
+    const isNameValid = validateString(name) !== null;
+    const isUsedPomodorosValid = validatePomodoro(usedPomodoros) !== null;
+    const isEstimatedPomodorosValid =
+      validatePomodoro(estimatedPomodoros) !== null;
+    const isSelectedValid = validateBoolean(selected) !== null;
+    const isCompletedValid = validateBoolean(completed) !== null;
+    if (
+      !isNameValid ||
+      !isUsedPomodorosValid ||
+      !isEstimatedPomodorosValid ||
+      !isCompletedValid ||
+      !isSelectedValid
+    ) {
+      return null;
+    }
 
-/**
- * Initialize element variables for different elements of confirmation popup
- * @param {HTMLElement} root - confirmation popup
- * @param {Function} onAcceptCallback - callback when confirmation is accepted
- */
-const initializeElements = (root) => {
-  confirmationOverlay = root;
-  confirmationPopup = confirmationOverlay.querySelector('#confirmation-popup');
-  noButton = confirmationPopup.querySelector('.confirmation-no-button');
-  yesButton = confirmationPopup.querySelector('.confirmation-yes-button');
+    const task = {
+      name,
+      usedPomodoros,
+      estimatedPomodoros,
+      selected,
+      completed,
+    };
+    return task;
+  } catch (e) {
+    return null;
+  }
 };
-
-/**
- * Initialize popup
- * @param {HTMLElement} root - confirmation element
- * @param {Function} onAcceptCallback - callback when confirmation is accepted
- */
-const initializePopup = (root, onAcceptCallback) => {
-  initializeElements(root);
-  noButton.onmousedown = (e) => e.preventDefault();
-  yesButton.onmousedown = (e) => e.preventDefault();
-  yesButton.onclick = () => {
-    closePopup();
-    onAcceptCallback();
-  };
-  noButton.onclick = closePopup;
-  confirmationOverlay.onclick = closePopup;
-  confirmationPopup.onclick = (e) => e.stopPropagation();
-};
-
-export { initializePopup, openPopup, closePopup };
 </code></pre>
         </article>
     </section>

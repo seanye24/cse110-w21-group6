@@ -30,7 +30,8 @@
  * @file progress-ring web component
  */
 
-import { createElement, validateNumber } from '../utils/helpers';
+import { createElement } from '../utils/helpers';
+import { validateLength, validateProgress } from '../utils/progressRing';
 
 /**
  * Custom web component representing a progress ring.
@@ -161,37 +162,40 @@ class ProgressRing extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    const newValueNumber = validateNumber(newValue);
-
-    // check if attribute value is number
-    if (newValueNumber === null) {
-      return;
-    }
-
-    // validate attribute ranges
     switch (name) {
-      case 'radius':
-        if (newValueNumber &lt; 0) {
+      case 'radius': {
+        const radius = validateLength(newValue);
+        if (radius === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
+
+        this._radius = radius;
         break;
-      case 'stroke':
-        if (newValueNumber &lt; 0) {
+      }
+      case 'stroke': {
+        const stroke = validateLength(newValue);
+        if (stroke === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
+
+        this._stroke = stroke;
         break;
-      case 'progress':
-        if (name === 'progress') {
-          if (newValueNumber &lt; 0 || newValueNumber > 100) {
-            return;
-          }
+      }
+      case 'progress': {
+        const progress = validateProgress(newValue);
+        if (progress === null) {
+          this.setAttribute(name, oldValue);
+          return;
         }
+
+        this._progress = progress;
         break;
+      }
       default:
-        return;
     }
 
-    this[`_${name}`] = newValueNumber;
     this.updateComponent(this._radius, this._stroke, this._progress);
   }
 
@@ -199,27 +203,42 @@ class ProgressRing extends HTMLElement {
     return this._radius;
   }
 
-  set radius(val) {
-    const num = validateNumber(val);
-    this.setAttribute('radius', num);
+  set radius(value) {
+    const radius = validateLength(value);
+    if (radius === null) {
+      return;
+    }
+
+    this._radius = radius;
+    this.setAttribute('radius', this._radius);
   }
 
   get stroke() {
     return this._stroke;
   }
 
-  set stroke(val) {
-    const num = validateNumber(val);
-    this.setAttribute('stroke', num);
+  set stroke(value) {
+    const stroke = validateLength(value);
+    if (stroke === null) {
+      return;
+    }
+
+    this._stroke = stroke;
+    this.setAttribute('stroke', this._stroke);
   }
 
   get progress() {
     return this._progress;
   }
 
-  set progress(val) {
-    const num = validateNumber(val);
-    this.setAttribute('progress', num);
+  set progress(value) {
+    const progress = validateProgress(value);
+    if (progress === null) {
+      return;
+    }
+
+    this._progress = progress;
+    this.setAttribute('progress', this._progress);
   }
 }
 
@@ -234,13 +253,13 @@ export default ProgressRing;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadiusStroke">setRadiusStroke</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 12 2021 01:54:48 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Sun Mar 14 2021 20:03:12 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
