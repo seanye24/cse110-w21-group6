@@ -2,7 +2,7 @@
  * @file utility functions for taskList component
  */
 
-import { validateNumber } from './helpers';
+import { validateBoolean, validateNumber, validateString } from './helpers';
 
 /**
  * Validate if input is number, greater than 0
@@ -15,4 +15,47 @@ export const validatePomodoros = (value) => {
     return null;
   }
   return pomodoros;
+};
+
+/**
+ * Validate if input is valid task
+ * @param {any} value - value to check
+ * @return {Task | null} - Task if valid, null otherwise
+ */
+export const validateTask = (value) => {
+  try {
+    const {
+      name,
+      usedPomodoros,
+      estimatedPomodoros,
+      selected,
+      completed,
+    } = value;
+    const isNameValid = validateString(name) !== null;
+    const isUsedPomodorosValid = validatePomodoros(usedPomodoros) !== null;
+    const isEstimatedPomodorosValid =
+      validatePomodoros(estimatedPomodoros) !== null;
+    const isSelectedValid = validateBoolean(selected) !== null;
+    const isCompletedValid = validateBoolean(completed) !== null;
+    if (
+      !isNameValid ||
+      !isUsedPomodorosValid ||
+      !isEstimatedPomodorosValid ||
+      !isCompletedValid ||
+      !isSelectedValid
+    ) {
+      return null;
+    }
+
+    const task = {
+      name,
+      usedPomodoros,
+      estimatedPomodoros,
+      selected,
+      completed,
+    };
+    return task;
+  } catch (e) {
+    return null;
+  }
 };
