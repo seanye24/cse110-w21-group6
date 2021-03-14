@@ -20,7 +20,177 @@ import { validatePomodoro, validateTask } from '../utils/taskList';
 
 customElements.define('task-list', TaskList);
 
-describe('testing tasklist', () => {
+describe('testing taskItem component', () => {
+  let taskItem;
+  beforeEach(() => {
+    taskItem = createElement('task-item', {
+      name: 'task1',
+      usedPomodoros: 0,
+      estimatedPomodoros: 1,
+      selected: false,
+      completed: false,
+    });
+  });
+
+  test('get attribute', () => {
+    expect(taskItem.getAttribute('name')).toBe('task1');
+    expect(taskItem.getAttribute('used-pomodoros')).toBe('0');
+    expect(taskItem.getAttribute('estimated-pomodoros')).toBe('1');
+    expect(taskItem.getAttribute('selected')).toBe('false');
+    expect(taskItem.getAttribute('completed')).toBe('false');
+  });
+
+  test('setting valid attribute changes attribute and property', () => {
+    taskItem.setAttribute('name', 'task2');
+    expect(taskItem.getAttribute('name')).toBe('task2');
+    expect(taskItem.name).toBe('task2');
+
+    taskItem.setAttribute('name', 'task3');
+    expect(taskItem.getAttribute('name')).toBe('task3');
+    expect(taskItem.name).toBe('task3');
+
+    taskItem.setAttribute('used-pomodoros', 1);
+    expect(taskItem.getAttribute('used-pomodoros')).toBe('1');
+    expect(taskItem.usedPomodoros).toBe(1);
+
+    taskItem.setAttribute('used-pomodoros', 2);
+    expect(taskItem.getAttribute('used-pomodoros')).toBe('2');
+    expect(taskItem.usedPomodoros).toBe(2);
+
+    taskItem.setAttribute('estimated-pomodoros', 2);
+    expect(taskItem.getAttribute('estimated-pomodoros')).toBe('2');
+    expect(taskItem.estimatedPomodoros).toBe(2);
+
+    taskItem.setAttribute('estimated-pomodoros', 3);
+    expect(taskItem.getAttribute('estimated-pomodoros')).toBe('3');
+    expect(taskItem.estimatedPomodoros).toBe(3);
+
+    taskItem.setAttribute('selected', true);
+    expect(taskItem.getAttribute('selected')).toBe('true');
+    expect(taskItem.selected).toBe(true);
+
+    taskItem.setAttribute('selected', false);
+    expect(taskItem.getAttribute('selected')).toBe('false');
+    expect(taskItem.selected).toBe(false);
+
+    taskItem.setAttribute('completed', true);
+    expect(taskItem.getAttribute('completed')).toBe('true');
+    expect(taskItem.completed).toBe(true);
+
+    taskItem.setAttribute('completed', false);
+    expect(taskItem.getAttribute('completed')).toBe('false');
+    expect(taskItem.completed).toBe(false);
+  });
+
+  test('invalid attributes are ignored', () => {
+    const invalidPomodoros = ['as', null, undefined, NaN, {}, -10, true, false];
+    const invalidBooleans = ['as', null, undefined, NaN, {}, -10, -1, 10, 1000];
+
+    invalidPomodoros.forEach((value) => {
+      taskItem.setAttribute('used-pomodoros', value);
+      expect(taskItem.getAttribute('used-pomodoros')).toBe('0');
+      expect(taskItem.usedPomodoros).toBe(0);
+
+      taskItem.setAttribute('estimated-pomodoros', value);
+      expect(taskItem.getAttribute('estimated-pomodoros')).toBe('1');
+      expect(taskItem.estimatedPomodoros).toBe(1);
+    });
+
+    invalidBooleans.forEach((value) => {
+      taskItem.setAttribute('selected', value);
+      expect(taskItem.getAttribute('selected')).toBe('false');
+      expect(taskItem.selected).toBe(false);
+
+      taskItem.setAttribute('completed', value);
+      expect(taskItem.getAttribute('completed')).toBe('false');
+      expect(taskItem.completed).toBe(false);
+    });
+  });
+
+  test('getter method', () => {
+    expect(taskItem.name).toBe('task1');
+    expect(taskItem.usedPomodoros).toBe(0);
+    expect(taskItem.estimatedPomodoros).toBe(1);
+    expect(taskItem.selected).toBe(false);
+    expect(taskItem.completed).toBe(false);
+  });
+
+  test('setter method sets property and attribute when valid', () => {
+    taskItem.name = 'task2';
+    expect(taskItem.getAttribute('name')).toBe('task2');
+    expect(taskItem.name).toBe('task2');
+
+    taskItem.name = 'task3';
+    expect(taskItem.getAttribute('name')).toBe('task3');
+    expect(taskItem.name).toBe('task3');
+
+    taskItem.usedPomodoros = 1;
+    expect(taskItem.getAttribute('used-pomodoros')).toBe('1');
+    expect(taskItem.usedPomodoros).toBe(1);
+
+    taskItem.usedPomodoros = 2;
+    expect(taskItem.getAttribute('used-pomodoros')).toBe('2');
+    expect(taskItem.usedPomodoros).toBe(2);
+
+    taskItem.estimatedPomodoros = 2;
+    expect(taskItem.getAttribute('estimated-pomodoros')).toBe('2');
+    expect(taskItem.estimatedPomodoros).toBe(2);
+
+    taskItem.estimatedPomodoros = 3;
+    expect(taskItem.getAttribute('estimated-pomodoros')).toBe('3');
+    expect(taskItem.estimatedPomodoros).toBe(3);
+
+    taskItem.selected = true;
+    expect(taskItem.getAttribute('selected')).toBe('true');
+    expect(taskItem.selected).toBe(true);
+
+    taskItem.selected = false;
+    expect(taskItem.getAttribute('selected')).toBe('false');
+    expect(taskItem.selected).toBe(false);
+
+    taskItem.completed = true;
+    expect(taskItem.getAttribute('completed')).toBe('true');
+    expect(taskItem.completed).toBe(true);
+
+    taskItem.completed = false;
+    expect(taskItem.getAttribute('completed')).toBe('false');
+    expect(taskItem.completed).toBe(false);
+  });
+
+  test('setter ignores invalid inputs', () => {
+    const invalidStrings = [null, undefined, NaN, {}, -10, true, false];
+    const invalidPomodoros = ['as', null, undefined, NaN, {}, -10, true, false];
+    const invalidBooleans = ['as', null, undefined, NaN, {}, -10, -1, 10, 1000];
+
+    invalidStrings.forEach((value) => {
+      taskItem.name = value;
+      expect(taskItem.getAttribute('name')).toBe('task1');
+      expect(taskItem.name).toBe('task1');
+    });
+
+    invalidPomodoros.forEach((value) => {
+      taskItem.usedPomodoros = value;
+      expect(taskItem.getAttribute('used-pomodoros')).toBe('0');
+      expect(taskItem.usedPomodoros).toBe(0);
+
+      taskItem.estimatedPomodoros = value;
+      expect(taskItem.getAttribute('estimated-pomodoros')).toBe('1');
+      expect(taskItem.estimatedPomodoros).toBe(1);
+    });
+
+    invalidBooleans.forEach((value) => {
+      taskItem.selected = value;
+      expect(taskItem.getAttribute('selected')).toBe('false');
+      expect(taskItem.selected).toBe(false);
+
+      taskItem.completed = value;
+      expect(taskItem.getAttribute('completed')).toBe('false');
+      expect(taskItem.completed).toBe(false);
+    });
+  });
+});
+
+describe('testing taskList script', () => {
   let tasks;
   let taskListElement;
   beforeEach(() => {
