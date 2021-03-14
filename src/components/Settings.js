@@ -290,6 +290,7 @@ class Settings extends HTMLElement {
       case 'short-break-length': {
         const shortBreakLength = validateShortBreakLength(newValue);
         if (shortBreakLength === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -301,6 +302,7 @@ class Settings extends HTMLElement {
       case 'long-break-length': {
         const longBreakLength = validateLongBreakLength(newValue);
         if (longBreakLength === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -312,6 +314,7 @@ class Settings extends HTMLElement {
       case 'timer-audio': {
         const timerAudio = validateTimerAudio(newValue);
         if (timerAudio === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
