@@ -238,12 +238,17 @@ class TaskItem extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'name':
-        this.nameElement.innerText = newValue;
+      case 'name': {
+        const newName = validateString(newValue);
+
+        this.nameElement.innerText = newName;
+        this._name = newName;
         break;
+      }
       case 'used-pomodoros': {
         const usedPomodoros = validatePomodoro(newValue);
         if (usedPomodoros === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -254,6 +259,7 @@ class TaskItem extends HTMLElement {
       case 'estimated-pomodoros': {
         const estimatedPomodoros = validatePomodoro(newValue);
         if (estimatedPomodoros === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -264,6 +270,7 @@ class TaskItem extends HTMLElement {
       case 'selected': {
         const selected = validateBoolean(newValue);
         if (selected === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -278,6 +285,7 @@ class TaskItem extends HTMLElement {
       case 'completed': {
         const completed = validateBoolean(newValue);
         if (completed === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
