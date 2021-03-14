@@ -16,6 +16,7 @@ import {
   completeTask,
 } from '../scripts/taskList';
 import { createElement } from '../utils/helpers';
+import { validatePomodoro, validateTask } from '../utils/taskList';
 
 customElements.define('task-list', TaskList);
 
@@ -314,5 +315,51 @@ describe('testing tasklist', () => {
     nameInput.value = 'task6';
     nameInput.dispatchEvent(new Event('input'));
     expect(nameInput.validity.valid).toBe(true);
+  });
+});
+
+describe('testing taskList utils', () => {
+  test('validatePomodoro returns pomodoros on valid input', () => {
+    expect(validatePomodoro(0)).toBe(0);
+    expect(validatePomodoro(1)).toBe(1);
+    expect(validatePomodoro(5)).toBe(5);
+    expect(validatePomodoro(10000)).toBe(10000);
+  });
+
+  test('validatePomodoro returns null on invalid input', () => {
+    expect(validatePomodoro(-1)).toBe(null);
+    expect(validatePomodoro(-1000)).toBe(null);
+    expect(validatePomodoro('asdf')).toBe(null);
+    expect(validatePomodoro(NaN)).toBe(null);
+    expect(validatePomodoro(null)).toBe(null);
+    expect(validatePomodoro(undefined)).toBe(null);
+    expect(validatePomodoro({})).toBe(null);
+  });
+
+  test('validateTask returns task on valid input', () => {
+    const tasks = new Array(5).fill(null).map((t, i) => ({
+      name: `task${i}`,
+      usedPomodoros: 0,
+      estimatedPomodoros: i,
+      selected: false,
+      completed: false,
+    }));
+    tasks.forEach((task) => expect(validateTask(task)).toStrictEqual(task));
+  });
+
+  test('validateTask returns null on invalid input', () => {
+    expect(validateTask(null)).toBeNull();
+    expect(validateTask(undefined)).toBeNull();
+    expect(validateTask('')).toBeNull();
+    expect(validateTask({})).toBeNull();
+    expect(
+      validateTask({
+        name: 'asdf',
+        usedPomodoros: 'hello',
+        estimatedPomodoros: 0,
+        selected: true,
+        completed: true,
+      }),
+    ).toBeNull();
   });
 });
