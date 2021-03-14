@@ -127,7 +127,7 @@ class Settings extends HTMLElement {
           .content .error {
             color: red;
             position: absolute;
-            margin-top: 50px;
+            margin-top: 25px;
             visibility: hidden;
           }
           

@@ -231,7 +231,7 @@ const endSession = (sessionButton, numPomodoros) => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  const settingsIcon = document.querySelector('.settings-icon');
+  const settingsIcon = document.querySelector('.material-icons');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
   const circlesElement = progressRingElement.shadowRoot.querySelector(
