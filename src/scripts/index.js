@@ -133,7 +133,6 @@ const startSession = async (changeSessionButton) => {
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
-      timerAudio.pause();
       // start pomodoro, stop if interval is interrupted
       const shouldContinue = await startInterval(60 * pomodoroLength);
       if (!shouldContinue) {
@@ -141,6 +140,7 @@ const startSession = async (changeSessionButton) => {
       }
 
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task
+      timerAudio.pause();
       timerAudio.src = getTimerAudio();
       timerAudio.play();
 
@@ -188,6 +188,10 @@ const startSession = async (changeSessionButton) => {
       if (!shouldContinue) {
         return numPomodoros;
       }
+
+      timerAudio.pause();
+      timerAudio.src = getTimerAudio();
+      timerAudio.play();
 
       // hide buttons if they aren't clicked
       if (!wasAnnouncementButtonClicked) {
