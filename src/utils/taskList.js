@@ -9,7 +9,7 @@ import { validateBoolean, validateNumber, validateString } from './helpers';
  * @param {any} value - value to check
  * @return {number | null} - short break length if valid, null otherwise
  */
-export const validatePomodoros = (value) => {
+export const validatePomodoro = (value) => {
   const pomodoros = validateNumber(value, true);
   if (pomodoros === null || pomodoros < 0) {
     return null;
@@ -32,9 +32,9 @@ export const validateTask = (value) => {
       completed,
     } = value;
     const isNameValid = validateString(name) !== null;
-    const isUsedPomodorosValid = validatePomodoros(usedPomodoros) !== null;
+    const isUsedPomodorosValid = validatePomodoro(usedPomodoros) !== null;
     const isEstimatedPomodorosValid =
-      validatePomodoros(estimatedPomodoros) !== null;
+      validatePomodoro(estimatedPomodoros) !== null;
     const isSelectedValid = validateBoolean(selected) !== null;
     const isCompletedValid = validateBoolean(completed) !== null;
     if (
