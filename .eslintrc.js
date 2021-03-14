@@ -12,7 +12,7 @@ module.exports = {
   plugins: ['prettier'],
   rules: {
     'prettier/prettier': 'error',
-    'import/prefer-default-export': 'warn',
+    'import/prefer-default-export': 'off',
     'no-unused-vars': ['warn', { args: 'after-used' }],
     'prefer-const': 'warn',
     'no-underscore-dangle': 'off',
