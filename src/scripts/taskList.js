@@ -297,9 +297,8 @@ const deselectAllTasks = () => {
  */
 const setTasklistUsability = (shouldTasklistBeUsable) => {
   tasks.forEach((task) => {
-    const {
-      taskElement: { shadowRoot },
-    } = getTask(task);
+    const { taskElement } = getTask(task);
+    const { shadowRoot } = taskElement;
     const itemContainer = shadowRoot.querySelector('.item-container');
     const textContainer = shadowRoot.querySelector('.text-container');
 
@@ -318,7 +317,7 @@ const setTasklistUsability = (shouldTasklistBeUsable) => {
     }
 
     // disable buttons
-    const buttons = getTaskItemButtons(getTask(task).taskElement);
+    const buttons = getTaskItemButtons(taskElement);
     Object.values(buttons).forEach((btn) => {
       btn.disabled = !shouldTasklistBeUsable;
     });
@@ -340,12 +339,12 @@ const completeTask = (completedTask) => {
   taskElement.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array
-  tasks.splice(taskIndex, 1);
-  tasks.push(completedTask);
+  const [removedTask] = tasks.splice(taskIndex, 1);
+  tasks.push({ ...removedTask, selected: false, completed: true });
 
   // update selected property of task
   updateTask(completedTask, {
-    ...completedTask,
+    ...removedTask,
     selected: false,
     completed: true,
   });
