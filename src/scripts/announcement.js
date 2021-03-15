@@ -2,23 +2,20 @@
  * @file Manage displaying announcements
  */
 
+import { dispatch, subscribe } from '../models';
+import {
+  ACTIONS,
+  LONG_BREAK_INTERVAL,
+  POMODORO_ANNOUNCEMENT,
+  POMODORO_INTERVAL,
+  SHORT_BREAK_INTERVAL,
+  TASK_COMPLETION_QUESTION,
+} from '../utils/constants';
+
 let announcementContainer;
 let announcementElement;
 let yesButton;
 let noButton;
-
-/**
- * Initialize announcement element
- * @param {HTMLElement} announcementElement - announcement element
- */
-const initializeAnnouncement = (containerElement) => {
-  announcementContainer = containerElement;
-  announcementElement = announcementContainer.querySelector('.announcement');
-  yesButton = announcementContainer.querySelector('.announcement-yes-button');
-  noButton = announcementContainer.querySelector('.announcement-no-button');
-  yesButton.onmousedown = (e) => e.preventDefault();
-  noButton.onmousedown = (e) => e.preventDefault();
-};
 
 /**
  * Set an announcement
@@ -26,22 +23,6 @@ const initializeAnnouncement = (containerElement) => {
  */
 const setAnnouncement = (announcement) => {
   announcementElement.innerText = announcement;
-};
-
-/**
- * Set yes button on click callback
- * @param {Function} callback - yes button onclick callback
- */
-const setYesButtonCallback = (callback) => {
-  yesButton.onclick = callback;
-};
-
-/**
- * Set no button on click callback
- * @param {Function} callback - no button onclick callback
- */
-const setNoButtonCallback = (callback) => {
-  noButton.onclick = callback;
 };
 
 /**
@@ -58,10 +39,48 @@ const setButtonVisibility = (visibility) => {
   }
 };
 
-export {
-  initializeAnnouncement,
-  setAnnouncement,
-  setYesButtonCallback,
-  setNoButtonCallback,
-  setButtonVisibility,
+/**
+ * Initialize announcement element
+ * @param {HTMLElement} announcementElement - announcement element
+ */
+const initializeAnnouncement = (containerElement) => {
+  announcementContainer = containerElement;
+  announcementElement = announcementContainer.querySelector('.announcement');
+  yesButton = announcementContainer.querySelector('.announcement-yes-button');
+  noButton = announcementContainer.querySelector('.announcement-no-button');
+  yesButton.onmousedown = (e) => e.preventDefault();
+  noButton.onmousedown = (e) => e.preventDefault();
+
+  yesButton.onclick = () => dispatch(ACTIONS.COMPLETE_CURRENT_TASK);
+  noButton.onclick = () => dispatch(ACTIONS.DID_NOT_COMPLETE_CURRENT_TASK);
+
+  subscribe({
+    [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        setButtonVisibility('hidden');
+      } else if (sessionState.session === 'active') {
+        setAnnouncement(POMODORO_ANNOUNCEMENT);
+      }
+    },
+    [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        switch (sessionState.currInterval) {
+          case POMODORO_INTERVAL:
+            setAnnouncement(POMODORO_ANNOUNCEMENT);
+            break;
+          case SHORT_BREAK_INTERVAL:
+            setAnnouncement(TASK_COMPLETION_QUESTION);
+            setButtonVisibility('visible');
+            break;
+          case LONG_BREAK_INTERVAL:
+            setAnnouncement(TASK_COMPLETION_QUESTION);
+            setButtonVisibility('visible');
+            break;
+          default:
+        }
+      }
+    },
+  });
 };
+
+export { initializeAnnouncement, setAnnouncement, setButtonVisibility };

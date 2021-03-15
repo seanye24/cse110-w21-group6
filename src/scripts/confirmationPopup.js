@@ -2,6 +2,9 @@
  * @file Manage Confirmation Pop-up for page
  */
 
+import { dispatch } from '../models';
+import { ACTIONS } from '../utils/constants';
+
 let confirmationOverlay;
 let confirmationPopup;
 let noButton;
@@ -38,13 +41,13 @@ const initializeElements = (root) => {
  * @param {HTMLElement} root - confirmation element
  * @param {Function} onAcceptCallback - callback when confirmation is accepted
  */
-const initializePopup = (root, onAcceptCallback) => {
+const initializePopup = (root) => {
   initializeElements(root);
   noButton.onmousedown = (e) => e.preventDefault();
   yesButton.onmousedown = (e) => e.preventDefault();
   yesButton.onclick = () => {
     closePopup();
-    onAcceptCallback();
+    dispatch(ACTIONS.CHANGE_SESSION, 'inactive');
   };
   noButton.onclick = closePopup;
   confirmationOverlay.onclick = closePopup;

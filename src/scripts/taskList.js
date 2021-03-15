@@ -12,6 +12,8 @@
  * @property {boolean} completed          - whether task is completed
  */
 
+import { dispatch, subscribe } from '../models';
+import { POMODORO_INTERVAL, ACTIONS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validateTask } from '../utils/taskList';
 
@@ -142,7 +144,9 @@ const selectTask = (task) => {
   tasks.unshift(task);
 
   // update selected property of task
-  return updateTask(task, { ...task, selected: true });
+  const updatedTask = { ...task, selected: true };
+  dispatch(ACTIONS.SELECT_TASK, updatedTask);
+  return updateTask(task, updatedTask);
 };
 
 /**
@@ -272,7 +276,7 @@ const checkDuplicateTask = (e) => {
  * @param {Task} task - task to be incremented
  * @return {Task} - incremented task
  */
-const incrementPomodoro = (task) => {
+const incrementTask = (task) => {
   const { usedPomodoros } = task;
   return updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
 };
@@ -295,6 +299,7 @@ const deselectAllTasks = () => {
   tasks.forEach((task) => {
     updateTask(task, { ...task, selected: false });
   });
+  dispatch(ACTIONS.SELECT_TASK, null);
 };
 
 /**
@@ -354,6 +359,7 @@ const completeTask = (completedTask) => {
     selected: false,
     completed: true,
   });
+  dispatch(ACTIONS.SELECT_TASK, null);
 };
 
 /**
@@ -383,6 +389,37 @@ const initializeTaskList = (root) => {
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
   restoreTasks();
   taskItemFormInputs.name.oninput = checkDuplicateTask;
+  deselectAllTasks();
+
+  subscribe({
+    [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        deselectAllTasks();
+        setTasklistUsability(true);
+      } else if (sessionState.session === 'active') {
+        setTasklistUsability(false);
+      }
+    },
+    [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        if (sessionState.currInterval === POMODORO_INTERVAL) {
+          setTasklistUsability(false);
+        }
+      }
+    },
+    [ACTIONS.INCREMENT_CURRENT_TASK]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        incrementTask(sessionState.currSelectedTask);
+      }
+    },
+    [ACTIONS.COMPLETE_CURRENT_TASK]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        completeTask(sessionState.currSelectedTask);
+        setTasklistUsability(true);
+        selectFirstTask();
+      }
+    },
+  });
 };
 
 export {
@@ -391,7 +428,7 @@ export {
   getTasks,
   updateTask,
   deleteTask,
-  incrementPomodoro,
+  incrementTask,
   selectTask,
   selectFirstTask,
   deselectAllTasks,

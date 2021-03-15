@@ -2,7 +2,8 @@
  * @file Manage tasklist for page
  */
 
-import { TIMER_AUDIOS } from '../utils/constants';
+import { dispatch } from '../models';
+import { ACTIONS, TIMER_AUDIOS } from '../utils/constants';
 import {
   validateShortBreakLength,
   validateLongBreakLength,
@@ -125,9 +126,12 @@ const saveSettings = () => {
     return null;
   }
 
-  setTimerAudio(soundInput.value);
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
+  setTimerAudio(timerAudio);
+  dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, newShortBreakLength);
+  dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, newLongBreakLength);
+  dispatch(ACTIONS.SET_TIMER_AUDIO, timerAudio);
   window.localStorage.setItem('shortBreakLength', newShortBreakLength);
   window.localStorage.setItem('longBreakLength', newLongBreakLength);
   window.localStorage.setItem('timerAudio', timerAudio);
@@ -162,20 +166,23 @@ const initializeElements = (root) => {
 /**
  * Set the initial settings element
  * @param {HTMLElement} root - settings element
- * @param {Function} saveSettingsCallback - callback for when settings are saved
  */
-const initializePopup = (root, saveSettingsCallback) => {
+const initializePopup = (root) => {
   const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
   initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
+  dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, shortBreakLength);
+  dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, longBreakLength);
 
   const savedTimerAudio = window.localStorage.getItem('timerAudio');
   if (validateTimerAudio(savedTimerAudio) === null) {
     setTimerAudio(TIMER_AUDIOS.calm);
     window.localStorage.setItem('timerAudio', TIMER_AUDIOS.calm);
+    dispatch(ACTIONS.SET_TIMER_AUDIO, TIMER_AUDIOS.calm);
   } else {
     setTimerAudio(savedTimerAudio);
+    dispatch(ACTIONS.SET_TIMER_AUDIO, savedTimerAudio);
   }
 
   overlay.onclick = closePopup;
@@ -186,7 +193,8 @@ const initializePopup = (root, saveSettingsCallback) => {
       return;
     }
     popupFunctions.closePopup();
-    saveSettingsCallback(...newBreakLengths);
+    dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, newBreakLengths[0]);
+    dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, newBreakLengths[1]);
   });
 
   soundInput.onchange = () => {

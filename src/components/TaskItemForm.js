@@ -94,6 +94,8 @@ class TaskItemForm extends HTMLElement {
       }
 
       #submit-input {
+        -webkit-appearance: none;
+        -moz-appearance: none;
         width: 50%;
         margin: auto;
         background: rgb(77, 207, 233);

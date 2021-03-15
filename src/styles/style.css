@@ -79,6 +79,7 @@ body {
 
 .session-button {
   font: 1.5rem 'Duru Sans', sans-serif;
+  background: #fff;
   color: #00b4d8;
   border-radius: 5px;
   border: none;
@@ -116,11 +117,11 @@ body {
 }
 
 .announcement-button {
-  font-size: 1rem;
+  font-size: 1.5rem;
   color: #fff;
   background: rgba(0, 180, 214);
   border: none;
-  margin: 0.5em;
+  margin: 1em;
   padding: 0.25em 0.5em;
   border-radius: 5px;
 }

@@ -355,13 +355,12 @@ describe('testing popup actions', () => {
   let longBreakInputElement;
   let timerAudioInputElement;
   let saveButton;
-  const mockSaveSettingsCallback = jest.fn();
   const saveSettingsSpy = jest.spyOn(popupFunctions, 'saveSettings');
   const closePopupSpy = jest.spyOn(popupFunctions, 'closePopup');
   beforeEach(() => {
     window.localStorage.clear();
     settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement, mockSaveSettingsCallback);
+    initializePopup(settingsPopupElement);
     const { shadowRoot } = settingsPopupElement;
     popupElement = shadowRoot.querySelector('.popup');
     overlayElement = shadowRoot.querySelector('#overlay');
@@ -418,11 +417,6 @@ describe('testing popup actions', () => {
       value: [DEFAULT_SHORT_BREAK_LENGTH, DEFAULT_LONG_BREAK_LENGTH],
     });
     expect(closePopupSpy).toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).toHaveBeenCalledWith(
-      DEFAULT_SHORT_BREAK_LENGTH,
-      DEFAULT_LONG_BREAK_LENGTH,
-    );
   });
 
   test("save button doesn't close when errors are present", () => {
@@ -438,7 +432,6 @@ describe('testing popup actions', () => {
       value: null,
     });
     expect(closePopupSpy).not.toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).not.toHaveBeenCalled();
   });
 });
 

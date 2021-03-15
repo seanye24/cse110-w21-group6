@@ -2,17 +2,16 @@
  * @file Manage progress ring for page
  */
 
+import { subscribe } from '../models';
+import {
+  ACTIONS,
+  LONG_BREAK_INTERVAL,
+  POMODORO_INTERVAL,
+  SHORT_BREAK_INTERVAL,
+} from '../utils/constants';
 import { validateLength, validateProgress } from '../utils/progressRing';
 
 let progressRingElement;
-
-/**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
- */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
-};
 
 /**
  * Get radius of ring
@@ -69,6 +68,45 @@ const setProgress = (value) => {
   }
 
   progressRingElement.progress = progress;
+};
+
+/**
+ * Set progress ring
+ * @param {HTMLElement} element - progress ring element
+ */
+const initializeProgressRing = (element) => {
+  progressRingElement = element;
+  subscribe({
+    [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        setProgress(100);
+      }
+    },
+    [ACTIONS.CHANGE_INTERVAL]: () => {
+      setProgress(100);
+    },
+    [ACTIONS.CHANGE_TIME]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        let currIntervalLength;
+        switch (sessionState.currInterval) {
+          case POMODORO_INTERVAL:
+            currIntervalLength = sessionState.pomodoroLength;
+            break;
+          case SHORT_BREAK_INTERVAL:
+            currIntervalLength = sessionState.shortBreakLength;
+            break;
+          case LONG_BREAK_INTERVAL:
+            currIntervalLength = sessionState.longBreakLength;
+            break;
+          default:
+            return;
+        }
+        const currProgress =
+          (100 * sessionState.currTime) / (60 * currIntervalLength);
+        setProgress(currProgress);
+      }
+    },
+  });
 };
 
 export {

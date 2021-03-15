@@ -1,15 +1,23 @@
 import {
   DEFAULT_POMODORO_LENGTH,
   POMODORO_INTERVAL,
-  SET_CURR_INTERVAL,
-  SET_CURR_SELECTED_TASK,
+  ACTIONS,
+} from '../utils/constants';
+
+const {
+  CHANGE_SESSION,
+  CHANGE_TIME,
+  CHANGE_INTERVAL,
+  SELECT_TASK,
+  INCREMENT_CURRENT_TASK,
+  COMPLETE_CURRENT_TASK,
+  DID_NOT_COMPLETE_CURRENT_TASK,
   SET_LONG_BREAK_LENGTH,
   SET_NUM_POMODOROS,
   SET_POMODORO_LENGTH,
-  SET_SESSION,
   SET_SHORT_BREAK_LENGTH,
   SET_TIMER_AUDIO,
-} from '../utils/constants';
+} = ACTIONS;
 
 const timerAudio = new Audio();
 timerAudio.volume = 0.2;
@@ -17,17 +25,18 @@ timerAudio.volume = 0.2;
 // initialize session state
 const sessionState = {
   session: 'inactive',
-  currInterval: POMODORO_INTERVAL,
-  currSelectedTask: '',
   numPomodoros: 0,
-  pomodoroLength: 0.05, // TODO: FOR TESTING, use DEFAULT_POMODORO_LENGTH later
+  currTime: 0,
+  currInterval: POMODORO_INTERVAL,
+  currSelectedTask: null,
+  pomodoroLength: 0.05 || DEFAULT_POMODORO_LENGTH, // TODO: FOR TESTING, use DEFAULT_POMODORO_LENGTH later
   shortBreakLength: 0,
   longBreakLength: 0,
   timerAudio,
 };
 
-const stateCallbacks = Object.keys(sessionState).reduce(
-  (acc, key) => ({ ...acc, [key]: [] }),
+const actionCallbacks = Object.values(ACTIONS).reduce(
+  (acc, action) => ({ ...acc, [action]: [] }),
   {},
 );
 
@@ -37,9 +46,9 @@ const stateCallbacks = Object.keys(sessionState).reduce(
  * @return {{stateName: stateValue}} - current session state
  */
 const subscribe = (callbacks) => {
-  Object.entries(callbacks).forEach(([key, value]) => {
-    if (Object.prototype.hasOwnProperty.call(stateCallbacks, key)) {
-      stateCallbacks[key].push(value);
+  Object.entries(callbacks).forEach(([action, callback]) => {
+    if (Object.prototype.hasOwnProperty.call(actionCallbacks, action)) {
+      actionCallbacks[action].push(callback);
     }
   });
   return sessionState;
@@ -52,40 +61,43 @@ const subscribe = (callbacks) => {
  */
 const dispatch = (action, payload) => {
   switch (action) {
-    case SET_SESSION:
+    case CHANGE_SESSION:
       sessionState.session = payload;
-      stateCallbacks.session.forEach((callback) => callback(payload));
       break;
-    case SET_CURR_INTERVAL:
+    case CHANGE_TIME:
+      sessionState.currTime = payload;
+      break;
+    case CHANGE_INTERVAL:
       sessionState.currInterval = payload;
-      stateCallbacks.currInterval.forEach((callback) => callback(payload));
       break;
-    case SET_CURR_SELECTED_TASK:
+    case SELECT_TASK:
       sessionState.currSelectedTask = payload;
-      stateCallbacks.currSelectedTask.forEach((callback) => callback(payload));
+      break;
+    case INCREMENT_CURRENT_TASK:
+      break;
+    case COMPLETE_CURRENT_TASK:
+      break;
+    case DID_NOT_COMPLETE_CURRENT_TASK:
       break;
     case SET_NUM_POMODOROS:
       sessionState.numPomodoros = payload;
-      stateCallbacks.numPomodoros.forEach((callback) => callback(payload));
       break;
     case SET_POMODORO_LENGTH:
       sessionState.pomodoroLength = payload;
-      stateCallbacks.pomodoroLength.forEach((callback) => callback(payload));
       break;
     case SET_SHORT_BREAK_LENGTH:
       sessionState.shortBreakLength = payload;
-      stateCallbacks.shortBreakLength.forEach((callback) => callback(payload));
       break;
     case SET_LONG_BREAK_LENGTH:
       sessionState.longBreakLength = payload;
-      stateCallbacks.longBreakLength.forEach((callback) => callback(payload));
       break;
     case SET_TIMER_AUDIO:
       sessionState.timerAudio.src = payload;
-      stateCallbacks.longBreakLength.forEach((callback) => callback(payload));
       break;
     default:
+      return;
   }
+  actionCallbacks[action].forEach((callback) => callback(sessionState));
 };
 
 export { subscribe, dispatch };

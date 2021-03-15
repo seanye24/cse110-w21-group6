@@ -74,7 +74,7 @@ class TaskItem extends HTMLElement {
         align-items: center;
       }
 
-      .item-container:not(.disabled):not(.selected) > .text-container:hover {
+      .item-container:not(.disabled):not(.selected):not(.completed) > .text-container:hover {
         background: rgba(255, 255, 255, 0.8);
       }
 

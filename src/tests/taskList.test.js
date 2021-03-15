@@ -7,7 +7,7 @@ import {
   getTasks,
   updateTask,
   deleteTask,
-  incrementPomodoro,
+  incrementTask,
   selectTask,
   selectFirstTask,
   deselectAllTasks,
@@ -293,7 +293,7 @@ describe('testing taskList script', () => {
   });
 
   test('increment task pomodoro', () => {
-    incrementPomodoro(tasks[2]);
+    incrementTask(tasks[2]);
     tasks[2].usedPomodoros++;
     expect(getTasks()).toStrictEqual(tasks);
   });
