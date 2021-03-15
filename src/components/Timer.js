@@ -53,7 +53,7 @@ class Timer extends HTMLElement {
         break;
       }
       case 'container-radius': {
-        const containerRadius = validateTime(newValue);
+        const containerRadius = validateContainerRadius(newValue);
         if (containerRadius === null) {
           this.setAttribute(name, oldValue);
           return;
