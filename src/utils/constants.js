@@ -33,3 +33,13 @@ export const DEFAULT_POMODORO_LENGTH = 25;
 export const DEFAULT_SHORT_BREAK_LENGTH = 5;
 export const DEFAULT_LONG_BREAK_LENGTH = 15;
 export const DEFAULT_TIMER_AUDIO = TIMER_AUDIOS.calm;
+
+// actions
+export const SET_SESSION = 'set session';
+export const SET_CURR_INTERVAL = 'set current interval';
+export const SET_CURR_SELECTED_TASK = 'set currently selected task';
+export const SET_NUM_POMODOROS = 'set number of pomodoros';
+export const SET_POMODORO_LENGTH = 'set pomodoro length';
+export const SET_SHORT_BREAK_LENGTH = 'set short break length';
+export const SET_LONG_BREAK_LENGTH = 'set long break length';
+export const SET_TIMER_AUDIO = 'set timer audio';
