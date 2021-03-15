@@ -83,6 +83,10 @@ const setTimerAudio = (value) => {
  * Open settings popup
  */
 const openPopup = () => {
+  // enable audio element, ignore if interrupted
+  timerAudioElement.src = '';
+  timerAudioElement.play().catch(() => true);
+
   popupEl.classList.add('active');
   overlay.classList.add('active');
 
@@ -188,7 +192,7 @@ const initializePopup = (root, saveSettingsCallback) => {
   soundInput.onchange = () => {
     timerAudioElement.pause();
     timerAudioElement.src = soundInput.value;
-    timerAudioElement.play();
+    timerAudioElement.play().catch(() => true); // ignore if interrupted
   };
 };
 

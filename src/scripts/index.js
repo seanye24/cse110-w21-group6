@@ -142,7 +142,7 @@ const startSession = async (changeSessionButton) => {
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task
       timerAudio.pause();
       timerAudio.src = getTimerAudio();
-      timerAudio.play();
+      timerAudio.play().catch(() => true); // ignore if interrupted
 
       // check if break should be short or long
       numPomodoros++;
@@ -191,7 +191,7 @@ const startSession = async (changeSessionButton) => {
 
       timerAudio.pause();
       timerAudio.src = getTimerAudio();
-      timerAudio.play();
+      timerAudio.play().catch(() => true); // ignore if interrupted
 
       // hide buttons if they aren't clicked
       if (!wasAnnouncementButtonClicked) {
@@ -284,6 +284,10 @@ window.addEventListener('DOMContentLoaded', () => {
   // start session when start button is clicked
   sessionButton.addEventListener('click', async () => {
     if (sessionButton.innerText === 'Start') {
+      // enable audio element
+      timerAudio.src = '';
+      timerAudio.play().catch(() => true); // ignore if interrupted
+
       isSessionOngoing = true;
       const changeSessionButton = () => {
         sessionButton.innerText = 'End';
