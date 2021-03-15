@@ -133,7 +133,6 @@ const startSession = async (changeSessionButton) => {
       setTasklistUsability(false);
       setAnnouncement(POMODORO_ANNOUNCEMENT);
 
-      timerAudio.pause();
       // start pomodoro, stop if interval is interrupted
       const shouldContinue = await startInterval(60 * pomodoroLength);
       if (!shouldContinue) {
@@ -141,6 +140,7 @@ const startSession = async (changeSessionButton) => {
       }
 
       currSelectedTask = incrementPomodoro(currSelectedTask); // increment task
+      timerAudio.pause();
       timerAudio.src = getTimerAudio();
       timerAudio.play();
 
@@ -189,6 +189,10 @@ const startSession = async (changeSessionButton) => {
         return numPomodoros;
       }
 
+      timerAudio.pause();
+      timerAudio.src = getTimerAudio();
+      timerAudio.play();
+
       // hide buttons if they aren't clicked
       if (!wasAnnouncementButtonClicked) {
         setButtonVisibility('hidden');
@@ -209,21 +213,25 @@ const startSession = async (changeSessionButton) => {
  * @param {number} numPomodoros - number of pomodoros completed during the session
  */
 const endSession = (sessionButton, numPomodoros) => {
-  setAnnouncement(
-    numPomodoros === -1 ? NO_TASKS_ANNOUNCEMENT : END_OF_SESSION_ANNOUNCEMENT,
-  );
+  if (numPomodoros === -1) {
+    setAnnouncement(NO_TASKS_ANNOUNCEMENT);
+  } else {
+    setAnnouncement(END_OF_SESSION_ANNOUNCEMENT);
+  }
   deselectAllTasks();
   sessionButton.innerText = 'Start';
   sessionButton.className = 'session-button';
-  initializeSummaryPopup(
-    document.querySelector('#summary-overlay'),
-    getTasks(),
-  );
-  openSummaryPopup();
+  if (numPomodoros > 0) {
+    initializeSummaryPopup(
+      document.querySelector('#summary-overlay'),
+      getTasks(),
+    );
+    openSummaryPopup();
+  }
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  const settingsIcon = document.querySelector('.settings-icon');
+  const settingsIcon = document.querySelector('.material-icons');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
   const circlesElement = progressRingElement.shadowRoot.querySelector(

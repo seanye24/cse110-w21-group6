@@ -2,7 +2,8 @@
  * @file progress-ring web component
  */
 
-import { createElement, validateNumber } from '../utils/helpers';
+import { createElement } from '../utils/helpers';
+import { validateLength, validateProgress } from '../utils/progressRing';
 
 /**
  * Custom web component representing a progress ring.
@@ -133,37 +134,40 @@ class ProgressRing extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    const newValueNumber = validateNumber(newValue);
-
-    // check if attribute value is number
-    if (newValueNumber === null) {
-      return;
-    }
-
-    // validate attribute ranges
     switch (name) {
-      case 'radius':
-        if (newValueNumber < 0) {
+      case 'radius': {
+        const radius = validateLength(newValue);
+        if (radius === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
+
+        this._radius = radius;
         break;
-      case 'stroke':
-        if (newValueNumber < 0) {
+      }
+      case 'stroke': {
+        const stroke = validateLength(newValue);
+        if (stroke === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
+
+        this._stroke = stroke;
         break;
-      case 'progress':
-        if (name === 'progress') {
-          if (newValueNumber < 0 || newValueNumber > 100) {
-            return;
-          }
+      }
+      case 'progress': {
+        const progress = validateProgress(newValue);
+        if (progress === null) {
+          this.setAttribute(name, oldValue);
+          return;
         }
+
+        this._progress = progress;
         break;
+      }
       default:
-        return;
     }
 
-    this[`_${name}`] = newValueNumber;
     this.updateComponent(this._radius, this._stroke, this._progress);
   }
 
@@ -171,27 +175,42 @@ class ProgressRing extends HTMLElement {
     return this._radius;
   }
 
-  set radius(val) {
-    const num = validateNumber(val);
-    this.setAttribute('radius', num);
+  set radius(value) {
+    const radius = validateLength(value);
+    if (radius === null) {
+      return;
+    }
+
+    this._radius = radius;
+    this.setAttribute('radius', this._radius);
   }
 
   get stroke() {
     return this._stroke;
   }
 
-  set stroke(val) {
-    const num = validateNumber(val);
-    this.setAttribute('stroke', num);
+  set stroke(value) {
+    const stroke = validateLength(value);
+    if (stroke === null) {
+      return;
+    }
+
+    this._stroke = stroke;
+    this.setAttribute('stroke', this._stroke);
   }
 
   get progress() {
     return this._progress;
   }
 
-  set progress(val) {
-    const num = validateNumber(val);
-    this.setAttribute('progress', num);
+  set progress(value) {
+    const progress = validateProgress(value);
+    if (progress === null) {
+      return;
+    }
+
+    this._progress = progress;
+    this.setAttribute('progress', this._progress);
   }
 }
 

@@ -13,9 +13,7 @@
  */
 
 import { createElement } from '../utils/helpers';
-import '../components/TaskItem';
-import '../components/TaskItemForm';
-import '../components/TaskList';
+import { validateTask } from '../utils/taskList';
 
 let tasks = [];
 let taskList;
@@ -93,13 +91,6 @@ const removeTaskFromDom = (taskToRemove) => {
  * @return {Task} - updated task
  */
 const updateTask = (prevTask, nextTask) => {
-  const {
-    name: nextName,
-    usedPomodoros,
-    estimatedPomodoros,
-    selected,
-    completed,
-  } = nextTask;
   const { taskIndex, taskElement } = getTask(prevTask);
 
   // update localStorage
@@ -107,11 +98,9 @@ const updateTask = (prevTask, nextTask) => {
   saveTasks();
 
   // update task in dom
-  taskElement.setAttribute('name', nextName);
-  taskElement.setAttribute('used-pomodoros', usedPomodoros);
-  taskElement.setAttribute('estimated-pomodoros', estimatedPomodoros);
-  taskElement.setAttribute('selected', selected);
-  taskElement.setAttribute('completed', completed);
+  Object.getOwnPropertyNames(nextTask).forEach((key) => {
+    taskElement[key] = nextTask[key];
+  });
   return nextTask;
 };
 
@@ -172,8 +161,8 @@ const createTaskElement = (newTask) => {
   // create html element
   const newTaskElement = createElement('task-item', {
     name,
-    'used-pomodoros': usedPomodoros,
-    'estimated-pomodoros': estimatedPomodoros,
+    usedPomodoros,
+    estimatedPomodoros,
     selected,
   });
 
@@ -229,10 +218,6 @@ const handleTaskFormSubmit = (e) => {
   const trimmedName = name.trim();
   const pomodoroNumber = Number(pomodoro);
 
-  if (Number.isNaN(pomodoroNumber)) {
-    return;
-  }
-
   nameInput.focus();
 
   addTask({
@@ -251,10 +236,19 @@ const handleTaskFormSubmit = (e) => {
  * Retrieve tasks from localStorage
  */
 const restoreTasks = () => {
-  if (!JSON.parse(window.localStorage.getItem('tasks'))) {
-    window.localStorage.setItem('tasks', JSON.stringify([]));
+  let restoredTasks;
+  try {
+    restoredTasks = JSON.parse(window.localStorage.getItem('tasks'));
+  } catch (e) {
+    restoredTasks = null;
   }
-  tasks = JSON.parse(window.localStorage.getItem('tasks'));
+  if (!restoredTasks) {
+    window.localStorage.setItem('tasks', JSON.stringify([]));
+    restoredTasks = [];
+  }
+
+  restoredTasks = restoredTasks.filter(validateTask);
+  tasks = restoredTasks;
   tasks.forEach((task) => addTaskToDom(createTaskElement(task)));
 };
 
@@ -309,9 +303,8 @@ const deselectAllTasks = () => {
  */
 const setTasklistUsability = (shouldTasklistBeUsable) => {
   tasks.forEach((task) => {
-    const {
-      taskElement: { shadowRoot },
-    } = getTask(task);
+    const { taskElement } = getTask(task);
+    const { shadowRoot } = taskElement;
     const itemContainer = shadowRoot.querySelector('.item-container');
     const textContainer = shadowRoot.querySelector('.text-container');
 
@@ -330,7 +323,7 @@ const setTasklistUsability = (shouldTasklistBeUsable) => {
     }
 
     // disable buttons
-    const buttons = getTaskItemButtons(getTask(task).taskElement);
+    const buttons = getTaskItemButtons(taskElement);
     Object.values(buttons).forEach((btn) => {
       btn.disabled = !shouldTasklistBeUsable;
     });
@@ -347,17 +340,17 @@ const completeTask = (completedTask) => {
   // mark task as completed and move it to end of DOM list
   removeTaskFromDom(completedTask);
   addTaskToDom(taskElement, 'end');
-  taskElement.setAttribute('selected', false);
-  taskElement.setAttribute('completed', true);
+  taskElement.selected = false;
+  taskElement.completed = true;
   taskElement.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array
-  tasks.splice(taskIndex, 1);
-  tasks.push(completedTask);
+  const [removedTask] = tasks.splice(taskIndex, 1);
+  tasks.push({ ...removedTask, selected: false, completed: true });
 
   // update selected property of task
   updateTask(completedTask, {
-    ...completedTask,
+    ...removedTask,
     selected: false,
     completed: true,
   });
@@ -405,4 +398,5 @@ export {
   getCurrentlySelectedTask,
   setTasklistUsability,
   completeTask,
+  handleTaskFormSubmit,
 };

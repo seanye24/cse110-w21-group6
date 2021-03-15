@@ -2,37 +2,8 @@
  * @file progress-ring web component
  */
 
-import {
-  createElement,
-  getMinutesAndSeconds,
-  validateNumber,
-} from '../utils/helpers';
-
-/**
- * Validate if input is number, between 0s and 3600s (1 hr)
- * @param {any} value - value to check
- * @return {number | null} - time if valid, null otherwise
- */
-const validateTime = (value) => {
-  const time = validateNumber(value, true);
-  if (time === null || time < 0 || time >= 60 * 60) {
-    return null;
-  }
-  return time;
-};
-
-/**
- * Validate if input is number and positive
- * @param {any} value - value to check
- * @return {number | null} - radius if valid, null otherwise
- */
-const validateContainerRadius = (value) => {
-  const containerRadius = validateNumber(value);
-  if (containerRadius === null || containerRadius < 0) {
-    return null;
-  }
-  return containerRadius;
-};
+import { createElement, getMinutesAndSeconds } from '../utils/helpers';
+import { validateContainerRadius, validateTime } from '../utils/timer';
 
 /**
  * Custom web component representing a timer
@@ -73,8 +44,10 @@ class Timer extends HTMLElement {
       case 'time': {
         const time = validateTime(newValue);
         if (time === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
+
         this._time = time;
         this.timerContainer.innerText = getMinutesAndSeconds(this._time);
         break;
@@ -82,13 +55,15 @@ class Timer extends HTMLElement {
       case 'container-radius': {
         const containerRadius = validateTime(newValue);
         if (containerRadius === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
+
         this._containerRadius = containerRadius;
         // scale font relative to progress ring radius
         this.styleElement.innerText = `
             .container {
-              font: ${this._containerRadius / 30}em 'Duru-Sans', sans-serif; 
+              font: ${this._containerRadius / 2}px 'Duru-Sans', sans-serif; 
               color: #fff;
             }
           `;

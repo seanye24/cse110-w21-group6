@@ -5,18 +5,18 @@
 /**
  * Creates an HTMLElement and set its attributes
  * Created to reduce boilerplate from element creation
- * @param {string} elementType - element tag name
+ * @param {string} elementName - element tag name
  * @param {{key: string}} props - element's attributes/properties
  * @param {{option: string}} options - element options such as namespace
  * @return element - new HTMLElement created
  */
-const createElement = (elementType, props = {}, options = {}) => {
+const createElement = (elementName, props = {}, options = {}) => {
   const { namespace } = options;
   let element;
   if (namespace) {
-    element = document.createElementNS(namespace, elementType);
+    element = document.createElementNS(namespace, elementName);
   } else {
-    element = document.createElement(elementType);
+    element = document.createElement(elementName);
   } // create element
 
   // set attributes/properties
@@ -62,6 +62,29 @@ const validateNumber = (value, shouldTruncate = false) => {
 };
 
 /**
+ * Tries to convert input to a boolean
+ * input must be already boolean or the strings 'true' | 'false'
+ * @param {any} value - to be converted to boolean
+ * @return {boolean | any} - boolean if successful, null otherwise
+ */
+const validateBoolean = (value) => {
+  const isBoolean = typeof value === 'boolean' || value instanceof Boolean;
+  if (isBoolean) {
+    return value;
+  }
+
+  const isString = validateString(value) !== null;
+  if (isString && value === 'true') {
+    return true;
+  }
+  if (isString && value === 'false') {
+    return false;
+  }
+
+  return null;
+};
+
+/**
  * Use promises to tick by specified tickLength
  * NOTE: ticks may be slightly longer than the duration due the single threaded nature of JavaScript
  * @param {number} duration - duration of tick (in seconds)
@@ -89,4 +112,5 @@ export {
   tick,
   validateNumber,
   validateString,
+  validateBoolean,
 };

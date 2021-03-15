@@ -18,15 +18,15 @@ import {
  */
 class Settings extends HTMLElement {
   static get observedAttributes() {
-    return ['shortBreakLength', 'longBreakLength', 'timerAudio'];
+    return ['short-break-length', 'long-break-length', 'timer-audio'];
   }
 
   constructor() {
     super();
 
-    this._shortBreakLength = this.getAttribute('shortBreakLength');
-    this._longBreakLength = this.getAttribute('longBreakLength');
-    this._timerAudio = this.getAttribute('timerAudio');
+    this._shortBreakLength = 0;
+    this._longBreakLength = 0;
+    this._timerAudio = '';
 
     this.styleElement = createElement('style', {
       innerText: `
@@ -127,7 +127,7 @@ class Settings extends HTMLElement {
           .content .error {
             color: red;
             position: absolute;
-            margin-top: 50px;
+            margin-top: 25px;
             visibility: hidden;
           }
           
@@ -287,9 +287,10 @@ class Settings extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     switch (name) {
-      case 'shortBreakLength': {
+      case 'short-break-length': {
         const shortBreakLength = validateShortBreakLength(newValue);
         if (shortBreakLength === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -298,9 +299,10 @@ class Settings extends HTMLElement {
         this.inputErrorShort.visibility = 'hidden';
         break;
       }
-      case 'longBreakLength': {
+      case 'long-break-length': {
         const longBreakLength = validateLongBreakLength(newValue);
         if (longBreakLength === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -309,9 +311,10 @@ class Settings extends HTMLElement {
         this.inputErrorLong.visibility = 'hidden';
         break;
       }
-      case 'timerAudio': {
+      case 'timer-audio': {
         const timerAudio = validateTimerAudio(newValue);
         if (timerAudio === null) {
+          this.setAttribute(name, oldValue);
           return;
         }
 
@@ -334,7 +337,7 @@ class Settings extends HTMLElement {
     }
 
     this._shortBreakLength = shortBreakLength;
-    this.setAttribute('shortBreakLength', this._shortBreakLength);
+    this.setAttribute('short-break-length', this._shortBreakLength);
   }
 
   get longBreakLength() {
@@ -348,7 +351,7 @@ class Settings extends HTMLElement {
     }
 
     this._longBreakLength = longBreakLength;
-    this.setAttribute('longBreakLength', this._longBreakLength);
+    this.setAttribute('long-break-length', this._longBreakLength);
   }
 
   get timerAudio() {
@@ -362,7 +365,7 @@ class Settings extends HTMLElement {
     }
 
     this._timerAudio = timerAudio;
-    this.setAttribute('timerAudio', this._timerAudio);
+    this.setAttribute('timer-audio', this._timerAudio);
   }
 }
 

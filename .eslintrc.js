@@ -12,8 +12,8 @@ module.exports = {
   plugins: ['prettier'],
   rules: {
     'prettier/prettier': 'error',
-    'import/prefer-default-export': 'warn',
-    'no-unused-vars': 'warn',
+    'import/prefer-default-export': 'off',
+    'no-unused-vars': ['warn', { args: 'after-used' }],
     'prefer-const': 'warn',
     'no-underscore-dangle': 'off',
     'no-plusplus': 'off',
