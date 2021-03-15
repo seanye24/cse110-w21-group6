@@ -27,10 +27,12 @@ import {
 } from '../utils/settings';
 
 // add audio element api (jsdom doens't support video/audio elements right now)
-window.HTMLMediaElement.prototype.load = jest.fn();
-window.HTMLMediaElement.prototype.play = jest.fn();
-window.HTMLMediaElement.prototype.pause = jest.fn();
-window.HTMLMediaElement.prototype.addTextTrack = jest.fn();
+window.HTMLMediaElement.prototype.load = jest.fn(() => Promise.resolve());
+window.HTMLMediaElement.prototype.play = jest.fn(() => Promise.resolve());
+window.HTMLMediaElement.prototype.pause = jest.fn(() => Promise.resolve());
+window.HTMLMediaElement.prototype.addTextTrack = jest.fn(() =>
+  Promise.resolve(),
+);
 
 customElements.define('settings-component', SettingsPopup);
 
