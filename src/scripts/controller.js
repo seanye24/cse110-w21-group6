@@ -220,8 +220,8 @@ const initializeController = () => {
     [ACTIONS.DID_NOT_COMPLETE_CURRENT_TASK]: onDidNotCompleteTask,
   }));
 
-  dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, 0.05); // TODO: FOR TESTING, remove later
-  dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, 0.07); // TODO: FOR TESTING, remove later
+  dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, 0.1); // TODO: FOR TESTING, remove later
+  dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, 0.1); // TODO: FOR TESTING, remove later
 
   // initialize variables, event listeners, and component values
   settingsIcon.onclick = openSettingsPopup;

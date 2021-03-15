@@ -36,7 +36,7 @@ const initializeTimer = (element) => {
     },
     [ACTIONS.CHANGE_TIME]: (sessionState) => {
       if (sessionState.session === 'active') {
-        setTimer(sessionStorage.currTime);
+        setTimer(sessionState.currTime);
       }
     },
   });
