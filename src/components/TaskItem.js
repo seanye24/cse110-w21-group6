@@ -189,7 +189,7 @@ class TaskItem extends HTMLElement {
 
     this.itemContainerElement = createElement('div', {
       className: 'item-container',
-      id: 'pomodoro'
+      id: 'pomodoro',
     });
     this.textContainerElement = createElement('button', {
       className: 'text-container',

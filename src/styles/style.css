@@ -98,7 +98,7 @@ body {
 
 .session-button {
   font: 1.5rem 'Duru Sans', sans-serif;
-  background: #FFF;
+  background: #fff;
   border-radius: 5px;
   border: none;
   margin-bottom: 1rem;
@@ -111,7 +111,7 @@ body {
 }
 
 .session-button.short-break {
- color: #54c800;
+  color: #54c800;
 }
 
 .session-button.long-break {
@@ -161,11 +161,11 @@ body {
 }
 
 .announcement-button.short-break {
-  background: #54C800;
+  background: #54c800;
 }
 
 .announcement-button.long-break {
-  background: #F87335;
+  background: #f87335;
 }
 
 .announcement-button.hidden {
