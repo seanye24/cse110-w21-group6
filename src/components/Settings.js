@@ -106,10 +106,10 @@ class Settings extends HTMLElement {
           }
           
           .content button {
-            background-color: rgba(72, 202, 228, 1);
+            background-color: rgba(176, 176, 176, 1);
             border: none;
             border-radius: .25rem;
-            color: white;
+            color: #2b2b2b;
             font: 1.1rem 'Duru Sans', sans-serif;
             text-align: center;
             text-decoration: none;
@@ -121,7 +121,7 @@ class Settings extends HTMLElement {
           }
 
           .content button:hover {
-            background-color: rgba(72, 202, 228, 0.8);
+            background-color: rgba(176, 176, 176, 0.8);
           }
           
           .content .error {

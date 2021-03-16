@@ -32,7 +32,7 @@ class ProgressRing extends HTMLElement {
 
     this.circleElement = createElement(
       'circle',
-      { class: 'circle' },
+      { class: 'circle pomodoro' },
       { namespace: svgNamespace },
     );
     this.baseCircleElement = createElement(
@@ -93,11 +93,9 @@ class ProgressRing extends HTMLElement {
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: 0;
         stroke-width: ${stroke};
-        fill: #48cae4;
       }
 
       .circle {
-        stroke: #0095b3;
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: ${(1 - progress / 100) * circumference};
         stroke-width: ${stroke + 2};
@@ -106,6 +104,21 @@ class ProgressRing extends HTMLElement {
         transition: stroke-dashoffset 0.5s;
         transform: rotate(-90deg);
         transform-origin: 50% 50%;
+      }
+
+      .circle.pomodoro {
+        stroke: #0095b3;
+        fill: #48cae4;
+      }
+
+      .circle.short-break {
+        stroke: #4ab717;
+        fill: #69da00;
+      }
+
+      .circle.long-break {
+        stroke: #f87335;
+        fill: #f97f38;
       }
 
       .foreign-object {
