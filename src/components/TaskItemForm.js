@@ -72,7 +72,7 @@ class TaskItemForm extends HTMLElement {
       }
 
       .task-input:focus {
-        box-shadow: 0 0 0 2pt #90e0ef;
+        box-shadow: 0 0 0 2pt #c8c8c8;
         outline: none;
         z-index: 1;
         position: relative;
@@ -96,7 +96,6 @@ class TaskItemForm extends HTMLElement {
       #submit-input {
         width: 50%;
         margin: auto;
-        background: rgb(77, 207, 233);
         border-radius: 5px;
         outline: none;
         border: none;
@@ -105,8 +104,30 @@ class TaskItemForm extends HTMLElement {
         font: 1.2rem 'Source Sans Pro', sans-serif;
       }
 
-      #submit-input:hover {
+      #submit-input.pomodoro {
+        background: rgb(77, 207, 233);
+      }
+
+      #submit-input.short-break {
+        background: #69da00;
+      }
+
+      #submit-input.long-break {
+        background: #f98f38;
+      }
+
+      #submit-input:hover.pomodoro {
         background: rgb(112, 216, 237);
+        cursor: pointer;
+      }
+
+      #submit-input:hover.short-break {
+        background: #7ce407;
+        cursor: pointer;
+      }
+
+      #submit-input:hover.long-break {
+        background: #f99e3d;
         cursor: pointer;
       }
     `;
@@ -161,7 +182,7 @@ class TaskItemForm extends HTMLElement {
     });
 
     this.submitInputElement = createElement('input', {
-      className: 'task-input',
+      className: 'task-input pomodoro',
       id: 'submit-input',
       type: 'submit',
       value: 'ADD',

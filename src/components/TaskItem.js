@@ -55,8 +55,16 @@ class TaskItem extends HTMLElement {
         outline: none;
       }
 
-      .item-container.selected {
+      #pomodoro.selected {
         background: #90e0ef;
+      }
+
+      #short-break.selected {
+        background: #7ce407;
+      }
+
+      #long-break.selected {
+        background: #f99e3d;
       }
 
       .text-container {
@@ -181,6 +189,7 @@ class TaskItem extends HTMLElement {
 
     this.itemContainerElement = createElement('div', {
       className: 'item-container',
+      id: 'pomodoro',
     });
     this.textContainerElement = createElement('button', {
       className: 'text-container',
