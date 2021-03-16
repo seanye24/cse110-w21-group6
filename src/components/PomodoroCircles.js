@@ -60,6 +60,8 @@ class PomodoroCircles extends HTMLElement {
         return;
       }
 
+      this._circleCount = circleCount;
+
       this.circles.forEach((circle, i) => {
         if (i < circleCount) {
           circle.classList.add('active');
