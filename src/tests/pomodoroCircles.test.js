@@ -10,7 +10,6 @@ import { validateCircleCount } from '../utils/pomodoroCircles';
 customElements.define('pomodoro-circles', PomodoroCircles);
 
 describe('testing pomodoro circle utils', () => {
-
   test('validateCircleCount returns progress on valid input', () => {
     const lengths = new Array(5).fill(null).map((e, i) => i);
     lengths.forEach((value) => {
@@ -83,10 +82,8 @@ describe('testing pomodoro circles', () => {
       circlesElement.circleCount = value;
       expect(circlesElement.getAttribute('circle-count')).toBe('0');
       expect(circlesElement.circleCount).toBe(0);
-
     });
   });
-
 });
 
 describe('testing pomodoro circle script', () => {
@@ -106,7 +103,7 @@ describe('testing pomodoro circle script', () => {
   test('get functions', () => {
     // initial values
     expect(getCircleCount()).toBe(0);
-    
+
     const values = new Array(5).fill(null).map((e, i) => i);
     values.forEach((value) => {
       circlesElement.circleCount = value;
@@ -129,5 +126,4 @@ describe('testing pomodoro circle script', () => {
       expect(circlesElement.circleCount).toBe(0);
     });
   });
-
 });
