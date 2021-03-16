@@ -1,6 +1,6 @@
 *:focus {
   outline: none;
-  box-shadow: 0 0 0 2pt #00b4d8;
+  box-shadow: 0 0 0 2pt #c8c8c8;
 }
 
 body {
@@ -14,13 +14,24 @@ body {
   width: calc(100vw - (100vw - 100%));
   height: 100vh;
   min-height: 1000px;
-  background: #48cae4;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 3em;
   margin-bottom: 50px;
   padding-bottom: 100px;
+}
+
+.pomodoro {
+  background: #48cae4;
+}
+
+.short-break {
+  background: #69da00;
+}
+
+.long-break {
+  background: #f97f38;
 }
 
 .navbar {
@@ -32,12 +43,19 @@ body {
   position: fixed;
   width: 100%;
   height: 3em;
-  background: #48cae4;
   z-index: 3;
 }
 
-.navbar.scrolled {
+#pomodoro.scrolled {
   background: #0095b3;
+}
+
+#short-break.scrolled {
+  background: #4ab717;
+}
+
+#long-break.scrolled {
+  background: #f76926;
 }
 
 .links {
@@ -63,14 +81,15 @@ body {
   text-decoration: none;
 }
 
-.settings-icon {
-  width: 2em;
-  height: 2em;
+.material-icons {
+  font-size: 2em;
   margin-right: 1em;
+  color: white;
 }
 
-.settings-icon:hover {
+.material-icons:hover {
   cursor: pointer;
+  color: #eee;
 }
 
 .progress-ring {
@@ -88,6 +107,18 @@ body {
   width: 4em;
 }
 
+.session-button.pomodoro {
+  color: #00b4d8;
+}
+
+.session-button.short-break {
+  color: #54c800;
+}
+
+.session-button.long-break {
+  color: #f87335;
+}
+
 .session-button:hover {
   cursor: pointer;
   background: #e2e6ea;
@@ -100,7 +131,7 @@ body {
 */
 
 .session-button:focus {
-  box-shadow: 0 0 0 2pt #00b4d8;
+  box-shadow: 0 0 0 2pt #c8c8c8;
   outline: none;
 }
 
@@ -124,6 +155,18 @@ body {
   margin: 1em;
   padding: 0.25em 0.5em;
   border-radius: 5px;
+}
+
+.announcement-button.pomodoro {
+  background: rgba(0, 180, 214);
+}
+
+.announcement-button.short-break {
+  background: #54c800;
+}
+
+.announcement-button.long-break {
+  background: #f87335;
 }
 
 .announcement-button.hidden {
@@ -175,7 +218,6 @@ body {
 }
 
 footer {
-  background-color: #48cae4;
   color: white;
   font: 1.1rem 'Duru Sans', sans-serif;
   padding: 10px;
@@ -188,7 +230,6 @@ footer {
   height: 1.75em;
   border-radius: 50%;
   vertical-align: bottom;
-  background: #fff;
 }
 
 .overlay {

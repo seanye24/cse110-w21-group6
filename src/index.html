@@ -24,27 +24,27 @@
     />
   </head>
   <body>
-    <nav class="navbar">
+    <nav id="pomodoro" class="navbar">
       <ul class="links">
         <li><a class="link" href="#main">POMODORO TIMER</a></li>
         <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
       </ul>
-      <img
-        src="assets/settings-icon.png"
+      <span 
         alt="settings"
         data-popup-target="#popup"
         id="open-popup"
-        class="settings-icon"
-      />
+        class="material-icons">
+        settings
+      </span>
     </nav>
-    <div id="main" role="main">
+    <div class= "pomodoro" id="main" role="main">
       <progress-ring
         progress="100"
         radius="150"
         stroke="5"
         class="progress-ring"
       ></progress-ring>
-      <button class="session-button" id="session-button">Start</button>
+      <button class="session-button pomodoro" id="session-button">Start</button>
 
       <div id="confirmation-overlay" class="overlay">
         <div id="confirmation-popup" class="popup">
@@ -77,10 +77,10 @@
 
       <div class="announcement-container">
         <h2 class="announcement">Work on your tasks!</h2>
-        <button class="announcement-button announcement-yes-button hidden">
+        <button class="announcement-button announcement-yes-button hidden pomodoro">
           Yes
         </button>
-        <button class="announcement-button announcement-no-button hidden">
+        <button class="announcement-button announcement-no-button hidden pomodoro">
           No
         </button>
       </div>
@@ -120,14 +120,14 @@
 
     <settings-component class="settings"></settings-component>
 
-    <footer>
+    <footer class="pomodoro">
       <p>
         Created by Pomodo Dragons © 2021&ensp;
         <a
           href="https://github.com/seanye24/cse110-w21-group6"
           target="_blank"
           rel="noreferrer noopener"
-          ><img src="assets/github-icon.png" alt="github" class="github-icon"
+          ><img src="assets/github.png" alt="github" class="github-icon"
         /></a>
       </p>
     </footer>

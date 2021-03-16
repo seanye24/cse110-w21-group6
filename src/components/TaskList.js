@@ -24,11 +24,22 @@ class TaskList extends HTMLElement {
         padding: 1em;
         font: normal 1rem 'Source Sans Pro', sans-serif;
         border-radius: 5px;
-        background: #00b4d8;
         height: 100%;
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
+      }
+
+      .container.pomodoro {
+        background: #00b4d8;
+      }
+
+      .container.short-break {
+        background: #54C800;
+      }
+
+      .container.long-break {
+        background: #f87335;
       }
 
       .task-item-container {
@@ -44,7 +55,7 @@ class TaskList extends HTMLElement {
     `;
 
     this.containerElement = createElement('div', {
-      className: 'container',
+      className: 'container pomodoro',
     });
 
     this.titleElement = createElement('h1', {
