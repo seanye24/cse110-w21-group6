@@ -60,7 +60,7 @@ describe('testing timer utils', () => {
   });
 });
 
-describe('testing setTimer', () => {
+describe('testing timer component', () => {
   let timerElement;
 
   beforeEach(() => {
@@ -69,8 +69,6 @@ describe('testing setTimer', () => {
       containerRadius: 10,
       className: 'timer',
     });
-
-    initializeTimer(timerElement);
   });
 
   test('get attribute', () => {
@@ -204,9 +202,6 @@ describe('testing timer script', () => {
   });
 
   test('get function', () => {
-    // initial value
-    expect(getTime()).toBe(1500);
-
     const values = new Array(3600).fill(null).map((e, i) => i);
     values.forEach((value) => {
       timerElement.time = value;
@@ -223,6 +218,7 @@ describe('testing timer script', () => {
   });
 
   test('if input invalid, set function does not change property', () => {
+    timerElement.time = 1500;
     const invalidTimes = [
       '$%^#^$',
       null,
