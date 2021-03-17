@@ -15,7 +15,7 @@
     <link rel="icon" href="assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Open+Sans&family=Roboto&family=Source+Sans+Pro&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Lato&family=Roboto&family=Source+Sans+Pro&display=swap"
       rel="stylesheet"
     />
     <link
@@ -26,8 +26,8 @@
   <body>
     <nav class="navbar pomodoro">
       <ul class="links">
-        <li><a class="link" href="#main">POMODORO TIMER</a></li>
-        <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
+        <li><a class="navbar-link" href="#main">POMODORO TIMER</a></li>
+        <li><a class="navbar-link" href="#instructions">INSTRUCTIONS</a></li>
       </ul>
       <span
         alt="settings"
@@ -68,10 +68,14 @@
           <h1 class="summary-title">Summary</h1>
           <hr class="summary-hr" />
           <div class="task-summary-list"></div>
+          <!--
           <div class="summary-stats-container">
             <span class="summary-actual-pomos"></span>
             <span class="summary-estimated-pomos"></span>
           </div>
+          -->
+          <p id="summary-pomodoros" class="summary-stats"></p>
+          <p id="summary-tasks" class="summary-stats"></p>
           <button class="summary-close-button">CLOSE</button>
         </div>
       </div>

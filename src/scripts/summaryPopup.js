@@ -12,13 +12,14 @@
  * @property {boolean} completed          - whether task is completed
  */
 
+import { subscribe } from '../models';
 import { createElement } from '../utils/helpers';
 
 let summaryOverlay;
 let summaryPopup;
 let taskSummaryList;
-let actualPomosElement;
-let estimatedPomosElement;
+let pomodorosStatsElement;
+let tasksStatsElement;
 let closeSummaryButton;
 
 /**
@@ -42,10 +43,10 @@ const closePopup = () => {
  * @return {HTMLElement} - task summary element
  */
 const createTaskSummary = (task) => {
-  const { name, usedPomodoros, estimatedPomodoros, completed } = task;
+  const { name, usedPomodoros, estimatedPomodoros, status } = task;
 
   const taskSummary = createElement('div', {
-    className: `task-summary-item ${completed ? 'completed' : 'incompleted'}`,
+    className: `task-summary-item ${status}`,
   });
   const nameElement = createElement('span', {
     className: 'task-summary-name',
@@ -62,12 +63,53 @@ const createTaskSummary = (task) => {
 
 /**
  * Create summary of tasks
- * @param {Task[]} taskList - tasks to summarize
+ * @param {Task[]} allTasks - all tasks
+ * @param {Task[]} completedTasks - completed tasks
+ * @param {Task[]} lastSelectedTask - last selected task before the session was over
  */
-const createTaskSummaryList = (taskList) => {
-  const completedTasks = taskList.filter((task) => task.completed);
-  const incompletedTasks = taskList.filter((task) => !task.completed);
-  [...completedTasks, ...incompletedTasks].forEach((task) => {
+const createTaskSummaryList = (allTasks, completedTasks, lastSelectedTask) => {
+  const completedUnderBudgetTasks = allTasks
+    .filter(
+      (task) =>
+        task.completed &&
+        task.usedPomodoros <= task.estimatedPomodoros &&
+        completedTasks.some((otherTask) => otherTask.name === task.name),
+    )
+    .map((t) => ({
+      ...t,
+      status: 'complete under-budget',
+    }));
+  const completedOverBudgetTasks = allTasks
+    .filter(
+      (task) =>
+        task.completed &&
+        task.usedPomodoros > task.estimatedPomodoros &&
+        completedTasks.some((otherTask) => otherTask.name === task.name),
+    )
+    .map((t) => ({
+      ...t,
+      status: 'complete over-budget',
+    }));
+  const inProgressTasks = allTasks
+    .filter((t) => !t.completed && t.usedPomodoros > 0)
+    .map((t) => ({ ...t, status: 'in-progress' }));
+  const notStartedTasks = allTasks
+    .filter((t) => !t.completed && t.usedPomodoros === 0)
+    .map((t) => ({ ...t, status: 'not-started' }));
+  const completedDuringPastTasks = allTasks
+    .filter(
+      (task) =>
+        task.completed &&
+        !completedTasks.some((otherTask) => otherTask.name === task.name),
+    )
+    .map((t) => ({ ...t, status: 'complete old' }));
+  [
+    ...completedUnderBudgetTasks,
+    ...completedOverBudgetTasks,
+    ...inProgressTasks,
+    ...notStartedTasks,
+    ...completedDuringPastTasks,
+  ].forEach((task) => {
     const taskSummary = createTaskSummary(task);
     taskSummaryList.append(taskSummary);
   });
@@ -81,10 +123,8 @@ const initializeElements = (root) => {
   summaryOverlay = root;
   summaryPopup = summaryOverlay.querySelector('#summary-popup');
   taskSummaryList = summaryOverlay.querySelector('.task-summary-list');
-  actualPomosElement = summaryOverlay.querySelector('.summary-actual-pomos');
-  estimatedPomosElement = summaryOverlay.querySelector(
-    '.summary-estimated-pomos',
-  );
+  pomodorosStatsElement = summaryOverlay.querySelector('#summary-pomodoros');
+  tasksStatsElement = summaryOverlay.querySelector('#summary-tasks');
   closeSummaryButton = summaryOverlay.querySelector('.summary-close-button');
 };
 
@@ -95,16 +135,15 @@ const initializeElements = (root) => {
  */
 const initializePopup = (root, tasks) => {
   initializeElements(root);
-  createTaskSummaryList(tasks);
-  const { actual, estimated } = tasks.reduce(
-    (acc, task) => ({
-      actual: acc.actual + task.usedPomodoros,
-      estimated: acc.estimated + task.estimatedPomodoros,
-    }),
-    { actual: 0, estimated: 0 },
-  );
-  actualPomosElement.innerText = `Actual: ${actual}`;
-  estimatedPomosElement.innerText = `Estimated: ${estimated}`;
+  const {
+    currentSelectedTask,
+    completedTasks,
+    numberOfPomodorosCompleted,
+  } = subscribe();
+
+  createTaskSummaryList(tasks, completedTasks, currentSelectedTask);
+  pomodorosStatsElement.innerText = `Number of pomodoros completed: ${numberOfPomodorosCompleted}`;
+  tasksStatsElement.innerText = `Number of tasks completed: ${completedTasks.length}`;
 
   closeSummaryButton.onclick = closePopup;
   closeSummaryButton.onmousedown = (e) => e.preventDefault();

@@ -78,7 +78,7 @@ const initializeAnnouncement = (containerElement) => {
             });
             break;
           case INTERVALS.longBreak:
-            setAnnouncement(ANNOUNCEMENTS.longBreakInterval);
+            setAnnouncement(ANNOUNCEMENTS.taskCompletionQuestion);
             setButtonVisibility('visible');
             [yesButton, noButton].forEach((btn) => {
               btn.classList.remove('pomodoro');
@@ -91,11 +91,16 @@ const initializeAnnouncement = (containerElement) => {
       }
     },
     [ACTIONS.changeSelectedTask]: (sessionState) => {
-      if (
-        sessionState.session === 'inactive' &&
-        sessionState.currentSelectedTask !== null
-      ) {
-        setAnnouncement(ANNOUNCEMENTS.clickToStart);
+      if (sessionState.currentSelectedTask !== null) {
+        if (sessionState.session === 'inactive') {
+          setAnnouncement(ANNOUNCEMENTS.clickToStart);
+        } else if (sessionState.session === 'active') {
+          if (sessionState.currentInterval === INTERVALS.shortBreak) {
+            setAnnouncement(ANNOUNCEMENTS.shortBreakInterval);
+          } else if (sessionState.currentInterval === INTERVALS.longBreak) {
+            setAnnouncement(ANNOUNCEMENTS.longBreakInterval);
+          }
+        }
       }
     },
     [ACTIONS.completeSelectedTask]: (sessionState) => {
@@ -106,7 +111,7 @@ const initializeAnnouncement = (containerElement) => {
       setButtonVisibility('hidden');
       if (sessionState.currentInterval === INTERVALS.shortBreak) {
         setAnnouncement(ANNOUNCEMENTS.shortBreakInterval);
-      } else if (sessionState.currentInterval === INTERVALS.longBreakInterval) {
+      } else if (sessionState.currentInterval === INTERVALS.longBreak) {
         setAnnouncement(ANNOUNCEMENTS.longBreakInterval);
       }
     },

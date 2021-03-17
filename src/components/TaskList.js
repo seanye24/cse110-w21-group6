@@ -27,6 +27,7 @@ class TaskList extends HTMLElement {
         font: normal 1rem 'Source Sans Pro', sans-serif;
         border-radius: 5px;
         height: 100%;
+        flex: 1 1 0;
         display: flex;
         flex-direction: column;
         box-sizing: border-box;

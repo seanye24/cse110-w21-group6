@@ -237,6 +237,9 @@ const initializeController = () => {
   sessionButton.onmousedown = (e) => {
     e.preventDefault();
   };
+  [...document.querySelectorAll('.navbar-link')].forEach((l) => {
+    l.onmousedown = (e) => e.preventDefault();
+  });
 
   // start session when start button is clicked
   sessionButton.addEventListener('click', async () => {
