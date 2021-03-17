@@ -60,7 +60,7 @@ const getTaskItemButtons = (taskElement) => {
 /**
  * Add task object to DOM, add event listeners to task-item
  * @param {HTMLElement} newTaskElement - new task element to be added
- * @param {'start' | 'end' | HTMLElement} position - position in list to append
+ * @param {('start' | 'end' | HTMLElement)=} position - position in list to append
  * @return {HTMLElement} - new task element added to DOM
  */
 const addTaskToDom = (newTaskElement, position = 'end') => {

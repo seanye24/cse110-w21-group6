@@ -1,3 +1,7 @@
+/**
+ * @file Publisher in the publish-subscribe pattern, holds global state
+ */
+
 import {
   ACTIONS,
   DEFAULT_POMODORO_LENGTH,
@@ -21,15 +25,16 @@ const sessionState = {
   timerAudio,
 };
 
+// maps each action to a synchronous message queue of callbacks
 const actionCallbacks = Object.values(ACTIONS).reduce(
   (acc, action) => ({ ...acc, [action]: [] }),
   {},
 );
 
 /**
- * Allow consumers to subscribe to session state
- * @param {stateName: Function} callbacks - object that maps a state name to a callback that will be run when the state name changes
- * @return {{stateName: stateValue}} - current session state
+ * Allow consumers to subscribe to session state and use callbacks to be notified of actions
+ * @param {Object.<string, Function>} callbacks - object that maps a state name to a callback that will be run when the state name changes
+ * @return {Object.<string, any>} - current session state
  */
 const subscribe = (callbacks) => {
   if (typeof callbacks === 'object' && callbacks !== null) {
