@@ -152,7 +152,6 @@ const initializePopup = (root, tasks) => {
     intervalName: currentInterval,
     timeRemaining: currentTime,
   });
-  console.log('session time: ', totalSessionTime);
   pomodorosStatsElement.innerText = `Number of pomodoros completed: ${numberOfPomodorosCompleted}`;
   tasksStatsElement.innerText = `Number of tasks completed: ${completedTasks.length}`;
   sessionTimeElement.innerText = `Total session time: ${getHoursMinutesAndSeconds(
