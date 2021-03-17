@@ -1513,7 +1513,7 @@ Sets error message for form
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line35">line 35</a>
+        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line40">line 40</a>
     </li></ul></dd>
     
 
@@ -1834,7 +1834,7 @@ Created to reduce boilerplate from element creation
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line13">line 13</a>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line16">line 16</a>
     </li></ul></dd>
     
 
@@ -2118,7 +2118,7 @@ Created to reduce boilerplate from element creation
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line45">line 45</a>
+        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line50">line 50</a>
     </li></ul></dd>
     
 
@@ -2176,7 +2176,7 @@ Created to reduce boilerplate from element creation
     
 
     
-    <h4 class="name" id="createTaskSummaryList"><span class="type-signature"></span>createTaskSummaryList<span class="signature">(allTasks, completedTasks, lastSelectedTask)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createTaskSummaryList"><span class="type-signature"></span>createTaskSummaryList<span class="signature">(allTasks, completedTasks)</span><span class="type-signature"></span></h4>
     
 
     
@@ -2263,29 +2263,6 @@ Created to reduce boilerplate from element creation
         </tr>
 
     
-
-        <tr>
-            
-                <td class="name"><code>lastSelectedTask</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="global.html#Task">Task</a>></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">last selected task before the session was over</td>
-        </tr>
-
-    
     </tbody>
 </table>
 
@@ -2323,7 +2300,7 @@ Created to reduce boilerplate from element creation
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line70">line 70</a>
+        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line74">line 74</a>
     </li></ul></dd>
     
 
@@ -3030,6 +3007,165 @@ Created to reduce boilerplate from element creation
     
 
     
+    <h4 class="name" id="getHoursMinutesAndSeconds"><span class="type-signature"></span>getHoursMinutesAndSeconds<span class="signature">(seconds)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Converts seconds into HH:MM:SS
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>seconds</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">seconds to convert</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line117">line 117</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - time in format HH h MM m SS s
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="getLongBreakLength"><span class="type-signature"></span>getLongBreakLength<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
@@ -3148,7 +3284,7 @@ Created to reduce boilerplate from element creation
 
 
 <div class="description">
-    Converts seconds into MM : SS
+    Converts seconds into MM:SS
 </div>
 
 
@@ -3241,7 +3377,7 @@ Created to reduce boilerplate from element creation
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line101">line 101</a>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line104">line 104</a>
     </li></ul></dd>
     
 
@@ -4383,6 +4519,166 @@ Created to reduce boilerplate from element creation
     
 
     
+    <h4 class="name" id="getTotalSessionTime"><span class="type-signature"></span>getTotalSessionTime<span class="signature">(numberOfPomodorosCompleted, lastInterval)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Computes total time elapsed during a session
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>numberOfPomodorosCompleted</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">number of pomodoros completed during the session</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lastInterval</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the interval in which the session stopped in</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line135">line 135</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id="handleTaskFormSubmit"><span class="type-signature"></span>handleTaskFormSubmit<span class="signature">(e)</span><span class="type-signature"></span></h4>
     
 
@@ -5214,7 +5510,7 @@ Created to reduce boilerplate from element creation
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line122">line 122</a>
+        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -5945,7 +6241,7 @@ Created to reduce boilerplate from element creation
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line136">line 136</a>
+        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line141">line 141</a>
     </li></ul></dd>
     
 
@@ -6620,7 +6916,7 @@ Created to reduce boilerplate from element creation
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line28">line 28</a>
+        <a href="scripts_summaryPopup.js.html">scripts/summaryPopup.js</a>, <a href="scripts_summaryPopup.js.html#line33">line 33</a>
     </li></ul></dd>
     
 
@@ -9394,7 +9690,7 @@ NOTE: ticks may be slightly longer than the duration due the single threaded nat
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line93">line 93</a>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line96">line 96</a>
     </li></ul></dd>
     
 
@@ -9736,7 +10032,7 @@ input must be already boolean or the strings 'true' | 'false'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line70">line 70</a>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line73">line 73</a>
     </li></ul></dd>
     
 
@@ -9933,7 +10229,7 @@ input must be already boolean or the strings 'true' | 'false'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line52">line 52</a>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line55">line 55</a>
     </li></ul></dd>
     
 
@@ -10095,7 +10391,7 @@ input must be already boolean or the strings 'true' | 'false'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line39">line 39</a>
+        <a href="utils_helpers.js.html">utils/helpers.js</a>, <a href="utils_helpers.js.html#line42">line 42</a>
     </li></ul></dd>
     
 
@@ -10602,13 +10898,13 @@ input must be already boolean or the strings 'true' | 'false'
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#dispatch">dispatch</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentSelectedTask">getCurrentSelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementTask">incrementTask</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#dispatch">dispatch</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentSelectedTask">getCurrentSelectedTask</a></li><li><a href="global.html#getHoursMinutesAndSeconds">getHoursMinutesAndSeconds</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#getTotalSessionTime">getTotalSessionTime</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementTask">incrementTask</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 18:56:42 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 21:57:17 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

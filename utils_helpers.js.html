@@ -30,6 +30,9 @@
  * @file Various utility methods
  */
 
+import { subscribe } from '../models';
+import { INTERVALS } from './constants';
+
 /**
  * Creates an HTMLElement and set its attributes
  * Created to reduce boilerplate from element creation
@@ -122,7 +125,7 @@ const tick = async (duration) =>
   new Promise((res) => setTimeout(res, 1000 * duration));
 
 /**
- * Converts seconds into MM : SS
+ * Converts seconds into MM:SS
  * @param {string} seconds - seconds to convert
  * @return {string} - time in format MM:SS
  */
@@ -134,9 +137,55 @@ const getMinutesAndSeconds = (totalSeconds) => {
   return `${minutes}:${seconds}`;
 };
 
+/**
+ * Converts seconds into HH:MM:SS
+ * @param {string} seconds - seconds to convert
+ * @return {string} - time in format HH h MM m SS s
+ */
+const getHoursMinutesAndSeconds = (totalSeconds) => {
+  const hours = Math.floor(totalSeconds / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
+  const hoursFormatted = hours > 0 ? `${hours}h` : '';
+  const minutesFormatted = minutes > 0 ? `${minutes}m` : '';
+  const secondsFormatted =
+    seconds > 0 || (hours === 0 &amp;&amp; minutes === 0) ? `${seconds}s` : '';
+  return [hoursFormatted, minutesFormatted, secondsFormatted]
+    .filter((s) => s !== '')
+    .join(' ');
+};
+
+/**
+ * Computes total time elapsed during a session
+ * @param {number} numberOfPomodorosCompleted - number of pomodoros completed during the session
+ * @param {{intervalName: string, timeRemaining: number}} lastInterval - the interval in which the session stopped in
+ */
+const getTotalSessionTime = (numberOfPomodorosCompleted, lastInterval) => {
+  const { pomodoroLength, shortBreakLength, longBreakLength } = subscribe();
+  const numberOfLongBreaks = numberOfPomodorosCompleted % 4;
+  const numberOfShortBreaks = numberOfPomodorosCompleted - numberOfLongBreaks;
+  const totalPomodoroTime = numberOfPomodorosCompleted * (60 * pomodoroLength);
+  const totalBreakTime =
+    numberOfShortBreaks * (60 * shortBreakLength) +
+    numberOfLongBreaks * (60 * longBreakLength);
+  const estimatedTotalSessionTime = totalPomodoroTime + totalBreakTime;
+
+  // if session was stopped during pomodoro interval or at the end of a break interval, use the estimated
+  // otherwise, subtract time left in break interval
+  if (
+    lastInterval.intervalName === INTERVALS.pomodoro ||
+    lastInterval.timeRemaining &lt;= 0
+  ) {
+    return estimatedTotalSessionTime;
+  }
+  return estimatedTotalSessionTime - lastInterval.timeRemaining;
+};
+
 export {
   createElement,
   getMinutesAndSeconds,
+  getHoursMinutesAndSeconds,
+  getTotalSessionTime,
   tick,
   validateNumber,
   validateString,
@@ -152,13 +201,13 @@ export {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#dispatch">dispatch</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentSelectedTask">getCurrentSelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementTask">incrementTask</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#dispatch">dispatch</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentSelectedTask">getCurrentSelectedTask</a></li><li><a href="global.html#getHoursMinutesAndSeconds">getHoursMinutesAndSeconds</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#getTotalSessionTime">getTotalSessionTime</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementTask">incrementTask</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 18:56:42 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 21:57:16 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
