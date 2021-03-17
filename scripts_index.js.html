@@ -26,8 +26,7 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>/* eslint-disable no-await-in-loop */
-/**
+            <pre class="prettyprint source linenums"><code>/**
  * @file Entry point for application
  */
 
@@ -39,54 +38,14 @@ import {
   PomodoroCircles,
   Settings,
 } from '../components';
-import {
-  completeTask,
-  deselectAllTasks,
-  getCurrentlySelectedTask,
-  getTasks,
-  incrementPomodoro,
-  initializeTaskList,
-  selectFirstTask,
-  setTasklistUsability,
-} from './taskList';
-import { initializeProgressRing, setProgress } from './progressRing';
-import { initializeTimer, setTimer } from './timer';
-import { initializePomodoroCircles, setCircleCount } from './pomodoroCircles';
-import {
-  initializePopup as initializeSettingsPopup,
-  openPopup as openSettingsPopup,
-  getShortBreakLength,
-  getLongBreakLength,
-  getTimerAudio,
-} from './settings';
-import {
-  initializeAnnouncement,
-  setAnnouncement,
-  setYesButtonCallback as setAnnouncementYesButtonCallback,
-  setNoButtonCallback as setAnnouncementNoButtonCallback,
-  setButtonVisibility,
-} from './announcement';
-import {
-  initializePopup as initializeConfirmationPopup,
-  openPopup as openConfirmationPopup,
-} from './confirmationPopup';
-import {
-  initializePopup as initializeSummaryPopup,
-  openPopup as openSummaryPopup,
-} from './summaryPopup';
-import {
-  POMODORO_ANNOUNCEMENT,
-  SHORT_BREAK_ANNOUNCEMENT,
-  LONG_BREAK_ANNOUNCEMENT,
-  POMODORO_INTERVAL,
-  SHORT_BREAK_INTERVAL,
-  LONG_BREAK_INTERVAL,
-  END_OF_SESSION_ANNOUNCEMENT,
-  TASK_COMPLETION_QUESTION,
-  NO_TASKS_ANNOUNCEMENT,
-  DEFAULT_POMODORO_LENGTH,
-} from '../utils/constants';
-import { tick } from '../utils/helpers';
+import { initializeTaskList } from './taskList';
+import { initializeProgressRing } from './progressRing';
+import { initializeTimer } from './timer';
+import { initializePomodoroCircles } from './pomodoroCircles';
+import { initializePopup as initializeSettingsPopup } from './settings';
+import { initializeAnnouncement } from './announcement';
+import { initializePopup as initializeConfirmationPopup } from './confirmationPopup';
+import initializeController from './controller';
 
 customElements.define('timer-component', Timer);
 customElements.define('progress-ring', ProgressRing);
@@ -94,197 +53,25 @@ customElements.define('task-list', TaskList);
 customElements.define('settings-component', Settings);
 customElements.define('pomodoro-circles', PomodoroCircles);
 
-let isSessionOngoing = false;
-let pomodoroLength = DEFAULT_POMODORO_LENGTH;
-pomodoroLength = 0.05; // TODO: FOR TESTING, remove later
-let shortBreakLength;
-let longBreakLength;
-const timerAudio = new Audio();
-timerAudio.volume = 0.2;
-
-/**
- * Starts and runs interval until interval is completed
- * @param {number} intervalLength - length of interval (in seconds)
- * @return {Promise&lt;void>} - implicitly returns Promise after currTime reaches 0
- */
-const startInterval = async (intervalLength) => {
-  let currTime = intervalLength;
-  while (currTime >= 0) {
-    // quit if session stops
-    if (!isSessionOngoing) {
-      return false;
-    }
-    const currProgress = (100 * currTime) / intervalLength;
-    setTimer(currTime);
-    setProgress(currProgress);
-    await tick(1);
-    currTime--;
-  }
-  return true;
-};
-
-/**
- * Handles pomodoro app, dispatches actions to components depending on the current interval
- * @param {Function} changeSessionButton - changes session button from start to end
- * @return {Promise&lt;number>} - number of pomodoros completed during session, -1 if no tasks are available at the start of the session
- */
-const startSession = async (changeSessionButton) => {
-  let numPomodoros = 0;
-  let currInterval = POMODORO_INTERVAL;
-  let currSelectedTask = null;
-
-  // continue looping if session has not been ended
-  while (isSessionOngoing) {
-    if (currInterval === POMODORO_INTERVAL) {
-      // use previous currTask or next available
-      currSelectedTask = getCurrentlySelectedTask();
-      if (!currSelectedTask) {
-        currSelectedTask = selectFirstTask();
-      }
-
-      // stop if no tasks available
-      if (!currSelectedTask) {
-        return numPomodoros === 0 ? -1 : numPomodoros;
-      }
-
-      // change session button to end when first pomo starts
-      if (numPomodoros === 0) {
-        changeSessionButton();
-      }
-
-      // reset circles if starting new set of 4 pomos
-      if (numPomodoros % 4 === 0) {
-        setCircleCount(0);
-      }
-
-      // disable tasklist
-      setTasklistUsability(false);
-      setAnnouncement(POMODORO_ANNOUNCEMENT);
-
-      // start pomodoro, stop if interval is interrupted
-      const shouldContinue = await startInterval(60 * pomodoroLength);
-      if (!shouldContinue) {
-        return numPomodoros;
-      }
-
-      currSelectedTask = incrementPomodoro(currSelectedTask); // increment task
-      timerAudio.pause();
-      timerAudio.src = getTimerAudio();
-      timerAudio.play();
-
-      // check if break should be short or long
-      numPomodoros++;
-      const circleCount = ((numPomodoros - 1) % 4) + 1; // number of circles to display
-      setCircleCount(circleCount);
-      const shouldBeLongBreak = numPomodoros > 0 &amp;&amp; numPomodoros % 4 === 0;
-      currInterval = shouldBeLongBreak
-        ? LONG_BREAK_INTERVAL
-        : SHORT_BREAK_INTERVAL;
-    } else {
-      // prompt user
-      setButtonVisibility('visible');
-      setAnnouncement(TASK_COMPLETION_QUESTION);
-
-      // copy curr selected task due to weird loop closures
-      const currSelectedTaskCopy = currSelectedTask;
-      const currAnnouncement =
-        currInterval === LONG_BREAK_INTERVAL
-          ? LONG_BREAK_ANNOUNCEMENT
-          : SHORT_BREAK_ANNOUNCEMENT;
-
-      let wasAnnouncementButtonClicked = false;
-      setAnnouncementYesButtonCallback(() => {
-        completeTask(currSelectedTaskCopy);
-        selectFirstTask();
-        setAnnouncement(currAnnouncement);
-        setButtonVisibility('hidden');
-        wasAnnouncementButtonClicked = true;
-        setTasklistUsability(true);
-      });
-      setAnnouncementNoButtonCallback(() => {
-        setAnnouncement(currAnnouncement);
-        setButtonVisibility('hidden');
-        wasAnnouncementButtonClicked = true;
-      });
-
-      // start break, stop if interval is interrupted
-      const shouldContinue = await startInterval(
-        currInterval === LONG_BREAK_INTERVAL
-          ? 60 * longBreakLength
-          : 60 * shortBreakLength,
-      );
-      if (!shouldContinue) {
-        return numPomodoros;
-      }
-
-      timerAudio.pause();
-      timerAudio.src = getTimerAudio();
-      timerAudio.play();
-
-      // hide buttons if they aren't clicked
-      if (!wasAnnouncementButtonClicked) {
-        setButtonVisibility('hidden');
-      }
-      currInterval = POMODORO_INTERVAL;
-    }
-
-    // reset progress and give it time to reset (progress-ring transition is 35s)
-    setProgress(100);
-    await tick(0.5);
-  }
-  return numPomodoros;
-};
-
-/**
- * Handle end of session
- * @param {HTMLElement} sessionButton - session button element
- * @param {number} numPomodoros - number of pomodoros completed during the session
- */
-const endSession = (sessionButton, numPomodoros) => {
-  if (numPomodoros === -1) {
-    setAnnouncement(NO_TASKS_ANNOUNCEMENT);
-  } else {
-    setAnnouncement(END_OF_SESSION_ANNOUNCEMENT);
-  }
-  deselectAllTasks();
-  sessionButton.innerText = 'Start';
-  sessionButton.className = 'session-button';
-  if (numPomodoros > 0) {
-    initializeSummaryPopup(
-      document.querySelector('#summary-overlay'),
-      getTasks(),
-    );
-    openSummaryPopup();
-  }
-};
-
 window.addEventListener('DOMContentLoaded', () => {
-  const settingsIcon = document.querySelector('.material-icons');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
   const circlesElement = progressRingElement.shadowRoot.querySelector(
     '.circles',
   );
-  const sessionButton = document.querySelector('.session-button');
   const announcementElement = document.querySelector('.announcement-container');
   const taskListElement = document.querySelector('.task-list');
   const confirmationOverlay = document.querySelector('#confirmation-overlay');
   const settingsElement = document.querySelector('.settings');
-
-  const saveSettingsCallback = (newShortBreakLength, newLongBreakLength) => {
-    shortBreakLength = newShortBreakLength;
-    longBreakLength = newLongBreakLength;
-  };
 
   initializeProgressRing(progressRingElement);
   initializeTimer(timerElement);
   initializePomodoroCircles(circlesElement);
   initializeAnnouncement(announcementElement);
   initializeTaskList(taskListElement);
-  initializeConfirmationPopup(confirmationOverlay, () => {
-    isSessionOngoing = false;
-  });
-  initializeSettingsPopup(settingsElement, saveSettingsCallback);
+  initializeConfirmationPopup(confirmationOverlay);
+  initializeSettingsPopup(settingsElement);
+  initializeController();
 
   // adjust nav bar color on scroll
   const navBar = document.querySelector('.navbar');
@@ -295,44 +82,6 @@ window.addEventListener('DOMContentLoaded', () => {
       navBar.classList.add('scrolled');
     }
   };
-
-  // initialize variables, event listeners, and component values
-  shortBreakLength = getShortBreakLength();
-  longBreakLength = getLongBreakLength();
-  shortBreakLength = 0.05; // TODO: FOR TESTING, remove later
-  longBreakLength = 0.1; // TODO: FOR TESTING, remove later
-  settingsIcon.onclick = openSettingsPopup;
-  sessionButton.onmousedown = (e) => {
-    e.preventDefault();
-  };
-  timerElement.onclick = () => timerAudio.pause();
-  setTimer(60 * pomodoroLength);
-  deselectAllTasks();
-
-  // start session when start button is clicked
-  sessionButton.addEventListener('click', async () => {
-    if (sessionButton.innerText === 'Start') {
-      isSessionOngoing = true;
-      const changeSessionButton = () => {
-        sessionButton.innerText = 'End';
-        sessionButton.classList.add('session-button', 'in-session');
-      };
-      const numPomodoros = await startSession(changeSessionButton);
-
-      // reenable tasklist and hide announcements
-      setTasklistUsability(true);
-      setButtonVisibility('hidden');
-
-      // reset progress, time, and circles
-      setProgress(100);
-      setTimer(60 * pomodoroLength);
-      setCircleCount(0);
-
-      endSession(sessionButton, numPomodoros);
-    } else {
-      openConfirmationPopup();
-    }
-  });
 });
 </code></pre>
         </article>
@@ -344,13 +93,13 @@ window.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#dispatch">dispatch</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentSelectedTask">getCurrentSelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementTask">incrementTask</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 00:23:45 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 18:56:42 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

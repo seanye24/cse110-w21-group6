@@ -40,6 +40,8 @@
  * @property {boolean} completed          - whether task is completed
  */
 
+import { dispatch, subscribe } from '../models';
+import { ACTIONS, INTERVALS, KEYS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validateTask } from '../utils/taskList';
 
@@ -55,7 +57,7 @@ let taskItemFormInputs;
  * Save current tasks to localStorage
  */
 const saveTasks = () => {
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+  window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
 };
 
 /**
@@ -86,7 +88,7 @@ const getTaskItemButtons = (taskElement) => {
 /**
  * Add task object to DOM, add event listeners to task-item
  * @param {HTMLElement} newTaskElement - new task element to be added
- * @param {'start' | 'end' | HTMLElement} position - position in list to append
+ * @param {('start' | 'end' | HTMLElement)=} position - position in list to append
  * @return {HTMLElement} - new task element added to DOM
  */
 const addTaskToDom = (newTaskElement, position = 'end') => {
@@ -140,14 +142,14 @@ const deleteTask = (taskToDelete) => {
   // update localStorage
   const { taskIndex } = getTask(taskToDelete);
   tasks.splice(taskIndex, 1);
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+  window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
   removeTaskFromDom(taskToDelete);
 };
 
 /**
  * Get currently selected task
  */
-const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
+const getCurrentSelectedTask = () => tasks.find((t) => t.selected);
 
 /**
  * Select a task
@@ -155,7 +157,7 @@ const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
  * @return {Task} - selected task
  */
 const selectTask = (task) => {
-  const prevSelectedTask = getCurrentlySelectedTask();
+  const prevSelectedTask = getCurrentSelectedTask();
   if (prevSelectedTask) {
     updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
   }
@@ -170,7 +172,9 @@ const selectTask = (task) => {
   tasks.unshift(task);
 
   // update selected property of task
-  return updateTask(task, { ...task, selected: true });
+  const updatedTask = { ...task, selected: true };
+  dispatch(ACTIONS.changeSelectedTask, updatedTask);
+  return updateTask(task, updatedTask);
 };
 
 /**
@@ -266,12 +270,12 @@ const handleTaskFormSubmit = (e) => {
 const restoreTasks = () => {
   let restoredTasks;
   try {
-    restoredTasks = JSON.parse(window.localStorage.getItem('tasks'));
+    restoredTasks = JSON.parse(window.localStorage.getItem(KEYS.tasks));
   } catch (e) {
     restoredTasks = null;
   }
   if (!restoredTasks) {
-    window.localStorage.setItem('tasks', JSON.stringify([]));
+    window.localStorage.setItem(KEYS.tasks, JSON.stringify([]));
     restoredTasks = [];
   }
 
@@ -300,7 +304,7 @@ const checkDuplicateTask = (e) => {
  * @param {Task} task - task to be incremented
  * @return {Task} - incremented task
  */
-const incrementPomodoro = (task) => {
+const incrementTask = (task) => {
   const { usedPomodoros } = task;
   return updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
 };
@@ -363,22 +367,24 @@ const setTasklistUsability = (shouldTasklistBeUsable) => {
  * @param {Task} completedTask - task that has been completed
  */
 const completeTask = (completedTask) => {
-  const { taskIndex, taskElement } = getTask(completedTask);
+  const { taskIndex } = getTask(completedTask);
 
-  // mark task as completed and move it to end of DOM list
-  removeTaskFromDom(completedTask);
-  addTaskToDom(taskElement, 'end');
-  taskElement.selected = false;
-  taskElement.completed = true;
-  taskElement.shadowRoot.querySelector('.text-container').onclick = null;
+  // move task to bottom of list in DOM
+  const removedTask = removeTaskFromDom(completedTask);
+  addTaskToDom(removedTask, 'end');
+  removedTask.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array
+  tasks.splice(taskIndex, 1);
+  tasks.push(completedTask);
+  /*
   const [removedTask] = tasks.splice(taskIndex, 1);
   tasks.push({ ...removedTask, selected: false, completed: true });
+  */
 
-  // update selected property of task
-  updateTask(completedTask, {
-    ...removedTask,
+  // update task
+  return updateTask(completedTask, {
+    ...completedTask,
     selected: false,
     completed: true,
   });
@@ -411,6 +417,45 @@ const initializeTaskList = (root) => {
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
   restoreTasks();
   taskItemFormInputs.name.oninput = checkDuplicateTask;
+  deselectAllTasks();
+
+  subscribe({
+    [ACTIONS.changeSession]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        deselectAllTasks();
+        setTasklistUsability(true);
+      } else if (sessionState.session === 'active') {
+        if (sessionState.currentSelectedTask === null) {
+          selectFirstTask();
+        }
+        setTasklistUsability(false);
+      }
+    },
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        if (sessionState.currentInterval === INTERVALS.pomodoro) {
+          if (sessionState.currentSelectedTask === null) {
+            selectFirstTask();
+          }
+          setTasklistUsability(false);
+        }
+      }
+    },
+    [ACTIONS.incrementSelectedTask]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        const incrementedTask = incrementTask(sessionState.currentSelectedTask);
+        dispatch(ACTIONS.changeSelectedTask, incrementedTask);
+      }
+    },
+    [ACTIONS.completeSelectedTask]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        const completedTask = completeTask(sessionState.currentSelectedTask);
+        dispatch(ACTIONS.changeSelectedTask, null);
+        dispatch(ACTIONS.addToCompletedTasks, completedTask);
+        setTasklistUsability(true);
+      }
+    },
+  });
 };
 
 export {
@@ -419,11 +464,11 @@ export {
   getTasks,
   updateTask,
   deleteTask,
-  incrementPomodoro,
+  incrementTask,
   selectTask,
   selectFirstTask,
   deselectAllTasks,
-  getCurrentlySelectedTask,
+  getCurrentSelectedTask,
   setTasklistUsability,
   completeTask,
   handleTaskFormSubmit,
@@ -438,13 +483,13 @@ export {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentlySelectedTask">getCurrentlySelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementPomodoro">incrementPomodoro</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setNoButtonCallback">setNoButtonCallback</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#setYesButtonCallback">setYesButtonCallback</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="PomodoroCircles.html">PomodoroCircles</a></li><li><a href="ProgressRing.html">ProgressRing</a></li><li><a href="Settings.html">Settings</a></li><li><a href="TaskItem.html">TaskItem</a></li><li><a href="TaskItemForm.html">TaskItemForm</a></li><li><a href="TaskList.html">TaskList</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTask">addTask</a></li><li><a href="global.html#addTaskToDom">addTaskToDom</a></li><li><a href="global.html#checkDuplicateTask">checkDuplicateTask</a></li><li><a href="global.html#closePopup">closePopup</a></li><li><a href="global.html#completeTask">completeTask</a></li><li><a href="global.html#createElement">createElement</a></li><li><a href="global.html#createTaskElement">createTaskElement</a></li><li><a href="global.html#createTaskSummary">createTaskSummary</a></li><li><a href="global.html#createTaskSummaryList">createTaskSummaryList</a></li><li><a href="global.html#deleteTask">deleteTask</a></li><li><a href="global.html#deselectAllTasks">deselectAllTasks</a></li><li><a href="global.html#dispatch">dispatch</a></li><li><a href="global.html#endSession">endSession</a></li><li><a href="global.html#getCircleCount">getCircleCount</a></li><li><a href="global.html#getCurrentSelectedTask">getCurrentSelectedTask</a></li><li><a href="global.html#getLongBreakLength">getLongBreakLength</a></li><li><a href="global.html#getMinutesAndSeconds">getMinutesAndSeconds</a></li><li><a href="global.html#getProgress">getProgress</a></li><li><a href="global.html#getRadius">getRadius</a></li><li><a href="global.html#getShortBreakLength">getShortBreakLength</a></li><li><a href="global.html#getStroke">getStroke</a></li><li><a href="global.html#getTask">getTask</a></li><li><a href="global.html#getTaskItemButtons">getTaskItemButtons</a></li><li><a href="global.html#getTasks">getTasks</a></li><li><a href="global.html#getTime">getTime</a></li><li><a href="global.html#getTimerAudio">getTimerAudio</a></li><li><a href="global.html#handleTaskFormSubmit">handleTaskFormSubmit</a></li><li><a href="global.html#incrementTask">incrementTask</a></li><li><a href="global.html#initializeAnnouncement">initializeAnnouncement</a></li><li><a href="global.html#initializeElements">initializeElements</a></li><li><a href="global.html#initializeIntervalLengths">initializeIntervalLengths</a></li><li><a href="global.html#initializePomodoroCircles">initializePomodoroCircles</a></li><li><a href="global.html#initializePopup">initializePopup</a></li><li><a href="global.html#initializeProgressRing">initializeProgressRing</a></li><li><a href="global.html#initializeTaskList">initializeTaskList</a></li><li><a href="global.html#initializeTimer">initializeTimer</a></li><li><a href="global.html#openPopup">openPopup</a></li><li><a href="global.html#removeTaskFromDom">removeTaskFromDom</a></li><li><a href="global.html#restoreTasks">restoreTasks</a></li><li><a href="global.html#saveSettings">saveSettings</a></li><li><a href="global.html#saveTasks">saveTasks</a></li><li><a href="global.html#selectFirstTask">selectFirstTask</a></li><li><a href="global.html#selectTask">selectTask</a></li><li><a href="global.html#setAnnouncement">setAnnouncement</a></li><li><a href="global.html#setButtonVisibility">setButtonVisibility</a></li><li><a href="global.html#setCircleCount">setCircleCount</a></li><li><a href="global.html#setLongBreakLength">setLongBreakLength</a></li><li><a href="global.html#setProgress">setProgress</a></li><li><a href="global.html#setRadius">setRadius</a></li><li><a href="global.html#setShortBreakLength">setShortBreakLength</a></li><li><a href="global.html#setStroke">setStroke</a></li><li><a href="global.html#setTasklistUsability">setTasklistUsability</a></li><li><a href="global.html#setTimer">setTimer</a></li><li><a href="global.html#setTimerAudio">setTimerAudio</a></li><li><a href="global.html#startInterval">startInterval</a></li><li><a href="global.html#startSession">startSession</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#tick">tick</a></li><li><a href="global.html#updateTask">updateTask</a></li><li><a href="global.html#validateBoolean">validateBoolean</a></li><li><a href="global.html#validateCircleCount">validateCircleCount</a></li><li><a href="global.html#validateContainerRadius">validateContainerRadius</a></li><li><a href="global.html#validateLength">validateLength</a></li><li><a href="global.html#validateLongBreakLength">validateLongBreakLength</a></li><li><a href="global.html#validateNumber">validateNumber</a></li><li><a href="global.html#validatePomodoro">validatePomodoro</a></li><li><a href="global.html#validateProgress">validateProgress</a></li><li><a href="global.html#validateShortBreakLength">validateShortBreakLength</a></li><li><a href="global.html#validateString">validateString</a></li><li><a href="global.html#validateTask">validateTask</a></li><li><a href="global.html#validateTime">validateTime</a></li><li><a href="global.html#validateTimerAudio">validateTimerAudio</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 00:23:45 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 18:56:42 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
