@@ -3,12 +3,7 @@
  */
 
 import { subscribe } from '../models';
-import {
-  ACTIONS,
-  LONG_BREAK_INTERVAL,
-  POMODORO_INTERVAL,
-  SHORT_BREAK_INTERVAL,
-} from '../utils/constants';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validateLength, validateProgress } from '../utils/progressRing';
 
@@ -151,7 +146,7 @@ class ProgressRing extends HTMLElement {
     this.timerComponent.containerRadius = radius;
 
     subscribe({
-      [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+      [ACTIONS.changeSession]: (sessionState) => {
         if (sessionState.session === 'inactive') {
           this.overlayCircleElement.setAttribute(
             'class',
@@ -159,22 +154,22 @@ class ProgressRing extends HTMLElement {
           );
         }
       },
-      [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+      [ACTIONS.changeInterval]: (sessionState) => {
         if (sessionState.session === 'active') {
-          switch (sessionState.currInterval) {
-            case POMODORO_INTERVAL:
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
               this.overlayCircleElement.setAttribute(
                 'class',
                 'overlay-circle pomodoro',
               );
               break;
-            case SHORT_BREAK_INTERVAL:
+            case INTERVALS.shortBreak:
               this.overlayCircleElement.setAttribute(
                 'class',
                 'overlay-circle short-break',
               );
               break;
-            case LONG_BREAK_INTERVAL:
+            case INTERVALS.longBreak:
               this.overlayCircleElement.setAttribute(
                 'class',
                 'overlay-circle long-break',

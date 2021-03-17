@@ -6,12 +6,7 @@ import { createElement } from '../utils/helpers';
 import TaskItem from './TaskItem';
 import TaskItemForm from './TaskItemForm';
 import { subscribe } from '../models';
-import {
-  ACTIONS,
-  LONG_BREAK_INTERVAL,
-  POMODORO_INTERVAL,
-  SHORT_BREAK_INTERVAL,
-} from '../utils/constants';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 
 customElements.define('task-item', TaskItem);
 customElements.define('task-item-form', TaskItemForm);
@@ -86,21 +81,21 @@ class TaskList extends HTMLElement {
     );
 
     subscribe({
-      [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+      [ACTIONS.changeSession]: (sessionState) => {
         if (sessionState.session === 'inactive') {
           this.containerElement.className = 'container pomodoro';
         }
       },
-      [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+      [ACTIONS.changeInterval]: (sessionState) => {
         if (sessionState.session === 'active') {
-          switch (sessionState.currInterval) {
-            case POMODORO_INTERVAL:
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
               this.containerElement.className = 'container pomodoro';
               break;
-            case SHORT_BREAK_INTERVAL:
+            case INTERVALS.shortBreak:
               this.containerElement.className = 'container short-break';
               break;
-            case LONG_BREAK_INTERVAL:
+            case INTERVALS.longBreak:
               this.containerElement.className = 'container long-break';
               break;
             default:

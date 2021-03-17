@@ -3,7 +3,7 @@
  */
 
 import { dispatch } from '../models';
-import { ACTIONS, TIMER_AUDIOS } from '../utils/constants';
+import { ACTIONS, KEYS, TIMER_AUDIOS } from '../utils/constants';
 import {
   validateShortBreakLength,
   validateLongBreakLength,
@@ -129,12 +129,12 @@ const saveSettings = () => {
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
   setTimerAudio(timerAudio);
-  dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, newShortBreakLength);
-  dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, newLongBreakLength);
-  dispatch(ACTIONS.SET_TIMER_AUDIO, timerAudio);
-  window.localStorage.setItem('shortBreakLength', newShortBreakLength);
-  window.localStorage.setItem('longBreakLength', newLongBreakLength);
-  window.localStorage.setItem('timerAudio', timerAudio);
+  dispatch(ACTIONS.changeShortBreakLength, newShortBreakLength);
+  dispatch(ACTIONS.changeLongBreakLength, newLongBreakLength);
+  dispatch(ACTIONS.changeTimerAudio, timerAudio);
+  window.localStorage.setItem(KEYS.shortBreakLength, newShortBreakLength);
+  window.localStorage.setItem(KEYS.longBreakLength, newLongBreakLength);
+  window.localStorage.setItem(KEYS.timerAudio, timerAudio);
   return [newShortBreakLength, newLongBreakLength];
 };
 
@@ -172,17 +172,17 @@ const initializePopup = (root) => {
   initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
-  dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, shortBreakLength);
-  dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, longBreakLength);
+  dispatch(ACTIONS.changeShortBreakLength, shortBreakLength);
+  dispatch(ACTIONS.changeLongBreakLength, longBreakLength);
 
-  const savedTimerAudio = window.localStorage.getItem('timerAudio');
+  const savedTimerAudio = window.localStorage.getItem(KEYS.timerAudio);
   if (validateTimerAudio(savedTimerAudio) === null) {
     setTimerAudio(TIMER_AUDIOS.calm);
-    window.localStorage.setItem('timerAudio', TIMER_AUDIOS.calm);
-    dispatch(ACTIONS.SET_TIMER_AUDIO, TIMER_AUDIOS.calm);
+    window.localStorage.setItem(KEYS.timerAudio, TIMER_AUDIOS.calm);
+    dispatch(ACTIONS.changeTimerAudio, TIMER_AUDIOS.calm);
   } else {
     setTimerAudio(savedTimerAudio);
-    dispatch(ACTIONS.SET_TIMER_AUDIO, savedTimerAudio);
+    dispatch(ACTIONS.changeTimerAudio, savedTimerAudio);
   }
 
   overlay.onclick = closePopup;
@@ -193,8 +193,8 @@ const initializePopup = (root) => {
       return;
     }
     popupFunctions.closePopup();
-    dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, newBreakLengths[0]);
-    dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, newBreakLengths[1]);
+    dispatch(ACTIONS.changeShortBreakLength, newBreakLengths[0]);
+    dispatch(ACTIONS.changeLongBreakLength, newBreakLengths[1]);
   });
 
   soundInput.onchange = () => {

@@ -47,7 +47,7 @@ const initializePopup = (root) => {
   yesButton.onmousedown = (e) => e.preventDefault();
   yesButton.onclick = () => {
     closePopup();
-    dispatch(ACTIONS.CHANGE_SESSION, 'inactive');
+    dispatch(ACTIONS.changeSession, 'inactive');
   };
   noButton.onclick = closePopup;
   confirmationOverlay.onclick = closePopup;

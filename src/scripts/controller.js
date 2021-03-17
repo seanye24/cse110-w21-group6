@@ -1,15 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import { dispatch, subscribe } from '../models';
-import {
-  ACTIONS,
-  END_OF_SESSION_ANNOUNCEMENT,
-  LONG_BREAK_ANNOUNCEMENT,
-  LONG_BREAK_INTERVAL,
-  NO_TASKS_ANNOUNCEMENT,
-  POMODORO_INTERVAL,
-  SHORT_BREAK_ANNOUNCEMENT,
-  SHORT_BREAK_INTERVAL,
-} from '../utils/constants';
+import { ACTIONS, ANNOUNCEMENTS, INTERVALS } from '../utils/constants';
 import { tick } from '../utils/helpers';
 import { setAnnouncement, setButtonVisibility } from './announcement';
 import { openPopup as openConfirmationPopup } from './confirmationPopup';
@@ -21,10 +12,10 @@ import {
 import { getTasks, selectFirstTask, setTasklistUsability } from './taskList';
 
 let session;
-let numPomodoros;
-let currTime;
-let currInterval;
-let currSelectedTask;
+let numberOfPomodorosCompleted;
+let currentTime;
+let currentInterval;
+let currentSelectedTask;
 let pomodoroLength;
 let shortBreakLength;
 let longBreakLength;
@@ -34,18 +25,18 @@ let wasAnnouncementButtonClicked;
 /**
  * Starts and runs interval until interval is completed
  * @param {number} intervalLength - length of interval (in seconds)
- * @return {Promise<void>} - implicitly returns Promise after currTime reaches 0
+ * @return {Promise<void>} - implicitly returns Promise after currentTime reaches 0
  */
 const startInterval = async (intervalLength) => {
-  dispatch(ACTIONS.CHANGE_TIME, intervalLength);
-  while (currTime >= 0) {
+  dispatch(ACTIONS.changeTime, intervalLength);
+  while (currentTime >= 0) {
     // quit if session stops
     if (session === 'inactive') {
       return false;
     }
     await tick(1);
     if (session === 'active') {
-      dispatch(ACTIONS.CHANGE_TIME, currTime - 1);
+      dispatch(ACTIONS.changeTime, currentTime - 1);
     }
   }
   return true;
@@ -57,17 +48,17 @@ const startInterval = async (intervalLength) => {
 const startSession = async () => {
   // continue looping if session has not been ended
   while (session === 'active') {
-    if (currInterval === POMODORO_INTERVAL) {
+    if (currentInterval === INTERVALS.pomodoro) {
       // if no tasks are selected, try to select first task
-      if (!currSelectedTask) {
+      if (!currentSelectedTask) {
         selectFirstTask();
       }
       // stop if no tasks available
-      if (!currSelectedTask) {
-        if (numPomodoros === 0) {
-          dispatch(ACTIONS.SET_NUM_POMODOROS, -1); // if session is stopped bc no tasks are available, set numPomodoros to -1
+      if (!currentSelectedTask) {
+        if (numberOfPomodorosCompleted === 0) {
+          dispatch(ACTIONS.incrementNumberOfPomodoros, -1); // if session is stopped bc no tasks are available, set numPomodoros to -1
         }
-        dispatch(ACTIONS.CHANGE_SESSION, 'inactive');
+        dispatch(ACTIONS.changeSession, 'inactive');
         return;
       }
 
@@ -77,29 +68,33 @@ const startSession = async () => {
         return;
       }
 
-      dispatch(ACTIONS.INCREMENT_CURRENT_TASK);
-      dispatch(ACTIONS.SET_NUM_POMODOROS, numPomodoros + 1);
+      dispatch(ACTIONS.incrementCurrentTask);
+      dispatch(
+        ACTIONS.incrementNumberOfPomodoros,
+        numberOfPomodorosCompleted + 1,
+      );
 
       // check if break should be short or long
-      const shouldBeLongBreak = numPomodoros > 0 && numPomodoros % 4 === 0;
+      const shouldBeLongBreak =
+        numberOfPomodorosCompleted > 0 && numberOfPomodorosCompleted % 4 === 0;
       const nextInterval = shouldBeLongBreak
-        ? LONG_BREAK_INTERVAL
-        : SHORT_BREAK_INTERVAL;
-      dispatch(ACTIONS.CHANGE_INTERVAL, nextInterval);
+        ? INTERVALS.longBreak
+        : INTERVALS.shortBreak;
+      dispatch(ACTIONS.changeInterval, nextInterval);
     } else {
       wasAnnouncementButtonClicked = false;
       // start break, stop if interval is interrupted
       const nextIntervalLength =
-        currInterval === LONG_BREAK_INTERVAL
+        currentInterval === INTERVALS.longBreak
           ? longBreakLength
           : shortBreakLength;
       const shouldContinue = await startInterval(60 * nextIntervalLength);
 
       // choose no if user didn't pick
       if (!wasAnnouncementButtonClicked) {
-        dispatch(ACTIONS.DID_NOT_COMPLETE_CURRENT_TASK);
+        dispatch(ACTIONS.doNotCompleteCurrentTask);
       }
-      dispatch(ACTIONS.CHANGE_INTERVAL, POMODORO_INTERVAL);
+      dispatch(ACTIONS.changeInterval, INTERVALS.pomodoro);
 
       if (!shouldContinue) {
         return;
@@ -110,23 +105,22 @@ const startSession = async () => {
 
 /**
  * Handle end of session
- * @param {number} numPomodoros - number of pomodoros completed during the session
  */
 const endSession = () => {
-  if (numPomodoros === -1) {
-    setAnnouncement(NO_TASKS_ANNOUNCEMENT);
+  if (numberOfPomodorosCompleted === -1) {
+    setAnnouncement(ANNOUNCEMENTS.noTasksAvailable);
   } else {
-    setAnnouncement(END_OF_SESSION_ANNOUNCEMENT);
+    setAnnouncement(ANNOUNCEMENTS.endOfSession);
   }
-  if (numPomodoros > 0) {
+  if (numberOfPomodorosCompleted > 0) {
     initializeSummaryPopup(
       document.querySelector('#summary-overlay'),
       getTasks(),
     );
     openSummaryPopup();
   }
-  dispatch(ACTIONS.SET_NUM_POMODOROS, 0);
-  dispatch(ACTIONS.CHANGE_TIME, 0);
+  dispatch(ACTIONS.incrementNumberOfPomodoros, 0);
+  dispatch(ACTIONS.changeTime, 0);
 };
 
 const initializeController = () => {
@@ -162,27 +156,27 @@ const initializeController = () => {
     }
   };
   const onChangeTime = (sessionState) => {
-    currTime = sessionState.currTime;
+    currentTime = sessionState.currentTime;
   };
   const onChangeInterval = (sessionState) => {
-    currInterval = sessionState.currInterval;
+    currentInterval = sessionState.currentInterval;
 
-    switch (currInterval) {
-      case POMODORO_INTERVAL:
+    switch (currentInterval) {
+      case INTERVALS.pomodoro:
         elementsThatChangeTheme.forEach((elem) => {
           elem.classList.add('pomodoro');
           elem.classList.remove('short-break');
           elem.classList.remove('long-break');
         });
         break;
-      case SHORT_BREAK_INTERVAL:
+      case INTERVALS.shortBreak:
         elementsThatChangeTheme.forEach((elem) => {
           elem.classList.remove('pomodoro');
           elem.classList.add('short-break');
           elem.classList.remove('long-break');
         });
         break;
-      case LONG_BREAK_INTERVAL:
+      case INTERVALS.longBreak:
         elementsThatChangeTheme.forEach((elem) => {
           elem.classList.remove('pomodoro');
           elem.classList.remove('short-break');
@@ -193,16 +187,16 @@ const initializeController = () => {
     }
 
     // play timer audio at the end of every interval
-    if (sessionState.numPomodoros > 0) {
+    if (sessionState.numberOfPomodorosCompleted > 0) {
       timerAudio.pause();
       timerAudio.play().catch(() => true); // ignore if interrupted
     }
   };
   const onSelectTask = (sessionState) => {
-    currSelectedTask = sessionState.currSelectedTask;
+    currentSelectedTask = sessionState.currentSelectedTask;
   };
   const onChangeNumPomodoros = (sessionState) => {
-    numPomodoros = sessionState.numPomodoros;
+    numberOfPomodorosCompleted = sessionState.numberOfPomodorosCompleted;
   };
   const onChangePomodoroLength = (sessionState) => {
     pomodoroLength = sessionState.pomodoroLength;
@@ -220,48 +214,48 @@ const initializeController = () => {
     setTasklistUsability(true);
     setButtonVisibility('hidden');
     wasAnnouncementButtonClicked = true;
-    if (sessionState.currInterval === SHORT_BREAK_INTERVAL) {
-      setAnnouncement(SHORT_BREAK_ANNOUNCEMENT);
-    } else if (sessionState.currInterval === LONG_BREAK_INTERVAL) {
-      setAnnouncement(LONG_BREAK_ANNOUNCEMENT);
+    if (sessionState.currentInterval === INTERVALS.shortBreak) {
+      setAnnouncement(INTERVALS.shortBreak);
+    } else if (sessionState.currentInterval === INTERVALS.longBreak) {
+      setAnnouncement(INTERVALS.longBreak);
     }
   };
   const onDidNotCompleteTask = (sessionState) => {
     setButtonVisibility('hidden');
     wasAnnouncementButtonClicked = true;
-    if (sessionState.currInterval === SHORT_BREAK_INTERVAL) {
-      setAnnouncement(SHORT_BREAK_ANNOUNCEMENT);
-    } else if (sessionState.currInterval === LONG_BREAK_INTERVAL) {
-      setAnnouncement(LONG_BREAK_ANNOUNCEMENT);
+    if (sessionState.currentInterval === INTERVALS.shortBreak) {
+      setAnnouncement(ANNOUNCEMENTS.shortBreakInterval);
+    } else if (sessionState.currentInterval === INTERVALS.longBreak) {
+      setAnnouncement(ANNOUNCEMENTS.longBreakInterval);
     }
   };
 
   ({
     session,
-    numPomodoros,
-    currTime,
-    currInterval,
-    currSelectedTask,
+    numberOfPomodorosCompleted,
+    currentTime,
+    currentInterval,
+    currentSelectedTask,
     pomodoroLength,
     shortBreakLength,
     longBreakLength,
     timerAudio,
   } = subscribe({
-    [ACTIONS.CHANGE_SESSION]: onChangeSession,
-    [ACTIONS.SET_NUM_POMODOROS]: onChangeNumPomodoros,
-    [ACTIONS.CHANGE_TIME]: onChangeTime,
-    [ACTIONS.CHANGE_INTERVAL]: onChangeInterval,
-    [ACTIONS.SELECT_TASK]: onSelectTask,
-    [ACTIONS.SET_POMODORO_LENGTH]: onChangePomodoroLength,
-    [ACTIONS.SET_SHORT_BREAK_LENGTH]: onChangeShortBreakLength,
-    [ACTIONS.SET_LONG_BREAK_LENGTH]: onChangeLongBreakLength,
-    [ACTIONS.SET_TIMER_AUDIO]: onChangeTimerAudio,
-    [ACTIONS.COMPLETE_CURRENT_TASK]: onCompleteTask,
-    [ACTIONS.DID_NOT_COMPLETE_CURRENT_TASK]: onDidNotCompleteTask,
+    [ACTIONS.changeSession]: onChangeSession,
+    [ACTIONS.incrementNumberOfPomodoros]: onChangeNumPomodoros,
+    [ACTIONS.changeTime]: onChangeTime,
+    [ACTIONS.changeInterval]: onChangeInterval,
+    [ACTIONS.selectTask]: onSelectTask,
+    [ACTIONS.incrementNumberOfPomodoros]: onChangePomodoroLength,
+    [ACTIONS.changeShortBreakLength]: onChangeShortBreakLength,
+    [ACTIONS.changeLongBreakLength]: onChangeLongBreakLength,
+    [ACTIONS.changeTimerAudio]: onChangeTimerAudio,
+    [ACTIONS.completeCurrentTask]: onCompleteTask,
+    [ACTIONS.doNotCompleteCurrentTask]: onDidNotCompleteTask,
   }));
 
-  dispatch(ACTIONS.SET_SHORT_BREAK_LENGTH, 0.1); // TODO: FOR TESTING, remove later
-  dispatch(ACTIONS.SET_LONG_BREAK_LENGTH, 0.1); // TODO: FOR TESTING, remove later
+  dispatch(ACTIONS.changeShortBreakLength, 0.1); // TODO: FOR TESTING, remove later
+  dispatch(ACTIONS.changeLongBreakLength, 0.1); // TODO: FOR TESTING, remove later
 
   // initialize variables, event listeners, and component values
   settingsIcon.onclick = openSettingsPopup;
@@ -279,7 +273,7 @@ const initializeController = () => {
       timerAudio.play().catch(() => true); // ignore if interrupted
       timerAudio.src = oldTimerAudioSrc;
 
-      dispatch(ACTIONS.CHANGE_SESSION, 'active');
+      dispatch(ACTIONS.changeSession, 'active');
       await startSession();
     } else {
       openConfirmationPopup();

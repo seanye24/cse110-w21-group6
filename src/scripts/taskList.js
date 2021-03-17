@@ -13,7 +13,7 @@
  */
 
 import { dispatch, subscribe } from '../models';
-import { POMODORO_INTERVAL, ACTIONS } from '../utils/constants';
+import { ACTIONS, INTERVALS, KEYS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validateTask } from '../utils/taskList';
 
@@ -29,7 +29,7 @@ let taskItemFormInputs;
  * Save current tasks to localStorage
  */
 const saveTasks = () => {
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+  window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
 };
 
 /**
@@ -114,14 +114,14 @@ const deleteTask = (taskToDelete) => {
   // update localStorage
   const { taskIndex } = getTask(taskToDelete);
   tasks.splice(taskIndex, 1);
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+  window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
   removeTaskFromDom(taskToDelete);
 };
 
 /**
  * Get currently selected task
  */
-const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
+const getCurrentSelectedTask = () => tasks.find((t) => t.selected);
 
 /**
  * Select a task
@@ -129,7 +129,7 @@ const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
  * @return {Task} - selected task
  */
 const selectTask = (task) => {
-  const prevSelectedTask = getCurrentlySelectedTask();
+  const prevSelectedTask = getCurrentSelectedTask();
   if (prevSelectedTask) {
     updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
   }
@@ -145,7 +145,7 @@ const selectTask = (task) => {
 
   // update selected property of task
   const updatedTask = { ...task, selected: true };
-  dispatch(ACTIONS.SELECT_TASK, updatedTask);
+  dispatch(ACTIONS.selectTask, updatedTask);
   return updateTask(task, updatedTask);
 };
 
@@ -242,12 +242,12 @@ const handleTaskFormSubmit = (e) => {
 const restoreTasks = () => {
   let restoredTasks;
   try {
-    restoredTasks = JSON.parse(window.localStorage.getItem('tasks'));
+    restoredTasks = JSON.parse(window.localStorage.getItem(KEYS.tasks));
   } catch (e) {
     restoredTasks = null;
   }
   if (!restoredTasks) {
-    window.localStorage.setItem('tasks', JSON.stringify([]));
+    window.localStorage.setItem(KEYS.tasks, JSON.stringify([]));
     restoredTasks = [];
   }
 
@@ -299,7 +299,7 @@ const deselectAllTasks = () => {
   tasks.forEach((task) => {
     updateTask(task, { ...task, selected: false });
   });
-  dispatch(ACTIONS.SELECT_TASK, null);
+  dispatch(ACTIONS.selectTask, null);
 };
 
 /**
@@ -359,7 +359,7 @@ const completeTask = (completedTask) => {
     selected: false,
     completed: true,
   });
-  dispatch(ACTIONS.SELECT_TASK, null);
+  dispatch(ACTIONS.selectTask, null);
 };
 
 /**
@@ -392,7 +392,7 @@ const initializeTaskList = (root) => {
   deselectAllTasks();
 
   subscribe({
-    [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+    [ACTIONS.changeSession]: (sessionState) => {
       if (sessionState.session === 'inactive') {
         deselectAllTasks();
         setTasklistUsability(true);
@@ -400,21 +400,21 @@ const initializeTaskList = (root) => {
         setTasklistUsability(false);
       }
     },
-    [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+    [ACTIONS.changeInterval]: (sessionState) => {
       if (sessionState.session === 'active') {
-        if (sessionState.currInterval === POMODORO_INTERVAL) {
+        if (sessionState.currentInterval === INTERVALS.pomodoro) {
           setTasklistUsability(false);
         }
       }
     },
-    [ACTIONS.INCREMENT_CURRENT_TASK]: (sessionState) => {
+    [ACTIONS.incrementCurrentTask]: (sessionState) => {
       if (sessionState.session === 'active') {
-        incrementTask(sessionState.currSelectedTask);
+        incrementTask(sessionState.currentSelectedTask);
       }
     },
-    [ACTIONS.COMPLETE_CURRENT_TASK]: (sessionState) => {
+    [ACTIONS.completeCurrentTask]: (sessionState) => {
       if (sessionState.session === 'active') {
-        completeTask(sessionState.currSelectedTask);
+        completeTask(sessionState.currentSelectedTask);
         setTasklistUsability(true);
         selectFirstTask();
       }
@@ -432,7 +432,7 @@ export {
   selectTask,
   selectFirstTask,
   deselectAllTasks,
-  getCurrentlySelectedTask,
+  getCurrentSelectedTask,
   setTasklistUsability,
   completeTask,
   handleTaskFormSubmit,

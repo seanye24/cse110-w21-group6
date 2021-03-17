@@ -3,12 +3,7 @@
  */
 
 import { subscribe } from '../models';
-import {
-  ACTIONS,
-  LONG_BREAK_INTERVAL,
-  POMODORO_INTERVAL,
-  SHORT_BREAK_INTERVAL,
-} from '../utils/constants';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import {
   createElement,
   validateBoolean,
@@ -251,27 +246,27 @@ class TaskItem extends HTMLElement {
     this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
 
     subscribe({
-      [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+      [ACTIONS.changeSession]: (sessionState) => {
         if (sessionState.session === 'inactive') {
           this.itemContainerElement.classList.add('pomodoro');
           this.itemContainerElement.classList.remove('short-break');
           this.itemContainerElement.classList.remove('long-break');
         }
       },
-      [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+      [ACTIONS.changeInterval]: (sessionState) => {
         if (sessionState.session === 'active') {
-          switch (sessionState.currInterval) {
-            case POMODORO_INTERVAL:
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
               this.itemContainerElement.classList.add('pomodoro');
               this.itemContainerElement.classList.remove('short-break');
               this.itemContainerElement.classList.remove('long-break');
               break;
-            case SHORT_BREAK_INTERVAL:
+            case INTERVALS.shortBreak:
               this.itemContainerElement.classList.remove('pomodoro');
               this.itemContainerElement.classList.add('short-break');
               this.itemContainerElement.classList.remove('long-break');
               break;
-            case LONG_BREAK_INTERVAL:
+            case INTERVALS.longBreak:
               this.itemContainerElement.classList.remove('pomodoro');
               this.itemContainerElement.classList.remove('short-break');
               this.itemContainerElement.classList.add('long-break');

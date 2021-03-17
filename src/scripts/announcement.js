@@ -3,14 +3,7 @@
  */
 
 import { dispatch, subscribe } from '../models';
-import {
-  ACTIONS,
-  LONG_BREAK_INTERVAL,
-  POMODORO_ANNOUNCEMENT,
-  POMODORO_INTERVAL,
-  SHORT_BREAK_INTERVAL,
-  TASK_COMPLETION_QUESTION,
-} from '../utils/constants';
+import { ACTIONS, ANNOUNCEMENTS, INTERVALS } from '../utils/constants';
 
 let announcementContainer;
 let announcementElement;
@@ -51,30 +44,31 @@ const initializeAnnouncement = (containerElement) => {
   yesButton.onmousedown = (e) => e.preventDefault();
   noButton.onmousedown = (e) => e.preventDefault();
 
-  yesButton.onclick = () => dispatch(ACTIONS.COMPLETE_CURRENT_TASK);
-  noButton.onclick = () => dispatch(ACTIONS.DID_NOT_COMPLETE_CURRENT_TASK);
+  yesButton.onclick = () => dispatch(ACTIONS.completeCurrentTask);
+  noButton.onclick = () => dispatch(ACTIONS.doNotCompleteCurrentTask);
 
+  setAnnouncement(ANNOUNCEMENTS.introduction);
   subscribe({
-    [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+    [ACTIONS.changeSession]: (sessionState) => {
       if (sessionState.session === 'inactive') {
         setButtonVisibility('hidden');
       } else if (sessionState.session === 'active') {
-        setAnnouncement(POMODORO_ANNOUNCEMENT);
+        setAnnouncement(ANNOUNCEMENTS.pomodoroInterval);
       }
     },
-    [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+    [ACTIONS.changeInterval]: (sessionState) => {
       if (sessionState.session === 'active') {
-        switch (sessionState.currInterval) {
-          case POMODORO_INTERVAL:
-            setAnnouncement(POMODORO_ANNOUNCEMENT);
+        switch (sessionState.currentInterval) {
+          case INTERVALS.pomodoro:
+            setAnnouncement(ANNOUNCEMENTS.pomodoroInterval);
             [yesButton, noButton].forEach((btn) => {
               btn.classList.add('pomodoro');
               btn.classList.remove('short-break');
               btn.classList.remove('long-break');
             });
             break;
-          case SHORT_BREAK_INTERVAL:
-            setAnnouncement(TASK_COMPLETION_QUESTION);
+          case INTERVALS.shortBreak:
+            setAnnouncement(ANNOUNCEMENTS.taskCompletionQuestion);
             setButtonVisibility('visible');
             [yesButton, noButton].forEach((btn) => {
               btn.classList.remove('pomodoro');
@@ -82,8 +76,8 @@ const initializeAnnouncement = (containerElement) => {
               btn.classList.remove('long-break');
             });
             break;
-          case LONG_BREAK_INTERVAL:
-            setAnnouncement(TASK_COMPLETION_QUESTION);
+          case INTERVALS.longBreak:
+            setAnnouncement(ANNOUNCEMENTS.longBreakInterval);
             setButtonVisibility('visible');
             [yesButton, noButton].forEach((btn) => {
               btn.classList.remove('pomodoro');
@@ -93,6 +87,14 @@ const initializeAnnouncement = (containerElement) => {
             break;
           default:
         }
+      }
+    },
+    [ACTIONS.selectTask]: (sessionState) => {
+      if (
+        sessionState.session === 'inactive' &&
+        sessionState.currentSelectedTask !== null
+      ) {
+        setAnnouncement(ANNOUNCEMENTS.clickToStart);
       }
     },
   });

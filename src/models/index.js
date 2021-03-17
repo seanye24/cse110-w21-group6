@@ -1,23 +1,8 @@
 import {
-  DEFAULT_POMODORO_LENGTH,
-  POMODORO_INTERVAL,
   ACTIONS,
+  DEFAULT_POMODORO_LENGTH,
+  INTERVALS,
 } from '../utils/constants';
-
-const {
-  CHANGE_SESSION,
-  CHANGE_TIME,
-  CHANGE_INTERVAL,
-  SELECT_TASK,
-  INCREMENT_CURRENT_TASK,
-  COMPLETE_CURRENT_TASK,
-  DID_NOT_COMPLETE_CURRENT_TASK,
-  SET_LONG_BREAK_LENGTH,
-  SET_NUM_POMODOROS,
-  SET_POMODORO_LENGTH,
-  SET_SHORT_BREAK_LENGTH,
-  SET_TIMER_AUDIO,
-} = ACTIONS;
 
 const timerAudio = new Audio();
 timerAudio.volume = 0.2;
@@ -25,10 +10,11 @@ timerAudio.volume = 0.2;
 // initialize session state
 const sessionState = {
   session: 'inactive',
-  numPomodoros: 0,
-  currTime: 0,
-  currInterval: POMODORO_INTERVAL,
-  currSelectedTask: null,
+  numberOfPomodorosCompleted: 0,
+  numberOfTasksCompleted: 0,
+  currentTime: 0,
+  currentInterval: INTERVALS.pomodoro,
+  currentSelectedTask: null,
   pomodoroLength: 0.1 || DEFAULT_POMODORO_LENGTH, // TODO: FOR TESTING, use DEFAULT_POMODORO_LENGTH later
   shortBreakLength: 0,
   longBreakLength: 0,
@@ -63,37 +49,40 @@ const subscribe = (callbacks) => {
  */
 const dispatch = (action, payload) => {
   switch (action) {
-    case CHANGE_SESSION:
+    case ACTIONS.changeSession:
       sessionState.session = payload;
       break;
-    case CHANGE_TIME:
-      sessionState.currTime = payload;
+    case ACTIONS.changeTime:
+      sessionState.currentTime = payload;
       break;
-    case CHANGE_INTERVAL:
-      sessionState.currInterval = payload;
+    case ACTIONS.changeInterval:
+      sessionState.currentInterval = payload;
       break;
-    case SELECT_TASK:
-      sessionState.currSelectedTask = payload;
+    case ACTIONS.selectTask:
+      sessionState.currentSelectedTask = payload;
       break;
-    case INCREMENT_CURRENT_TASK:
+    case ACTIONS.incrementCurrentTask:
       break;
-    case COMPLETE_CURRENT_TASK:
+    case ACTIONS.completeCurrentTask:
       break;
-    case DID_NOT_COMPLETE_CURRENT_TASK:
+    case ACTIONS.doNotCompleteCurrentTask:
       break;
-    case SET_NUM_POMODOROS:
-      sessionState.numPomodoros = payload;
+    case ACTIONS.incrementNumberOfPomodoros:
+      sessionState.numberOfPomodorosCompleted = payload;
       break;
-    case SET_POMODORO_LENGTH:
+    case ACTIONS.incrementNumberOfTasks:
+      sessionState.numberOfTasksCompleted = payload;
+      break;
+    case ACTIONS.changePomodoroLength:
       sessionState.pomodoroLength = payload;
       break;
-    case SET_SHORT_BREAK_LENGTH:
+    case ACTIONS.changeShortBreakLength:
       sessionState.shortBreakLength = payload;
       break;
-    case SET_LONG_BREAK_LENGTH:
+    case ACTIONS.changeLongBreakLength:
       sessionState.longBreakLength = payload;
       break;
-    case SET_TIMER_AUDIO:
+    case ACTIONS.changeTimerAudio:
       sessionState.timerAudio.src = payload;
       break;
     default:
