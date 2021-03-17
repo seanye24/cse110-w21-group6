@@ -52,13 +52,13 @@ const dispatch = (action, payload) => {
     case ACTIONS.changeSession:
       sessionState.session = payload;
       break;
-    case ACTIONS.changeTime:
+    case ACTIONS.changeCurrentTime:
       sessionState.currentTime = payload;
       break;
-    case ACTIONS.changeInterval:
+    case ACTIONS.changeCurrentInterval:
       sessionState.currentInterval = payload;
       break;
-    case ACTIONS.selectTask:
+    case ACTIONS.changeCurrentSelectedTask:
       sessionState.currentSelectedTask = payload;
       break;
     case ACTIONS.incrementCurrentTask:

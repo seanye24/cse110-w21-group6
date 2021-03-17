@@ -46,9 +46,9 @@ export const DEFAULT_TIMER_AUDIO = TIMER_AUDIOS.calm;
 // actions
 export const ACTIONS = {
   changeSession: 'change current session',
-  changeTime: 'change current time',
-  changeInterval: 'change current interval',
-  selectTask: 'select task',
+  changeCurrentTime: 'change current time',
+  changeCurrentInterval: 'change current interval',
+  changeCurrentSelectedTask: 'change currently selected task',
   incrementCurrentTask: 'increment current task',
   completeCurrentTask: 'complete current task',
   doNotCompleteCurrentTask: 'do not complete current task',

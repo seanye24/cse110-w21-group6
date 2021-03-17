@@ -213,7 +213,7 @@ class TaskItemForm extends HTMLElement {
           this.submitInputElement.className = 'pomodoro';
         }
       },
-      [ACTIONS.changeInterval]: (sessionState) => {
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
         if (sessionState.session === 'active') {
           switch (sessionState.currentInterval) {
             case INTERVALS.pomodoro:

@@ -253,7 +253,7 @@ class TaskItem extends HTMLElement {
           this.itemContainerElement.classList.remove('long-break');
         }
       },
-      [ACTIONS.changeInterval]: (sessionState) => {
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
         if (sessionState.session === 'active') {
           switch (sessionState.currentInterval) {
             case INTERVALS.pomodoro:

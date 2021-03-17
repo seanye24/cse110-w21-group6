@@ -145,7 +145,7 @@ const selectTask = (task) => {
 
   // update selected property of task
   const updatedTask = { ...task, selected: true };
-  dispatch(ACTIONS.selectTask, updatedTask);
+  dispatch(ACTIONS.changeCurrentSelectedTask, updatedTask);
   return updateTask(task, updatedTask);
 };
 
@@ -299,7 +299,7 @@ const deselectAllTasks = () => {
   tasks.forEach((task) => {
     updateTask(task, { ...task, selected: false });
   });
-  dispatch(ACTIONS.selectTask, null);
+  dispatch(ACTIONS.changeCurrentSelectedTask, null);
 };
 
 /**
@@ -359,7 +359,7 @@ const completeTask = (completedTask) => {
     selected: false,
     completed: true,
   });
-  dispatch(ACTIONS.selectTask, null);
+  dispatch(ACTIONS.changeCurrentSelectedTask, null);
 };
 
 /**
@@ -400,7 +400,7 @@ const initializeTaskList = (root) => {
         setTasklistUsability(false);
       }
     },
-    [ACTIONS.changeInterval]: (sessionState) => {
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
       if (sessionState.session === 'active') {
         if (sessionState.currentInterval === INTERVALS.pomodoro) {
           setTasklistUsability(false);

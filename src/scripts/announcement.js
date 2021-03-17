@@ -56,7 +56,7 @@ const initializeAnnouncement = (containerElement) => {
         setAnnouncement(ANNOUNCEMENTS.pomodoroInterval);
       }
     },
-    [ACTIONS.changeInterval]: (sessionState) => {
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
       if (sessionState.session === 'active') {
         switch (sessionState.currentInterval) {
           case INTERVALS.pomodoro:
@@ -89,7 +89,7 @@ const initializeAnnouncement = (containerElement) => {
         }
       }
     },
-    [ACTIONS.selectTask]: (sessionState) => {
+    [ACTIONS.changeCurrentSelectedTask]: (sessionState) => {
       if (
         sessionState.session === 'inactive' &&
         sessionState.currentSelectedTask !== null

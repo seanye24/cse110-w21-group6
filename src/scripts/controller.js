@@ -28,7 +28,7 @@ let wasAnnouncementButtonClicked;
  * @return {Promise<void>} - implicitly returns Promise after currentTime reaches 0
  */
 const startInterval = async (intervalLength) => {
-  dispatch(ACTIONS.changeTime, intervalLength);
+  dispatch(ACTIONS.changeCurrentTime, intervalLength);
   while (currentTime >= 0) {
     // quit if session stops
     if (session === 'inactive') {
@@ -36,7 +36,7 @@ const startInterval = async (intervalLength) => {
     }
     await tick(1);
     if (session === 'active') {
-      dispatch(ACTIONS.changeTime, currentTime - 1);
+      dispatch(ACTIONS.changeCurrentTime, currentTime - 1);
     }
   }
   return true;
@@ -80,7 +80,7 @@ const startSession = async () => {
       const nextInterval = shouldBeLongBreak
         ? INTERVALS.longBreak
         : INTERVALS.shortBreak;
-      dispatch(ACTIONS.changeInterval, nextInterval);
+      dispatch(ACTIONS.changeCurrentInterval, nextInterval);
     } else {
       wasAnnouncementButtonClicked = false;
       // start break, stop if interval is interrupted
@@ -94,7 +94,7 @@ const startSession = async () => {
       if (!wasAnnouncementButtonClicked) {
         dispatch(ACTIONS.doNotCompleteCurrentTask);
       }
-      dispatch(ACTIONS.changeInterval, INTERVALS.pomodoro);
+      dispatch(ACTIONS.changeCurrentInterval, INTERVALS.pomodoro);
 
       if (!shouldContinue) {
         return;
@@ -120,7 +120,7 @@ const endSession = () => {
     openSummaryPopup();
   }
   dispatch(ACTIONS.incrementNumberOfPomodoros, 0);
-  dispatch(ACTIONS.changeTime, 0);
+  dispatch(ACTIONS.changeCurrentTime, 0);
 };
 
 const initializeController = () => {
@@ -243,9 +243,9 @@ const initializeController = () => {
   } = subscribe({
     [ACTIONS.changeSession]: onChangeSession,
     [ACTIONS.incrementNumberOfPomodoros]: onChangeNumPomodoros,
-    [ACTIONS.changeTime]: onChangeTime,
-    [ACTIONS.changeInterval]: onChangeInterval,
-    [ACTIONS.selectTask]: onSelectTask,
+    [ACTIONS.changeCurrentTime]: onChangeTime,
+    [ACTIONS.changeCurrentInterval]: onChangeInterval,
+    [ACTIONS.changeCurrentSelectedTask]: onSelectTask,
     [ACTIONS.incrementNumberOfPomodoros]: onChangePomodoroLength,
     [ACTIONS.changeShortBreakLength]: onChangeShortBreakLength,
     [ACTIONS.changeLongBreakLength]: onChangeLongBreakLength,

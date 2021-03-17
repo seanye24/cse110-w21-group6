@@ -81,7 +81,7 @@ const initializeProgressRing = (element) => {
         overlayCircleElement.setAttribute('class', 'overlay-circle pomodoro');
       }
     },
-    [ACTIONS.changeInterval]: (sessionState) => {
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
       setProgress(100);
       switch (sessionState.currentInterval) {
         case INTERVALS.pomodoro:
@@ -102,7 +102,7 @@ const initializeProgressRing = (element) => {
         default:
       }
     },
-    [ACTIONS.changeTime]: (sessionState) => {
+    [ACTIONS.changeCurrentTime]: (sessionState) => {
       if (sessionState.session === 'active') {
         let currentIntervalLength;
         switch (sessionState.currentInterval) {

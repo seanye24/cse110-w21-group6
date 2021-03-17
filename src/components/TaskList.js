@@ -86,7 +86,7 @@ class TaskList extends HTMLElement {
           this.containerElement.className = 'container pomodoro';
         }
       },
-      [ACTIONS.changeInterval]: (sessionState) => {
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
         if (sessionState.session === 'active') {
           switch (sessionState.currentInterval) {
             case INTERVALS.pomodoro:

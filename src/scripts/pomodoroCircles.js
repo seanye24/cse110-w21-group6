@@ -39,7 +39,7 @@ const initializePomodoroCircles = (element) => {
         setCircleCount(0);
       }
     },
-    [ACTIONS.changeInterval]: (sessionState) => {
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
       if (sessionState.session === 'active') {
         // reset circles if starting new set of 4 pomos
         if (sessionState.currentInterval === INTERVALS.pomodoro) {
