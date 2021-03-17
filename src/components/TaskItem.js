@@ -2,6 +2,8 @@
  * @file task-item web component
  */
 
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import {
   createElement,
   validateBoolean,
@@ -55,15 +57,15 @@ class TaskItem extends HTMLElement {
         outline: none;
       }
 
-      #pomodoro.selected {
+      .item-container.selected.pomodoro {
         background: #90e0ef;
       }
 
-      #short-break.selected {
+      .item-container.selected.short-break {
         background: #7ce407;
       }
 
-      #long-break.selected {
+      .item-container.selected.long-break {
         background: #f99e3d;
       }
 
@@ -82,7 +84,7 @@ class TaskItem extends HTMLElement {
         align-items: center;
       }
 
-      .item-container:not(.disabled):not(.selected) > .text-container:hover {
+      .item-container:not(.disabled):not(.selected):not(.completed) > .text-container:hover {
         background: rgba(255, 255, 255, 0.8);
       }
 
@@ -95,17 +97,17 @@ class TaskItem extends HTMLElement {
         box-shadow: 0 0 0 2pt #00b4d8;
       }
       
-      .completed .name {
-        text-decoration: line-through;
-      }
-
-      .name {
+      .task-name {
         width: 80%;
         display: inline-block;
         margin: 0.5em 0;
       }
+
+      .item-container.completed .task-name {
+        text-decoration: line-through;
+      }
       
-      .pomodoro-container {
+      .task-pomodoro-container {
         width: 20%;
         height: 100%;
         display: inline-block;
@@ -113,7 +115,7 @@ class TaskItem extends HTMLElement {
         text-align: right;
       }
 
-      .pomodoro-label {
+      .task-pomodoro-label {
         position: absolute;
         top: -0.5em;
         right: 0;
@@ -121,7 +123,7 @@ class TaskItem extends HTMLElement {
         color: #777;
       }
 
-      .pomodoro {
+      .task-pomodoro {
         display: inline-block;
         margin: 1em 0 0 0;
       }
@@ -188,8 +190,7 @@ class TaskItem extends HTMLElement {
     });
 
     this.itemContainerElement = createElement('div', {
-      className: 'item-container',
-      id: 'pomodoro',
+      className: 'item-container pomodoro',
     });
     this.textContainerElement = createElement('button', {
       className: 'text-container',
@@ -201,19 +202,19 @@ class TaskItem extends HTMLElement {
       },
     });
     this.nameElement = createElement('p', {
-      className: 'name',
+      className: 'task-name',
     });
     this.pomodoroContainer = createElement('span', {
-      className: 'pomodoro-container',
+      className: 'task-pomodoro-container',
     });
     this.pomodoroLabel = createElement('label', {
-      className: 'pomodoro-label',
-      for: 'pomodoro',
+      className: 'task-pomodoro-label',
+      for: 'task-pomodoro',
       innerText: 'Pomodoros',
     });
     this.pomodoroElement = createElement('p', {
-      className: 'pomodoro',
-      id: 'pomodoro',
+      className: 'task-pomodoro',
+      id: 'task-pomodoro',
     });
 
     this.deleteTaskButton = createElement('button', {
@@ -243,6 +244,41 @@ class TaskItem extends HTMLElement {
     this.deleteTaskButton.appendChild(this.deleteTaskIcon);
     this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
     this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
+
+    subscribe({
+      [ACTIONS.changeSession]: (sessionState) => {
+        if (sessionState.session === 'inactive') {
+          this.itemContainerElement.classList.add('pomodoro');
+          this.itemContainerElement.classList.remove('short-break');
+          this.itemContainerElement.classList.remove('long-break');
+        }
+      },
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
+        if (sessionState.session === 'active') {
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
+              this.itemContainerElement.classList.add('pomodoro');
+              this.itemContainerElement.classList.remove('short-break');
+              this.itemContainerElement.classList.remove('long-break');
+              break;
+            case INTERVALS.shortBreak:
+              this.itemContainerElement.classList.remove('pomodoro');
+              this.itemContainerElement.classList.add('short-break');
+              this.itemContainerElement.classList.remove('long-break');
+              break;
+            case INTERVALS.longBreak:
+              this.itemContainerElement.classList.remove('pomodoro');
+              this.itemContainerElement.classList.remove('short-break');
+              this.itemContainerElement.classList.add('long-break');
+              break;
+            default:
+              this.itemContainerElement.classList.add('pomodoro');
+              this.itemContainerElement.classList.remove('short-break');
+              this.itemContainerElement.classList.remove('long-break');
+          }
+        }
+      },
+    });
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

@@ -15,7 +15,7 @@
     <link rel="icon" href="assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Open+Sans&family=Roboto&family=Source+Sans+Pro&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Lato&family=Roboto&family=Source+Sans+Pro&display=swap"
       rel="stylesheet"
     />
     <link
@@ -24,24 +24,25 @@
     />
   </head>
   <body>
-    <nav id="pomodoro" class="navbar">
+    <nav class="navbar pomodoro">
       <ul class="links">
-        <li><a class="link" href="#main">POMODORO TIMER</a></li>
-        <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
+        <li><a class="navbar-link" href="#main">POMODORO TIMER</a></li>
+        <li><a class="navbar-link" href="#instructions">INSTRUCTIONS</a></li>
       </ul>
-      <span 
+      <span
         alt="settings"
         data-popup-target="#popup"
         id="open-popup"
-        class="material-icons">
+        class="material-icons"
+      >
         settings
       </span>
     </nav>
-    <div class= "pomodoro" id="main" role="main">
+    <div class="pomodoro" id="main" role="main">
       <progress-ring
         progress="100"
         radius="150"
-        stroke="5"
+        stroke="6"
         class="progress-ring"
       ></progress-ring>
       <button class="session-button pomodoro" id="session-button">Start</button>
@@ -67,20 +68,28 @@
           <h1 class="summary-title">Summary</h1>
           <hr class="summary-hr" />
           <div class="task-summary-list"></div>
+          <!--
           <div class="summary-stats-container">
             <span class="summary-actual-pomos"></span>
             <span class="summary-estimated-pomos"></span>
           </div>
+          -->
+          <p id="summary-pomodoros" class="summary-stats"></p>
+          <p id="summary-tasks" class="summary-stats"></p>
           <button class="summary-close-button">CLOSE</button>
         </div>
       </div>
 
       <div class="announcement-container">
-        <h2 class="announcement">Work on your tasks!</h2>
-        <button class="announcement-button announcement-yes-button hidden pomodoro">
+        <h2 class="announcement"></h2>
+        <button
+          class="announcement-button announcement-yes-button hidden pomodoro"
+        >
           Yes
         </button>
-        <button class="announcement-button announcement-no-button hidden pomodoro">
+        <button
+          class="announcement-button announcement-no-button hidden pomodoro"
+        >
           No
         </button>
       </div>
@@ -91,18 +100,18 @@
       <hr class="instructions-hr" />
       <ol class="instructions-list">
         <li>
-          Make sure to add tasks that you wish to complete today into the 
-          task list!
+          Make sure to add tasks that you wish to complete today into the task
+          list!
         </li>
         <li>
           Click on the task you would like to start working on and/or complete.
         </li>
         <li>
-          You will work for 25 minute intervals (Pomodoros) with 3-5 minute 
-          long breaks in between.
+          You will work for 25 minute intervals (Pomodoros) with 3-5 minute long
+          breaks in between.
         </li>
         <li>
-          After 4 Pomodoros, you will be rewarded a longer 15-30 minute long 
+          After 4 Pomodoros, you will be rewarded a longer 15-30 minute long
           break.
         </li>
         <li>
@@ -120,7 +129,7 @@
 
     <settings-component class="settings"></settings-component>
 
-    <footer class="pomodoro">
+    <footer class="footer pomodoro">
       <p>
         Created by Pomodo Dragons © 2021&ensp;
         <a

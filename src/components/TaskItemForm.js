@@ -2,6 +2,8 @@
  * @file task-item-form web component
  */
 
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 
 /**
@@ -94,6 +96,8 @@ class TaskItemForm extends HTMLElement {
       }
 
       #submit-input {
+        -webkit-appearance: none;
+        -moz-appearance: none;
         width: 50%;
         margin: auto;
         border-radius: 5px;
@@ -116,17 +120,17 @@ class TaskItemForm extends HTMLElement {
         background: #f98f38;
       }
 
-      #submit-input:hover.pomodoro {
+      #submit-input.pomodoro:hover {
         background: rgb(112, 216, 237);
         cursor: pointer;
       }
 
-      #submit-input:hover.short-break {
+      #submit-input.short-break:hover {
         background: #7ce407;
         cursor: pointer;
       }
 
-      #submit-input:hover.long-break {
+      #submit-input.long-break:hover {
         background: #f99e3d;
         cursor: pointer;
       }
@@ -202,6 +206,31 @@ class TaskItemForm extends HTMLElement {
       this.pomodoroInputLabel,
       this.pomodoroInputElement,
     );
+
+    subscribe({
+      [ACTIONS.changeSession]: (sessionState) => {
+        if (sessionState.session === 'inactive') {
+          this.submitInputElement.className = 'pomodoro';
+        }
+      },
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
+        if (sessionState.session === 'active') {
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
+              this.submitInputElement.className = 'pomodoro';
+              break;
+            case INTERVALS.shortBreak:
+              this.submitInputElement.className = 'short-break';
+              break;
+            case INTERVALS.longBreak:
+              this.submitInputElement.className = 'long-break';
+              break;
+            default:
+              this.submitInputElement.className = 'pomodoro';
+          }
+        }
+      },
+    });
   }
 }
 

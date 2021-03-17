@@ -53,7 +53,9 @@ module.exports = (env, argv) => {
         inject: true,
         template: 'src/index.html',
       }),
-      new MiniCssExtractPlugin(),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+      }),
       new CopyPlugin({
         patterns: [
           {

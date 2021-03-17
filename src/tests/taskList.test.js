@@ -7,14 +7,15 @@ import {
   getTasks,
   updateTask,
   deleteTask,
-  incrementPomodoro,
+  incrementTask,
   selectTask,
   selectFirstTask,
   deselectAllTasks,
-  getCurrentlySelectedTask,
+  getCurrentSelectedTask,
   setTasklistUsability,
   completeTask,
 } from '../scripts/taskList';
+import { KEYS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validatePomodoro, validateTask } from '../utils/taskList';
 
@@ -204,7 +205,7 @@ describe('testing taskList script', () => {
     }));
 
     window.localStorage.clear();
-    window.localStorage.setItem('tasks', JSON.stringify(tasks));
+    window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
     taskListElement = createElement('task-list', {
       className: 'task-list',
     });
@@ -216,14 +217,18 @@ describe('testing taskList script', () => {
   test('if localStorage is empty, use an empty array', () => {
     window.localStorage.clear();
     initializeTaskList(taskListElement);
-    expect(JSON.parse(window.localStorage.getItem('tasks'))).toStrictEqual([]);
+    expect(JSON.parse(window.localStorage.getItem(KEYS.tasks))).toStrictEqual(
+      [],
+    );
     expect(getTasks()).toStrictEqual([]);
   });
 
   test('if localStorage is corrupted, use an empty array', () => {
-    window.localStorage.setItem('tasks', 'asd;fjlka[fasdf;lkj;kl]}');
+    window.localStorage.setItem(KEYS.tasks, 'asd;fjlka[fasdf;lkj;kl]}');
     initializeTaskList(taskListElement);
-    expect(JSON.parse(window.localStorage.getItem('tasks'))).toStrictEqual([]);
+    expect(JSON.parse(window.localStorage.getItem(KEYS.tasks))).toStrictEqual(
+      [],
+    );
     expect(getTasks()).toStrictEqual([]);
   });
 
@@ -231,8 +236,8 @@ describe('testing taskList script', () => {
     tasks[1].selected = 'asdf';
     delete tasks[2].usedPomodoros;
     tasks[3].estimatedPomodoros = 'asdf';
-    window.localStorage.setItem('tasks', JSON.stringify(tasks));
-    expect(JSON.parse(window.localStorage.getItem('tasks'))).toStrictEqual(
+    window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
+    expect(JSON.parse(window.localStorage.getItem(KEYS.tasks))).toStrictEqual(
       tasks,
     );
 
@@ -293,7 +298,7 @@ describe('testing taskList script', () => {
   });
 
   test('increment task pomodoro', () => {
-    incrementPomodoro(tasks[2]);
+    incrementTask(tasks[2]);
     tasks[2].usedPomodoros++;
     expect(getTasks()).toStrictEqual(tasks);
   });
@@ -344,15 +349,15 @@ describe('testing taskList script', () => {
   test('get currently selected task', () => {
     selectTask(tasks[2]);
     tasks.unshift({ ...tasks.splice(2, 1)[0], selected: true });
-    expect(getCurrentlySelectedTask()).toStrictEqual(tasks[0]);
+    expect(getCurrentSelectedTask()).toStrictEqual(tasks[0]);
 
     selectTask(tasks[3]);
     tasks.unshift({ ...tasks.splice(3, 1)[0], selected: true });
-    expect(getCurrentlySelectedTask()).toStrictEqual(tasks[0]);
+    expect(getCurrentSelectedTask()).toStrictEqual(tasks[0]);
 
     selectTask(tasks[1]);
     tasks.unshift({ ...tasks.splice(1, 1)[0], selected: true });
-    expect(getCurrentlySelectedTask()).toStrictEqual(tasks[0]);
+    expect(getCurrentSelectedTask()).toStrictEqual(tasks[0]);
   });
 
   test('setTasklistUsability(false) disables task list', () => {

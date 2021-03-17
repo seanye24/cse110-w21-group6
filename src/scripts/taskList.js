@@ -12,6 +12,8 @@
  * @property {boolean} completed          - whether task is completed
  */
 
+import { dispatch, subscribe } from '../models';
+import { ACTIONS, INTERVALS, KEYS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validateTask } from '../utils/taskList';
 
@@ -27,7 +29,7 @@ let taskItemFormInputs;
  * Save current tasks to localStorage
  */
 const saveTasks = () => {
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+  window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
 };
 
 /**
@@ -112,14 +114,14 @@ const deleteTask = (taskToDelete) => {
   // update localStorage
   const { taskIndex } = getTask(taskToDelete);
   tasks.splice(taskIndex, 1);
-  window.localStorage.setItem('tasks', JSON.stringify(tasks));
+  window.localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
   removeTaskFromDom(taskToDelete);
 };
 
 /**
  * Get currently selected task
  */
-const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
+const getCurrentSelectedTask = () => tasks.find((t) => t.selected);
 
 /**
  * Select a task
@@ -127,7 +129,7 @@ const getCurrentlySelectedTask = () => tasks.find((t) => t.selected);
  * @return {Task} - selected task
  */
 const selectTask = (task) => {
-  const prevSelectedTask = getCurrentlySelectedTask();
+  const prevSelectedTask = getCurrentSelectedTask();
   if (prevSelectedTask) {
     updateTask(prevSelectedTask, { ...prevSelectedTask, selected: false });
   }
@@ -142,7 +144,9 @@ const selectTask = (task) => {
   tasks.unshift(task);
 
   // update selected property of task
-  return updateTask(task, { ...task, selected: true });
+  const updatedTask = { ...task, selected: true };
+  dispatch(ACTIONS.changeSelectedTask, updatedTask);
+  return updateTask(task, updatedTask);
 };
 
 /**
@@ -238,12 +242,12 @@ const handleTaskFormSubmit = (e) => {
 const restoreTasks = () => {
   let restoredTasks;
   try {
-    restoredTasks = JSON.parse(window.localStorage.getItem('tasks'));
+    restoredTasks = JSON.parse(window.localStorage.getItem(KEYS.tasks));
   } catch (e) {
     restoredTasks = null;
   }
   if (!restoredTasks) {
-    window.localStorage.setItem('tasks', JSON.stringify([]));
+    window.localStorage.setItem(KEYS.tasks, JSON.stringify([]));
     restoredTasks = [];
   }
 
@@ -272,7 +276,7 @@ const checkDuplicateTask = (e) => {
  * @param {Task} task - task to be incremented
  * @return {Task} - incremented task
  */
-const incrementPomodoro = (task) => {
+const incrementTask = (task) => {
   const { usedPomodoros } = task;
   return updateTask(task, { ...task, usedPomodoros: usedPomodoros + 1 });
 };
@@ -335,22 +339,24 @@ const setTasklistUsability = (shouldTasklistBeUsable) => {
  * @param {Task} completedTask - task that has been completed
  */
 const completeTask = (completedTask) => {
-  const { taskIndex, taskElement } = getTask(completedTask);
+  const { taskIndex } = getTask(completedTask);
 
-  // mark task as completed and move it to end of DOM list
-  removeTaskFromDom(completedTask);
-  addTaskToDom(taskElement, 'end');
-  taskElement.selected = false;
-  taskElement.completed = true;
-  taskElement.shadowRoot.querySelector('.text-container').onclick = null;
+  // move task to bottom of list in DOM
+  const removedTask = removeTaskFromDom(completedTask);
+  addTaskToDom(removedTask, 'end');
+  removedTask.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array
+  tasks.splice(taskIndex, 1);
+  tasks.push(completedTask);
+  /*
   const [removedTask] = tasks.splice(taskIndex, 1);
   tasks.push({ ...removedTask, selected: false, completed: true });
+  */
 
-  // update selected property of task
-  updateTask(completedTask, {
-    ...removedTask,
+  // update task
+  return updateTask(completedTask, {
+    ...completedTask,
     selected: false,
     completed: true,
   });
@@ -383,6 +389,45 @@ const initializeTaskList = (root) => {
   taskItemFormContainer.addEventListener('submit', handleTaskFormSubmit);
   restoreTasks();
   taskItemFormInputs.name.oninput = checkDuplicateTask;
+  deselectAllTasks();
+
+  subscribe({
+    [ACTIONS.changeSession]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        deselectAllTasks();
+        setTasklistUsability(true);
+      } else if (sessionState.session === 'active') {
+        if (sessionState.currentSelectedTask === null) {
+          selectFirstTask();
+        }
+        setTasklistUsability(false);
+      }
+    },
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        if (sessionState.currentInterval === INTERVALS.pomodoro) {
+          if (sessionState.currentSelectedTask === null) {
+            selectFirstTask();
+          }
+          setTasklistUsability(false);
+        }
+      }
+    },
+    [ACTIONS.incrementSelectedTask]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        const incrementedTask = incrementTask(sessionState.currentSelectedTask);
+        dispatch(ACTIONS.changeSelectedTask, incrementedTask);
+      }
+    },
+    [ACTIONS.completeSelectedTask]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        const completedTask = completeTask(sessionState.currentSelectedTask);
+        dispatch(ACTIONS.changeSelectedTask, null);
+        dispatch(ACTIONS.addToCompletedTasks, completedTask);
+        setTasklistUsability(true);
+      }
+    },
+  });
 };
 
 export {
@@ -391,11 +436,11 @@ export {
   getTasks,
   updateTask,
   deleteTask,
-  incrementPomodoro,
+  incrementTask,
   selectTask,
   selectFirstTask,
   deselectAllTasks,
-  getCurrentlySelectedTask,
+  getCurrentSelectedTask,
   setTasklistUsability,
   completeTask,
   handleTaskFormSubmit,

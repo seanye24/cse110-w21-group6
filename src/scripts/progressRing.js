@@ -2,17 +2,11 @@
  * @file Manage progress ring for page
  */
 
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import { validateLength, validateProgress } from '../utils/progressRing';
 
 let progressRingElement;
-
-/**
- * Set progress ring
- * @param {HTMLElement} element - progress ring element
- */
-const initializeProgressRing = (element) => {
-  progressRingElement = element;
-};
 
 /**
  * Get radius of ring
@@ -69,6 +63,67 @@ const setProgress = (value) => {
   }
 
   progressRingElement.progress = progress;
+};
+
+/**
+ * Set progress ring
+ * @param {HTMLElement} element - progress ring element
+ */
+const initializeProgressRing = (element) => {
+  progressRingElement = element;
+  const overlayCircleElement = progressRingElement.shadowRoot.querySelector(
+    '.overlay-circle',
+  );
+  subscribe({
+    [ACTIONS.changeSession]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        setProgress(100);
+        overlayCircleElement.setAttribute('class', 'overlay-circle pomodoro');
+      }
+    },
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
+      setProgress(100);
+      switch (sessionState.currentInterval) {
+        case INTERVALS.pomodoro:
+          overlayCircleElement.setAttribute('class', 'overlay-circle pomodoro');
+          break;
+        case INTERVALS.shortBreak:
+          overlayCircleElement.setAttribute(
+            'class',
+            'overlay-circle short-break',
+          );
+          break;
+        case INTERVALS.longBreak:
+          overlayCircleElement.setAttribute(
+            'class',
+            'overlay-circle long-break',
+          );
+          break;
+        default:
+      }
+    },
+    [ACTIONS.changeCurrentTime]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        let currentIntervalLength;
+        switch (sessionState.currentInterval) {
+          case INTERVALS.pomodoro:
+            currentIntervalLength = sessionState.pomodoroLength;
+            break;
+          case INTERVALS.shortBreak:
+            currentIntervalLength = sessionState.shortBreakLength;
+            break;
+          case INTERVALS.longBreak:
+            currentIntervalLength = sessionState.longBreakLength;
+            break;
+          default:
+            return;
+        }
+        const currProgress =
+          (100 * sessionState.currentTime) / (60 * currentIntervalLength);
+        setProgress(currProgress);
+      }
+    },
+  });
 };
 
 export {

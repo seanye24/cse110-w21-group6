@@ -5,6 +5,8 @@
 import { createElement } from '../utils/helpers';
 import TaskItem from './TaskItem';
 import TaskItemForm from './TaskItemForm';
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 
 customElements.define('task-item', TaskItem);
 customElements.define('task-item-form', TaskItemForm);
@@ -25,6 +27,7 @@ class TaskList extends HTMLElement {
         font: normal 1rem 'Source Sans Pro', sans-serif;
         border-radius: 5px;
         height: 100%;
+        flex: 1 1 0;
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
@@ -77,6 +80,31 @@ class TaskList extends HTMLElement {
       this.taskItemListContainerElement,
       this.taskItemFormElement,
     );
+
+    subscribe({
+      [ACTIONS.changeSession]: (sessionState) => {
+        if (sessionState.session === 'inactive') {
+          this.containerElement.className = 'container pomodoro';
+        }
+      },
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
+        if (sessionState.session === 'active') {
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
+              this.containerElement.className = 'container pomodoro';
+              break;
+            case INTERVALS.shortBreak:
+              this.containerElement.className = 'container short-break';
+              break;
+            case INTERVALS.longBreak:
+              this.containerElement.className = 'container long-break';
+              break;
+            default:
+              this.containerElement.className = 'container pomodoro';
+          }
+        }
+      },
+    });
   }
 }
 
