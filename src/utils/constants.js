@@ -12,7 +12,7 @@ export const ANNOUNCEMENTS = {
   selectNewTask: 'Select a new task!',
   taskCompletionQuestion: 'Did you finish the task?',
   endOfSession: 'Good work today!',
-  noTasksAvailable: 'No work to be done.',
+  noTasksAvailable: 'Add a task to get started!',
 };
 
 // interval names

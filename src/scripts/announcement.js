@@ -51,7 +51,14 @@ const initializeAnnouncement = (containerElement) => {
   subscribe({
     [ACTIONS.changeSession]: (sessionState) => {
       if (sessionState.session === 'inactive') {
-        setAnnouncement(ANNOUNCEMENTS.endOfSession);
+        if (
+          sessionState.currentSelectedTask !== null ||
+          sessionState.completedTasks.length > 0
+        ) {
+          setAnnouncement(ANNOUNCEMENTS.endOfSession);
+        } else {
+          setAnnouncement(ANNOUNCEMENTS.noTasksAvailable);
+        }
         setButtonVisibility('hidden');
       } else if (sessionState.session === 'active') {
         setAnnouncement(ANNOUNCEMENTS.pomodoroInterval);
