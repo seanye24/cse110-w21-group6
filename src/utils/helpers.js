@@ -2,6 +2,9 @@
  * @file Various utility methods
  */
 
+import { subscribe } from '../models';
+import { INTERVALS } from './constants';
+
 /**
  * Creates an HTMLElement and set its attributes
  * Created to reduce boilerplate from element creation
@@ -94,7 +97,7 @@ const tick = async (duration) =>
   new Promise((res) => setTimeout(res, 1000 * duration));
 
 /**
- * Converts seconds into MM : SS
+ * Converts seconds into MM:SS
  * @param {string} seconds - seconds to convert
  * @return {string} - time in format MM:SS
  */
@@ -106,9 +109,51 @@ const getMinutesAndSeconds = (totalSeconds) => {
   return `${minutes}:${seconds}`;
 };
 
+/**
+ * Converts seconds into HH:MM:SS
+ * @param {string} seconds - seconds to convert
+ * @return {string} - time in format HH h MM m SS s
+ */
+const getHoursMinutesAndSeconds = (totalSeconds) => {
+  const hours = Math.floor(totalSeconds / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
+  const hoursFormatted = hours > 0 ? `${hours}h` : '';
+  const minutesFormatted = minutes > 0 ? `${minutes}m` : '';
+  return `${hoursFormatted} ${minutesFormatted} ${seconds}s`;
+};
+
+/**
+ * Computes total time elapsed during a session
+ * @param {number} numberOfPomodorosCompleted - number of pomodoros completed during the session
+ * @param {{intervalName: string, timeRemaining: number}} lastInterval - the interval in which the session stopped in
+ */
+const getTotalSessionTime = (numberOfPomodorosCompleted, lastInterval) => {
+  const { pomodoroLength, shortBreakLength, longBreakLength } = subscribe();
+  const numberOfLongBreaks = numberOfPomodorosCompleted % 4;
+  const numberOfShortBreaks = numberOfPomodorosCompleted - numberOfLongBreaks;
+  const totalPomodoroTime = numberOfPomodorosCompleted * (60 * pomodoroLength);
+  const totalBreakTime =
+    numberOfShortBreaks * (60 * shortBreakLength) +
+    numberOfLongBreaks * (60 * longBreakLength);
+  const estimatedTotalSessionTime = totalPomodoroTime + totalBreakTime;
+
+  // if session was stopped during pomodoro interval or at the end of a break interval, use the estimated
+  // otherwise, subtract time left in break interval
+  if (
+    lastInterval.intervalName === INTERVALS.pomodoro ||
+    lastInterval.timeRemaining <= 0
+  ) {
+    return estimatedTotalSessionTime;
+  }
+  return estimatedTotalSessionTime - lastInterval.timeRemaining;
+};
+
 export {
   createElement,
   getMinutesAndSeconds,
+  getHoursMinutesAndSeconds,
+  getTotalSessionTime,
   tick,
   validateNumber,
   validateString,

@@ -110,7 +110,7 @@ const initializeAnnouncement = (containerElement) => {
         }
       }
     },
-    [ACTIONS.completeSelectedTask]: (sessionState) => {
+    [ACTIONS.completeSelectedTask]: () => {
       setButtonVisibility('hidden');
       setAnnouncement(ANNOUNCEMENTS.selectNewTask);
     },

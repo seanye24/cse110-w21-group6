@@ -13,13 +13,18 @@
  */
 
 import { subscribe } from '../models';
-import { createElement } from '../utils/helpers';
+import {
+  createElement,
+  getHoursMinutesAndSeconds,
+  getTotalSessionTime,
+} from '../utils/helpers';
 
 let summaryOverlay;
 let summaryPopup;
 let taskSummaryList;
 let pomodorosStatsElement;
 let tasksStatsElement;
+let sessionTimeElement;
 let closeSummaryButton;
 
 /**
@@ -65,9 +70,8 @@ const createTaskSummary = (task) => {
  * Create summary of tasks
  * @param {Task[]} allTasks - all tasks
  * @param {Task[]} completedTasks - completed tasks
- * @param {Task[]} lastSelectedTask - last selected task before the session was over
  */
-const createTaskSummaryList = (allTasks, completedTasks, lastSelectedTask) => {
+const createTaskSummaryList = (allTasks, completedTasks) => {
   const completedUnderBudgetTasks = allTasks
     .filter(
       (task) =>
@@ -125,6 +129,7 @@ const initializeElements = (root) => {
   taskSummaryList = summaryOverlay.querySelector('.task-summary-list');
   pomodorosStatsElement = summaryOverlay.querySelector('#summary-pomodoros');
   tasksStatsElement = summaryOverlay.querySelector('#summary-tasks');
+  sessionTimeElement = summaryOverlay.querySelector('#summary-time');
   closeSummaryButton = summaryOverlay.querySelector('.summary-close-button');
 };
 
@@ -136,14 +141,23 @@ const initializeElements = (root) => {
 const initializePopup = (root, tasks) => {
   initializeElements(root);
   const {
-    currentSelectedTask,
+    currentInterval,
+    currentTime,
     completedTasks,
     numberOfPomodorosCompleted,
   } = subscribe();
 
-  createTaskSummaryList(tasks, completedTasks, currentSelectedTask);
+  createTaskSummaryList(tasks, completedTasks);
+  const totalSessionTime = getTotalSessionTime(numberOfPomodorosCompleted, {
+    intervalName: currentInterval,
+    timeRemaining: currentTime,
+  });
+  console.log('session time: ', totalSessionTime);
   pomodorosStatsElement.innerText = `Number of pomodoros completed: ${numberOfPomodorosCompleted}`;
   tasksStatsElement.innerText = `Number of tasks completed: ${completedTasks.length}`;
+  sessionTimeElement.innerText = `Total session time: ${getHoursMinutesAndSeconds(
+    totalSessionTime,
+  )}`;
 
   closeSummaryButton.onclick = closePopup;
   closeSummaryButton.onmousedown = (e) => e.preventDefault();
