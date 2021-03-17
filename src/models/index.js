@@ -11,11 +11,11 @@ timerAudio.volume = 0.2;
 const sessionState = {
   session: 'inactive',
   numberOfPomodorosCompleted: 0,
-  numberOfTasksCompleted: 0,
   currentTime: 0,
   currentInterval: INTERVALS.pomodoro,
   currentSelectedTask: null,
-  pomodoroLength: 0.1 || DEFAULT_POMODORO_LENGTH, // TODO: FOR TESTING, use DEFAULT_POMODORO_LENGTH later
+  completedTasks: [],
+  pomodoroLength: 0.05 || DEFAULT_POMODORO_LENGTH, // TODO: FOR TESTING, use DEFAULT_POMODORO_LENGTH later
   shortBreakLength: 0,
   longBreakLength: 0,
   timerAudio,
@@ -67,11 +67,14 @@ const dispatch = (action, payload) => {
       break;
     case ACTIONS.doNotCompleteSelectedTask:
       break;
+    case ACTIONS.addToCompletedTasks:
+      sessionState.completedTasks.push(payload);
+      break;
+    case ACTIONS.clearCompletedTasks:
+      sessionState.completedTasks = [];
+      break;
     case ACTIONS.changeNumberOfPomodoros:
       sessionState.numberOfPomodorosCompleted = payload;
-      break;
-    case ACTIONS.changeNumberOfTasks:
-      sessionState.numberOfTasksCompleted = payload;
       break;
     case ACTIONS.changePomodoroLength:
       sessionState.pomodoroLength = payload;

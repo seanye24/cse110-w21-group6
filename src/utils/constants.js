@@ -49,7 +49,6 @@ export const ACTIONS = {
   changeCurrentTime: 'change current time',
   changeCurrentInterval: 'change current interval',
   changeNumberOfPomodoros: 'change number of pomodoros completed',
-  changeNumberOfTasks: 'change number of tasks completed',
   changePomodoroLength: 'change pomodoro length',
   changeShortBreakLength: 'change short break length',
   changeLongBreakLength: 'change long break length',
@@ -58,4 +57,6 @@ export const ACTIONS = {
   incrementSelectedTask: 'increment current task',
   completeSelectedTask: 'complete current task',
   doNotCompleteSelectedTask: 'do not complete current task',
+  addToCompletedTasks: 'add to completed tasks',
+  clearCompletedTasks: 'clear completed tasks',
 };

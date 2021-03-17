@@ -355,7 +355,7 @@ const completeTask = (completedTask) => {
   */
 
   // update task
-  updateTask(completedTask, {
+  return updateTask(completedTask, {
     ...completedTask,
     selected: false,
     completed: true,
@@ -415,14 +415,15 @@ const initializeTaskList = (root) => {
     },
     [ACTIONS.incrementSelectedTask]: (sessionState) => {
       if (sessionState.session === 'active') {
-        const newTask = incrementTask(sessionState.currentSelectedTask);
-        dispatch(ACTIONS.changeSelectedTask, newTask);
+        const incrementedTask = incrementTask(sessionState.currentSelectedTask);
+        dispatch(ACTIONS.changeSelectedTask, incrementedTask);
       }
     },
     [ACTIONS.completeSelectedTask]: (sessionState) => {
       if (sessionState.session === 'active') {
-        completeTask(sessionState.currentSelectedTask);
+        const completedTask = completeTask(sessionState.currentSelectedTask);
         dispatch(ACTIONS.changeSelectedTask, null);
+        dispatch(ACTIONS.addToCompletedTasks, completedTask);
         setTasklistUsability(true);
       }
     },
