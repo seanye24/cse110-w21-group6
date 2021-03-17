@@ -1,15 +1,14 @@
 /* eslint-disable no-await-in-loop */
 import { dispatch, subscribe } from '../models';
-import { ACTIONS, ANNOUNCEMENTS, INTERVALS } from '../utils/constants';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import { tick } from '../utils/helpers';
-import { setAnnouncement, setButtonVisibility } from './announcement';
 import { openPopup as openConfirmationPopup } from './confirmationPopup';
 import { openPopup as openSettingsPopup } from './settings';
 import {
   initializePopup as initializeSummaryPopup,
   openPopup as openSummaryPopup,
 } from './summaryPopup';
-import { getTasks, selectFirstTask, setTasklistUsability } from './taskList';
+import { getTasks } from './taskList';
 
 let session;
 let numberOfPomodorosCompleted;
@@ -49,15 +48,8 @@ const startSession = async () => {
   // continue looping if session has not been ended
   while (session === 'active') {
     if (currentInterval === INTERVALS.pomodoro) {
-      // if no tasks are selected, try to select first task
-      if (!currentSelectedTask) {
-        selectFirstTask();
-      }
       // stop if no tasks available
       if (!currentSelectedTask) {
-        if (numberOfPomodorosCompleted === 0) {
-          dispatch(ACTIONS.incrementNumberOfPomodoros, -1); // if session is stopped bc no tasks are available, set numPomodoros to -1
-        }
         dispatch(ACTIONS.changeSession, 'inactive');
         return;
       }
@@ -68,11 +60,8 @@ const startSession = async () => {
         return;
       }
 
-      dispatch(ACTIONS.incrementCurrentTask);
-      dispatch(
-        ACTIONS.incrementNumberOfPomodoros,
-        numberOfPomodorosCompleted + 1,
-      );
+      dispatch(ACTIONS.incrementSelectedTask);
+      dispatch(ACTIONS.changeNumberOfPomodoros, numberOfPomodorosCompleted + 1);
 
       // check if break should be short or long
       const shouldBeLongBreak =
@@ -92,13 +81,13 @@ const startSession = async () => {
 
       // choose no if user didn't pick
       if (!wasAnnouncementButtonClicked) {
-        dispatch(ACTIONS.doNotCompleteCurrentTask);
+        dispatch(ACTIONS.doNotCompleteSelectedTask);
       }
-      dispatch(ACTIONS.changeCurrentInterval, INTERVALS.pomodoro);
 
       if (!shouldContinue) {
         return;
       }
+      dispatch(ACTIONS.changeCurrentInterval, INTERVALS.pomodoro);
     }
   }
 };
@@ -107,11 +96,6 @@ const startSession = async () => {
  * Handle end of session
  */
 const endSession = () => {
-  if (numberOfPomodorosCompleted === -1) {
-    setAnnouncement(ANNOUNCEMENTS.noTasksAvailable);
-  } else {
-    setAnnouncement(ANNOUNCEMENTS.endOfSession);
-  }
   if (numberOfPomodorosCompleted > 0) {
     initializeSummaryPopup(
       document.querySelector('#summary-overlay'),
@@ -119,8 +103,11 @@ const endSession = () => {
     );
     openSummaryPopup();
   }
-  dispatch(ACTIONS.incrementNumberOfPomodoros, 0);
   dispatch(ACTIONS.changeCurrentTime, 0);
+  dispatch(ACTIONS.changeCurrentInterval, INTERVALS.pomodoro);
+  dispatch(ACTIONS.changeSelectedTask, null);
+  dispatch(ACTIONS.changeNumberOfPomodoros, 0);
+  dispatch(ACTIONS.changeNumberOfTasks, 0);
 };
 
 const initializeController = () => {
@@ -210,24 +197,11 @@ const initializeController = () => {
   const onChangeTimerAudio = (sessionState) => {
     timerAudio = sessionState.timerAudio;
   };
-  const onCompleteTask = (sessionState) => {
-    setTasklistUsability(true);
-    setButtonVisibility('hidden');
+  const onCompleteTask = () => {
     wasAnnouncementButtonClicked = true;
-    if (sessionState.currentInterval === INTERVALS.shortBreak) {
-      setAnnouncement(INTERVALS.shortBreak);
-    } else if (sessionState.currentInterval === INTERVALS.longBreak) {
-      setAnnouncement(INTERVALS.longBreak);
-    }
   };
-  const onDidNotCompleteTask = (sessionState) => {
-    setButtonVisibility('hidden');
+  const onDidNotCompleteTask = () => {
     wasAnnouncementButtonClicked = true;
-    if (sessionState.currentInterval === INTERVALS.shortBreak) {
-      setAnnouncement(ANNOUNCEMENTS.shortBreakInterval);
-    } else if (sessionState.currentInterval === INTERVALS.longBreak) {
-      setAnnouncement(ANNOUNCEMENTS.longBreakInterval);
-    }
   };
 
   ({
@@ -242,16 +216,16 @@ const initializeController = () => {
     timerAudio,
   } = subscribe({
     [ACTIONS.changeSession]: onChangeSession,
-    [ACTIONS.incrementNumberOfPomodoros]: onChangeNumPomodoros,
+    [ACTIONS.changeNumberOfPomodoros]: onChangeNumPomodoros,
     [ACTIONS.changeCurrentTime]: onChangeTime,
     [ACTIONS.changeCurrentInterval]: onChangeInterval,
-    [ACTIONS.changeCurrentSelectedTask]: onSelectTask,
-    [ACTIONS.incrementNumberOfPomodoros]: onChangePomodoroLength,
+    [ACTIONS.changeSelectedTask]: onSelectTask,
+    [ACTIONS.changePomodoroLength]: onChangePomodoroLength,
     [ACTIONS.changeShortBreakLength]: onChangeShortBreakLength,
     [ACTIONS.changeLongBreakLength]: onChangeLongBreakLength,
     [ACTIONS.changeTimerAudio]: onChangeTimerAudio,
-    [ACTIONS.completeCurrentTask]: onCompleteTask,
-    [ACTIONS.doNotCompleteCurrentTask]: onDidNotCompleteTask,
+    [ACTIONS.completeSelectedTask]: onCompleteTask,
+    [ACTIONS.doNotCompleteSelectedTask]: onDidNotCompleteTask,
   }));
 
   dispatch(ACTIONS.changeShortBreakLength, 0.1); // TODO: FOR TESTING, remove later

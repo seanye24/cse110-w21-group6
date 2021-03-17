@@ -44,13 +44,14 @@ const initializeAnnouncement = (containerElement) => {
   yesButton.onmousedown = (e) => e.preventDefault();
   noButton.onmousedown = (e) => e.preventDefault();
 
-  yesButton.onclick = () => dispatch(ACTIONS.completeCurrentTask);
-  noButton.onclick = () => dispatch(ACTIONS.doNotCompleteCurrentTask);
+  yesButton.onclick = () => dispatch(ACTIONS.completeSelectedTask);
+  noButton.onclick = () => dispatch(ACTIONS.doNotCompleteSelectedTask);
 
   setAnnouncement(ANNOUNCEMENTS.introduction);
   subscribe({
     [ACTIONS.changeSession]: (sessionState) => {
       if (sessionState.session === 'inactive') {
+        setAnnouncement(ANNOUNCEMENTS.endOfSession);
         setButtonVisibility('hidden');
       } else if (sessionState.session === 'active') {
         setAnnouncement(ANNOUNCEMENTS.pomodoroInterval);
@@ -89,12 +90,24 @@ const initializeAnnouncement = (containerElement) => {
         }
       }
     },
-    [ACTIONS.changeCurrentSelectedTask]: (sessionState) => {
+    [ACTIONS.changeSelectedTask]: (sessionState) => {
       if (
         sessionState.session === 'inactive' &&
         sessionState.currentSelectedTask !== null
       ) {
         setAnnouncement(ANNOUNCEMENTS.clickToStart);
+      }
+    },
+    [ACTIONS.completeSelectedTask]: (sessionState) => {
+      setButtonVisibility('hidden');
+      setAnnouncement(ANNOUNCEMENTS.selectNewTask);
+    },
+    [ACTIONS.doNotCompleteSelectedTask]: (sessionState) => {
+      setButtonVisibility('hidden');
+      if (sessionState.currentInterval === INTERVALS.shortBreak) {
+        setAnnouncement(ANNOUNCEMENTS.shortBreakInterval);
+      } else if (sessionState.currentInterval === INTERVALS.longBreakInterval) {
+        setAnnouncement(ANNOUNCEMENTS.longBreakInterval);
       }
     },
   });

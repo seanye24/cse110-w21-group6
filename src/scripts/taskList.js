@@ -145,7 +145,7 @@ const selectTask = (task) => {
 
   // update selected property of task
   const updatedTask = { ...task, selected: true };
-  dispatch(ACTIONS.changeCurrentSelectedTask, updatedTask);
+  dispatch(ACTIONS.changeSelectedTask, updatedTask);
   return updateTask(task, updatedTask);
 };
 
@@ -299,7 +299,6 @@ const deselectAllTasks = () => {
   tasks.forEach((task) => {
     updateTask(task, { ...task, selected: false });
   });
-  dispatch(ACTIONS.changeCurrentSelectedTask, null);
 };
 
 /**
@@ -340,26 +339,27 @@ const setTasklistUsability = (shouldTasklistBeUsable) => {
  * @param {Task} completedTask - task that has been completed
  */
 const completeTask = (completedTask) => {
-  const { taskIndex, taskElement } = getTask(completedTask);
+  const { taskIndex } = getTask(completedTask);
 
-  // mark task as completed and move it to end of DOM list
-  removeTaskFromDom(completedTask);
-  addTaskToDom(taskElement, 'end');
-  taskElement.selected = false;
-  taskElement.completed = true;
-  taskElement.shadowRoot.querySelector('.text-container').onclick = null;
+  // move task to bottom of list in DOM
+  const removedTask = removeTaskFromDom(completedTask);
+  addTaskToDom(removedTask, 'end');
+  removedTask.shadowRoot.querySelector('.text-container').onclick = null;
 
   // move task to end of tasks array
+  tasks.splice(taskIndex, 1);
+  tasks.push(completedTask);
+  /*
   const [removedTask] = tasks.splice(taskIndex, 1);
   tasks.push({ ...removedTask, selected: false, completed: true });
+  */
 
-  // update selected property of task
+  // update task
   updateTask(completedTask, {
-    ...removedTask,
+    ...completedTask,
     selected: false,
     completed: true,
   });
-  dispatch(ACTIONS.changeCurrentSelectedTask, null);
 };
 
 /**
@@ -397,26 +397,33 @@ const initializeTaskList = (root) => {
         deselectAllTasks();
         setTasklistUsability(true);
       } else if (sessionState.session === 'active') {
+        if (sessionState.currentSelectedTask === null) {
+          selectFirstTask();
+        }
         setTasklistUsability(false);
       }
     },
     [ACTIONS.changeCurrentInterval]: (sessionState) => {
       if (sessionState.session === 'active') {
         if (sessionState.currentInterval === INTERVALS.pomodoro) {
+          if (sessionState.currentSelectedTask === null) {
+            selectFirstTask();
+          }
           setTasklistUsability(false);
         }
       }
     },
-    [ACTIONS.incrementCurrentTask]: (sessionState) => {
+    [ACTIONS.incrementSelectedTask]: (sessionState) => {
       if (sessionState.session === 'active') {
-        incrementTask(sessionState.currentSelectedTask);
+        const newTask = incrementTask(sessionState.currentSelectedTask);
+        dispatch(ACTIONS.changeSelectedTask, newTask);
       }
     },
-    [ACTIONS.completeCurrentTask]: (sessionState) => {
+    [ACTIONS.completeSelectedTask]: (sessionState) => {
       if (sessionState.session === 'active') {
         completeTask(sessionState.currentSelectedTask);
+        dispatch(ACTIONS.changeSelectedTask, null);
         setTasklistUsability(true);
-        selectFirstTask();
       }
     },
   });

@@ -29,12 +29,12 @@ const getTime = () => timerElement.time;
 const initializeTimer = (element) => {
   timerElement = element;
   const { pomodoroLength } = subscribe({
-    [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+    [ACTIONS.changeSession]: (sessionState) => {
       if (sessionState.session === 'inactive') {
         setTimer(60 * sessionState.pomodoroLength);
       }
     },
-    [ACTIONS.CHANGE_TIME]: (sessionState) => {
+    [ACTIONS.changeCurrentTime]: (sessionState) => {
       if (sessionState.session === 'active') {
         setTimer(sessionState.currentTime);
       }

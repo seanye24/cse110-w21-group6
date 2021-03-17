@@ -58,19 +58,19 @@ const dispatch = (action, payload) => {
     case ACTIONS.changeCurrentInterval:
       sessionState.currentInterval = payload;
       break;
-    case ACTIONS.changeCurrentSelectedTask:
+    case ACTIONS.changeSelectedTask:
       sessionState.currentSelectedTask = payload;
       break;
-    case ACTIONS.incrementCurrentTask:
+    case ACTIONS.incrementSelectedTask:
       break;
-    case ACTIONS.completeCurrentTask:
+    case ACTIONS.completeSelectedTask:
       break;
-    case ACTIONS.doNotCompleteCurrentTask:
+    case ACTIONS.doNotCompleteSelectedTask:
       break;
-    case ACTIONS.incrementNumberOfPomodoros:
+    case ACTIONS.changeNumberOfPomodoros:
       sessionState.numberOfPomodorosCompleted = payload;
       break;
-    case ACTIONS.incrementNumberOfTasks:
+    case ACTIONS.changeNumberOfTasks:
       sessionState.numberOfTasksCompleted = payload;
       break;
     case ACTIONS.changePomodoroLength:
