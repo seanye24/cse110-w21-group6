@@ -4,6 +4,7 @@ import {
   validateString,
   validateNumber,
   getMinutesAndSeconds,
+  getHoursMinutesAndSeconds,
   createElement,
 } from '../utils/helpers';
 
@@ -58,6 +59,22 @@ describe('testing getMinutesAndSeconds', () => {
     expect(getMinutesAndSeconds(1000)).toBe('16:40');
     expect(getMinutesAndSeconds(7)).toBe('00:07');
     expect(getMinutesAndSeconds(1499)).toBe('24:59');
+  });
+});
+
+describe('testing getHoursMinutesAndSeconds', () => {
+  test('input correctly returns time of format HHh MMm SSs', () => {
+    expect(getHoursMinutesAndSeconds(0)).toBe('0s');
+    expect(getHoursMinutesAndSeconds(1)).toBe('1s');
+    expect(getHoursMinutesAndSeconds(25)).toBe('25s');
+    expect(getHoursMinutesAndSeconds(60)).toBe('1m');
+    expect(getHoursMinutesAndSeconds(100)).toBe('1m 40s');
+    expect(getHoursMinutesAndSeconds(360)).toBe('6m');
+    expect(getHoursMinutesAndSeconds(2500)).toBe('41m 40s');
+    expect(getHoursMinutesAndSeconds(3600)).toBe('1h');
+    expect(getHoursMinutesAndSeconds(3605)).toBe('1h 5s');
+    expect(getHoursMinutesAndSeconds(3665)).toBe('1h 1m 5s');
+    expect(getHoursMinutesAndSeconds(4540)).toBe('1h 15m 40s');
   });
 });
 

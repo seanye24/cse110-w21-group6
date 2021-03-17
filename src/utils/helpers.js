@@ -120,7 +120,11 @@ const getHoursMinutesAndSeconds = (totalSeconds) => {
   const seconds = totalSeconds % 60;
   const hoursFormatted = hours > 0 ? `${hours}h` : '';
   const minutesFormatted = minutes > 0 ? `${minutes}m` : '';
-  return `${hoursFormatted} ${minutesFormatted} ${seconds}s`;
+  const secondsFormatted =
+    seconds > 0 || (hours === 0 && minutes === 0) ? `${seconds}s` : '';
+  return [hoursFormatted, minutesFormatted, secondsFormatted]
+    .filter((s) => s !== '')
+    .join(' ');
 };
 
 /**
