@@ -67,14 +67,29 @@ const initializeAnnouncement = (containerElement) => {
         switch (sessionState.currInterval) {
           case POMODORO_INTERVAL:
             setAnnouncement(POMODORO_ANNOUNCEMENT);
+            [yesButton, noButton].forEach((btn) => {
+              btn.classList.add('pomodoro');
+              btn.classList.remove('short-break');
+              btn.classList.remove('long-break');
+            });
             break;
           case SHORT_BREAK_INTERVAL:
             setAnnouncement(TASK_COMPLETION_QUESTION);
             setButtonVisibility('visible');
+            [yesButton, noButton].forEach((btn) => {
+              btn.classList.remove('pomodoro');
+              btn.classList.add('short-break');
+              btn.classList.remove('long-break');
+            });
             break;
           case LONG_BREAK_INTERVAL:
             setAnnouncement(TASK_COMPLETION_QUESTION);
             setButtonVisibility('visible');
+            [yesButton, noButton].forEach((btn) => {
+              btn.classList.remove('pomodoro');
+              btn.classList.remove('short-break');
+              btn.classList.add('long-break');
+            });
             break;
           default:
         }

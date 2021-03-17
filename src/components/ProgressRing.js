@@ -2,6 +2,13 @@
  * @file progress-ring web component
  */
 
+import { subscribe } from '../models';
+import {
+  ACTIONS,
+  LONG_BREAK_INTERVAL,
+  POMODORO_INTERVAL,
+  SHORT_BREAK_INTERVAL,
+} from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validateLength, validateProgress } from '../utils/progressRing';
 
@@ -30,9 +37,9 @@ class ProgressRing extends HTMLElement {
       { namespace: svgNamespace },
     );
 
-    this.circleElement = createElement(
+    this.overlayCircleElement = createElement(
       'circle',
-      { class: 'circle pomodoro' },
+      { class: 'overlay-circle pomodoro' },
       { namespace: svgNamespace },
     );
     this.baseCircleElement = createElement(
@@ -61,7 +68,7 @@ class ProgressRing extends HTMLElement {
     this.root.append(this.styleElement, this.svgElement);
     this.svgElement.append(
       this.baseCircleElement,
-      this.circleElement,
+      this.overlayCircleElement,
       this.foreignObjectElement,
     );
     this.foreignObjectElement.appendChild(this.foreignObjectContainer);
@@ -93,12 +100,13 @@ class ProgressRing extends HTMLElement {
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: 0;
         stroke-width: ${stroke};
+        fill: transparent;
       }
 
-      .circle {
+      .overlay-circle {
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: ${(1 - progress / 100) * circumference};
-        stroke-width: ${stroke + 2};
+        stroke-width: ${stroke};
         fill: transparent;
 
         transition: stroke-dashoffset 0.5s;
@@ -106,19 +114,16 @@ class ProgressRing extends HTMLElement {
         transform-origin: 50% 50%;
       }
 
-      .circle.pomodoro {
+      .overlay-circle.pomodoro {
         stroke: #0095b3;
-        fill: #48cae4;
       }
 
-      .circle.short-break {
+      .overlay-circle.short-break {
         stroke: #4ab717;
-        fill: #69da00;
       }
 
-      .circle.long-break {
+      .overlay-circle.long-break {
         stroke: #f87335;
-        fill: #f97f38;
       }
 
       .foreign-object {
@@ -135,15 +140,55 @@ class ProgressRing extends HTMLElement {
 
     this.foreignObjectElement.setAttribute('width', 2 * radius);
     this.foreignObjectElement.setAttribute('height', 2 * radius);
-    this.circleElement.setAttribute('r', normalizedRadius);
-    this.circleElement.setAttribute('cx', radius);
-    this.circleElement.setAttribute('cy', radius);
+    this.overlayCircleElement.setAttribute('r', normalizedRadius);
+    this.overlayCircleElement.setAttribute('cx', radius);
+    this.overlayCircleElement.setAttribute('cy', radius);
 
     this.baseCircleElement.setAttribute('r', normalizedRadius);
     this.baseCircleElement.setAttribute('cx', radius);
     this.baseCircleElement.setAttribute('cy', radius);
 
     this.timerComponent.containerRadius = radius;
+
+    subscribe({
+      [ACTIONS.CHANGE_SESSION]: (sessionState) => {
+        if (sessionState.session === 'inactive') {
+          this.overlayCircleElement.setAttribute(
+            'class',
+            'overlay-circle pomodoro',
+          );
+        }
+      },
+      [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
+        if (sessionState.session === 'active') {
+          switch (sessionState.currInterval) {
+            case POMODORO_INTERVAL:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle pomodoro',
+              );
+              break;
+            case SHORT_BREAK_INTERVAL:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle short-break',
+              );
+              break;
+            case LONG_BREAK_INTERVAL:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle long-break',
+              );
+              break;
+            default:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle pomodoro',
+              );
+          }
+        }
+      },
+    });
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

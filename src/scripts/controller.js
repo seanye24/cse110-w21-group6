@@ -130,10 +130,20 @@ const endSession = () => {
 };
 
 const initializeController = () => {
+  const mainElement = document.querySelector('#main');
+  const navBarElement = document.querySelector('.navbar');
+  const footerElement = document.querySelector('.footer');
   const sessionButton = document.querySelector('.session-button');
   const settingsIcon = document.querySelector('.material-icons');
   const progressRingElement = document.querySelector('.progress-ring');
   const timerElement = progressRingElement.shadowRoot.querySelector('.timer');
+
+  const elementsThatChangeTheme = [
+    mainElement,
+    navBarElement,
+    sessionButton,
+    footerElement,
+  ];
 
   const onChangeSession = (sessionState) => {
     session = sessionState.session;
@@ -141,6 +151,11 @@ const initializeController = () => {
       sessionButton.innerText = 'End';
       sessionButton.classList.add('session-button', 'in-session');
     } else if (session === 'inactive') {
+      elementsThatChangeTheme.forEach((elem) => {
+        elem.classList.add('pomodoro');
+        elem.classList.remove('short-break');
+        elem.classList.remove('long-break');
+      });
       sessionButton.innerText = 'Start';
       sessionButton.classList.remove('in-session');
       endSession();
@@ -151,6 +166,31 @@ const initializeController = () => {
   };
   const onChangeInterval = (sessionState) => {
     currInterval = sessionState.currInterval;
+
+    switch (currInterval) {
+      case POMODORO_INTERVAL:
+        elementsThatChangeTheme.forEach((elem) => {
+          elem.classList.add('pomodoro');
+          elem.classList.remove('short-break');
+          elem.classList.remove('long-break');
+        });
+        break;
+      case SHORT_BREAK_INTERVAL:
+        elementsThatChangeTheme.forEach((elem) => {
+          elem.classList.remove('pomodoro');
+          elem.classList.add('short-break');
+          elem.classList.remove('long-break');
+        });
+        break;
+      case LONG_BREAK_INTERVAL:
+        elementsThatChangeTheme.forEach((elem) => {
+          elem.classList.remove('pomodoro');
+          elem.classList.remove('short-break');
+          elem.classList.add('long-break');
+        });
+        break;
+      default:
+    }
 
     // play timer audio at the end of every interval
     if (sessionState.numPomodoros > 0) {

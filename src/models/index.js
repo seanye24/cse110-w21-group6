@@ -46,11 +46,13 @@ const actionCallbacks = Object.values(ACTIONS).reduce(
  * @return {{stateName: stateValue}} - current session state
  */
 const subscribe = (callbacks) => {
-  Object.entries(callbacks).forEach(([action, callback]) => {
-    if (Object.prototype.hasOwnProperty.call(actionCallbacks, action)) {
-      actionCallbacks[action].push(callback);
-    }
-  });
+  if (typeof callbacks === 'object' && callbacks !== null) {
+    Object.entries(callbacks).forEach(([action, callback]) => {
+      if (Object.prototype.hasOwnProperty.call(actionCallbacks, action)) {
+        actionCallbacks[action].push(callback);
+      }
+    });
+  }
   return sessionState;
 };
 

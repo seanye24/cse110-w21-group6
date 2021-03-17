@@ -76,14 +76,36 @@ const setProgress = (value) => {
  */
 const initializeProgressRing = (element) => {
   progressRingElement = element;
+  const overlayCircleElement = progressRingElement.shadowRoot.querySelector(
+    '.overlay-circle',
+  );
   subscribe({
     [ACTIONS.CHANGE_SESSION]: (sessionState) => {
       if (sessionState.session === 'inactive') {
         setProgress(100);
+        overlayCircleElement.setAttribute('class', 'overlay-circle pomodoro');
       }
     },
-    [ACTIONS.CHANGE_INTERVAL]: () => {
+    [ACTIONS.CHANGE_INTERVAL]: (sessionState) => {
       setProgress(100);
+      switch (sessionState.currInterval) {
+        case POMODORO_INTERVAL:
+          overlayCircleElement.setAttribute('class', 'overlay-circle pomodoro');
+          break;
+        case SHORT_BREAK_INTERVAL:
+          overlayCircleElement.setAttribute(
+            'class',
+            'overlay-circle short-break',
+          );
+          break;
+        case LONG_BREAK_INTERVAL:
+          overlayCircleElement.setAttribute(
+            'class',
+            'overlay-circle long-break',
+          );
+          break;
+        default:
+      }
     },
     [ACTIONS.CHANGE_TIME]: (sessionState) => {
       if (sessionState.session === 'active') {
