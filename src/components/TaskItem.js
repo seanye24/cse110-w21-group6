@@ -85,8 +85,7 @@ class TaskItem extends HTMLElement {
       }
 
       .item-container.completed .text-container {
-        background: #eee;
-        opacity: 0.8;
+        background: #ddd;
       }
 
       .item-container:not(.disabled):not(.selected):not(.completed) > .text-container:hover {
