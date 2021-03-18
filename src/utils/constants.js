@@ -46,6 +46,7 @@ export const DEFAULT_TIMER_AUDIO = TIMER_AUDIOS.calm;
 // actions
 export const ACTIONS = {
   changeSession: 'change current session',
+  changeTotalSessionTime: 'change total session time',
   changeCurrentTime: 'change current time',
   changeCurrentInterval: 'change current interval',
   changeNumberOfPomodoros: 'change number of pomodoros completed',

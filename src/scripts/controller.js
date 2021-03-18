@@ -11,6 +11,7 @@ import {
 import { getTasks } from './taskList';
 
 let session;
+let totalSessionTime;
 let numberOfPomodorosCompleted;
 let currentTime;
 let currentInterval;
@@ -62,6 +63,10 @@ const startSession = async () => {
 
       dispatch(ACTIONS.incrementSelectedTask);
       dispatch(ACTIONS.changeNumberOfPomodoros, numberOfPomodorosCompleted + 1);
+      dispatch(
+        ACTIONS.changeTotalSessionTime,
+        totalSessionTime + 60 * pomodoroLength,
+      );
 
       // check if break should be short or long
       const shouldBeLongBreak =
@@ -83,10 +88,14 @@ const startSession = async () => {
       if (!wasAnnouncementButtonClicked) {
         dispatch(ACTIONS.doNotCompleteSelectedTask);
       }
-
       if (!shouldContinue) {
         return;
       }
+
+      dispatch(
+        ACTIONS.changeTotalSessionTime,
+        totalSessionTime + 60 * nextIntervalLength,
+      );
       dispatch(ACTIONS.changeCurrentInterval, INTERVALS.pomodoro);
     }
   }
@@ -103,6 +112,7 @@ const endSession = () => {
     );
     openSummaryPopup();
   }
+  dispatch(ACTIONS.changeTotalSessionTime, 0);
   dispatch(ACTIONS.changeCurrentTime, 0);
   dispatch(ACTIONS.changeCurrentInterval, INTERVALS.pomodoro);
   dispatch(ACTIONS.changeSelectedTask, null);
@@ -141,6 +151,9 @@ const initializeController = () => {
       sessionButton.classList.remove('in-session');
       endSession();
     }
+  };
+  const onChangeTotalSessionTime = (sessionState) => {
+    totalSessionTime = sessionState.totalSessionTime;
   };
   const onChangeTime = (sessionState) => {
     currentTime = sessionState.currentTime;
@@ -209,6 +222,7 @@ const initializeController = () => {
 
   ({
     session,
+    totalSessionTime,
     numberOfPomodorosCompleted,
     currentTime,
     currentInterval,
@@ -219,6 +233,7 @@ const initializeController = () => {
     timerAudio,
   } = subscribe({
     [ACTIONS.changeSession]: onChangeSession,
+    [ACTIONS.changeTotalSessionTime]: onChangeTotalSessionTime,
     [ACTIONS.changeNumberOfPomodoros]: onChangeNumPomodoros,
     [ACTIONS.changeCurrentTime]: onChangeTime,
     [ACTIONS.changeCurrentInterval]: onChangeInterval,

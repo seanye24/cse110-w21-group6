@@ -14,6 +14,7 @@ timerAudio.volume = 0.2;
 // initialize session state
 const sessionState = {
   session: 'inactive',
+  totalSessionTime: 0,
   numberOfPomodorosCompleted: 0,
   currentTime: 0,
   currentInterval: INTERVALS.pomodoro,
@@ -56,6 +57,9 @@ const dispatch = (action, payload) => {
   switch (action) {
     case ACTIONS.changeSession:
       sessionState.session = payload;
+      break;
+    case ACTIONS.changeTotalSessionTime:
+      sessionState.totalSessionTime = payload;
       break;
     case ACTIONS.changeCurrentTime:
       sessionState.currentTime = payload;
