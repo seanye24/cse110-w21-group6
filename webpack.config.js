@@ -4,11 +4,12 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const BrotliPlugin = require('brotli-webpack-plugin');
 
 module.exports = (env, argv) => {
   const config = {
     entry: ['./src/scripts/index.js'],
-    mode: argv.mode || 'production',
+    mode: argv.mode,
     target: 'web',
     output: {
       filename: 'main.js',
@@ -61,6 +62,12 @@ module.exports = (env, argv) => {
       ],
     },
     plugins: [
+      new BrotliPlugin({
+        asset: '[path].br[query]',
+        test: /\.(js|css|html|mp3|png)$/,
+        threshold: 10240,
+        minRatio: 0.8,
+      }),
       new CleanWebpackPlugin(),
       new ESLintPlugin(),
       new HtmlWebpackPlugin({
@@ -80,7 +87,7 @@ module.exports = (env, argv) => {
       contentBase: path.join(__dirname, 'dist'),
       compress: true,
     },
-    devtool: 'inline-source-map',
+    devtool: argv.mode === 'development' && 'inline-source-map',
   };
   return config;
 };
