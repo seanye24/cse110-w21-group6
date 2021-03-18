@@ -45,6 +45,7 @@ class Settings extends HTMLElement {
             transform: translate(-50%, -50%) scale(0);
             width: 65%;
             min-width: 360px;
+            max-width: 500px;
             border-radius: 5px;
             padding: 1.5rem 3rem;
             transition: 200ms ease-in-out;

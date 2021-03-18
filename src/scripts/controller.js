@@ -174,7 +174,10 @@ const initializeController = () => {
     }
 
     // play timer audio at the end of every interval
-    if (sessionState.numberOfPomodorosCompleted > 0) {
+    if (
+      sessionState.session === 'active' &&
+      sessionState.numberOfPomodorosCompleted > 0
+    ) {
       timerAudio.pause();
       timerAudio.play().catch(() => true); // ignore if interrupted
     }
