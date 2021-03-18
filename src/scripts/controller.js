@@ -218,8 +218,8 @@ const initializeController = () => {
     [ACTIONS.doNotCompleteSelectedTask]: onDidNotCompleteTask,
   }));
 
-  dispatch(ACTIONS.changeShortBreakLength, 0.05); // TODO: FOR TESTING, remove later
-  dispatch(ACTIONS.changeLongBreakLength, 0.05); // TODO: FOR TESTING, remove later
+  dispatch(ACTIONS.changeShortBreakLength, 0.1); // TODO: FOR TESTING, remove later
+  dispatch(ACTIONS.changeLongBreakLength, 0.2); // TODO: FOR TESTING, remove later
 
   // initialize variables, event listeners, and component values
   settingsIcon.onclick = openSettingsPopup;
