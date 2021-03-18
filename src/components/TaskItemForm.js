@@ -105,7 +105,7 @@ class TaskItemForm extends HTMLElement {
         border: none;
         color: white;
         padding: 0.5em;
-        font: 1.2rem 'Source Sans Pro', sans-serif;
+        font: 1.1rem 'Duru Sans', sans-serif;
       }
 
       #submit-input.pomodoro {
