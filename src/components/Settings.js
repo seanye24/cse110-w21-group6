@@ -43,8 +43,8 @@ class Settings extends HTMLElement {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            min-width: 500px;
-            width: 80%;
+            width: 65%;
+            min-width: 360px;
             border-radius: 5px;
             padding: 1.5rem 3rem;
             transition: 200ms ease-in-out;
