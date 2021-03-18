@@ -22,7 +22,7 @@ class TaskList extends HTMLElement {
 
     this.shadow = this.attachShadow({ mode: 'open' });
     this.styleElement = createElement('style', {
-      innerText: styles,
+      innerText: styles.toString(),
     });
 
     this.containerElement = createElement('div', {

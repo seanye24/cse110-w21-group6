@@ -24,7 +24,7 @@ class Timer extends HTMLElement {
     this._containerRadius = 0;
 
     this.styleElement = createElement('style', {
-      innerText: styles,
+      innerText: styles.toString(),
     });
 
     this.shadow = this.attachShadow({ mode: 'open' });

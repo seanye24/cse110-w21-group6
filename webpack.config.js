@@ -38,7 +38,6 @@ module.exports = (env, argv) => {
           test: /\.component\.css$/i,
           include: [path.join(__dirname, 'src')],
           use: [
-            'to-string-loader',
             'css-loader',
             {
               loader: 'postcss-loader',

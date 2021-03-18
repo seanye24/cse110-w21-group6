@@ -37,7 +37,7 @@ class Settings extends HTMLElement {
     this._timerAudio = '';
 
     this.styleElement = createElement('style', {
-      innerText: styles,
+      innerText: styles.toString(),
     });
 
     // Opening Shadow DOM

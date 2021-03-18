@@ -110,7 +110,7 @@ class ProgressRing extends HTMLElement {
         transform-origin: 50% 50%;
       }
 
-      ${styles}
+      ${styles.toString()}
     `;
 
     this.foreignObjectElement.setAttribute('width', 2 * radius);

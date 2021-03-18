@@ -46,7 +46,7 @@ class TaskItem extends HTMLElement {
     this.shadow = this.attachShadow({ mode: 'open' });
 
     this.styleElement = createElement('style', {
-      innerText: styles,
+      innerText: styles.toString(),
     });
 
     this.materialIconLinkElement = createElement('link', {
