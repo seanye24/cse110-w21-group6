@@ -339,7 +339,8 @@ body {
 
 .info-container {
   padding: 0 4rem;
-  margin: 0 0 4rem 0;
+  margin: 0 auto 4rem auto;
+  max-width: 1000px;
 }
 
 .info-section-container {
