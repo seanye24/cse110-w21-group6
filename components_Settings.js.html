@@ -30,12 +30,19 @@
  * @file settings web component
  */
 
+import { TIMER_AUDIOS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import {
   validateShortBreakLength,
   validateLongBreakLength,
   validateTimerAudio,
 } from '../utils/settings';
+
+const timerAudioDescriptions = {
+  calm: 'Calm Alarm',
+  annoying: 'Original Alarm',
+  kanye: 'Kanye Telling You to Stop',
+};
 
 /**
  * Custom web component representing the settings popup
@@ -58,124 +65,114 @@ class Settings extends HTMLElement {
 
     this.styleElement = createElement('style', {
       innerText: `
-          .popup {
+          .popup-container {
             position: fixed;
+            z-index: 5;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
+            min-width: 500px;
+            width: 80%;
+            border-radius: 5px;
+            padding: 1.5rem 3rem;
             transition: 200ms ease-in-out;
-            border-radius: 10px;
-            z-index: 5;
-            background-color: white;
-            width: 700px;
-            max-width: 80%;
+            background: white;
+            font: 1.1rem 'Source Sans Pro', sans-serif;
+            color: #2b2b2b;
           }
           
-          .popup.active {
+          .popup-container.active {
             transform: translate(-50%, -50%) scale(1);
           }
           
-          .settings-title {
-            font: 2rem 'Source Sans Pro', sans-serif;
-            color: #777;
-            letter-spacing: 0.1em;
+          .popup-title {
             margin: 0;
+            font: 2rem 'Lato', sans-serif;
+            color: #757575;
+            opacity: 0.9;
           }
           
-          .settings-hr {
-            margin-top: 0;
-            margin-bottom: 1.5em;
+          .popup-title-hr {
+            margin: 0 0 1rem 0;
+          }
+
+          .form-inputs-container {
+            margin: 0 0 2rem 0;
           }
           
-          .content {
-            font: 1.1rem 'Duru Sans', sans-serif;
-            padding: 20px;
-          }
-          
-          .content .form-input input {
-            text-decoration: none;
-            font: 1.1rem 'Duru Sans', sans-serif;
-            border: none;
-            text-align: center;
-            margin-left: 0.5em;
-          }
-          
-          .content .form-input {
-            text-align: center;
-            margin-bottom: 1em;
+          .form-input-container {
+            margin: 1rem 0 0 0;
             display: flex;
-            justify-content: center;
             align-items: center;
           }
           
-          .content .form-input .bounds {
-            color: #808080;
-            margin-left: 1em;
+          .form-input-label {
+            width: 12ch;
+            margin-right: 1rem;
           }
 
-          .content .form-input label {
-            line-height: 35px;
-            margin-right: 0.5em
-          }
-
-          select {
+          .form-input {
             cursor: pointer;
-            font: 0.85rem 'Duru Sans', sans-serif;
-            display: inline-block;
-            vertical-align: middle;
-            padding: 5px;
-            width: 225px;
-            border: 1px solid #FFF;
-            height: 34px;
+            width: 4.5ch;
+            border: none;
+            border-radius: 5px;
+            margin-right: 1rem;
+            padding: 0.3em 0.5em;
+            font: 1.1rem 'Source Sans Pro', sans-serif;
+            color: #2b2b2b;
+            background: #eee;
+          }
+          
+          #timer-audio-input {
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background: url(assets/sound.png) 96% / 10% no-repeat #EEE;
+            width: 30ch;
+            background: url(assets/sound.png) 96% / 10% no-repeat #eee;
           }
           
-          .content button {
-            background-color: rgba(176, 176, 176, 1);
-            border: none;
-            border-radius: .25rem;
-            color: #2b2b2b;
-            font: 1.1rem 'Duru Sans', sans-serif;
-            text-align: center;
-            text-decoration: none;
-            margin: 1.5em auto 0.5em auto;
-            padding: 0.5em;
-            display: block;
-            width: 75%;
-            cursor: pointer;
+          .break-input-bounds {
+            color: #808080;
           }
 
-          .content button:hover {
-            background-color: rgba(176, 176, 176, 0.8);
+          .error-message {
+            margin: 0; 
+            display: none;
+            color: red;
           }
           
-          .content .error {
-            color: red;
-            position: absolute;
-            margin-top: 25px;
-            visibility: hidden;
+          .save-button {
+            cursor: pointer;
+            width: 75%;
+            display: block;
+            border: none;
+            border-radius: 0.25rem;
+            margin: 0 auto 0.5rem auto;
+            padding: 0.5em;
+            background: #b0b0b0;
+            font: 1.1rem 'Duru Sans', sans-serif;
+            text-align: center;
+            color: #2b2b2b;
+          }
+
+          .save-button:hover {
+            opacity: 0.9;
           }
           
           #overlay {
             position: fixed;
-            opacity: 0;
-            transition: 200ms ease-in-out;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            pointer-events: none;
             z-index: 4;
-            cursor: pointer;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            transition: 200ms ease-in-out;
+            visibility: hidden;
+            background-color: rgba(0, 0, 0, 0.5);
           }
           
           #overlay.active {
-            opacity: 1;
-            pointer-events: all;
+            cursor: pointer;
+            visibility: visible;
           }
         `,
     });
@@ -183,134 +180,136 @@ class Settings extends HTMLElement {
     // Opening Shadow DOM
     this.shadow = this.attachShadow({ mode: 'open' });
 
-    // Creating all the elements
+    // container elements
     this.popupContainer = createElement('div', {
-      className: 'popup',
-      id: 'popup',
+      className: 'popup-container',
     });
-    this.contentContainer = createElement('div', {
-      className: 'content',
+    this.formInputsContainer = createElement('div', {
+      className: 'form-inputs-container',
     });
+
+    // title element
     this.popupTitle = createElement('h1', {
-      className: 'settings-title',
+      className: 'popup-title',
       innerText: 'SETTINGS',
     });
-    this.popupTitleLine = createElement('hr', {
-      className: 'settings-hr',
+    this.popupTitleHr = createElement('hr', {
+      className: 'popup-title-hr',
     });
-    this.inputContainerShort = createElement('div', {
-      className: 'form-input',
+
+    // short break form
+    this.shortBreakContainer = createElement('div', {
+      className: 'form-input-container',
     });
-    this.inputLabelShort = createElement('label', {
+    this.shortBreakLabel = createElement('label', {
       innerText: 'Short Break: ',
-      for: 'short-number',
+      for: 'short-break-input',
+      className: 'form-input-label',
     });
-    this.inputBoxShort = createElement('input', {
-      id: 'short-number',
-      name: 'short-number',
+    this.shortBreakInput = createElement('input', {
+      id: 'short-break-input',
+      className: 'form-input',
+      name: 'short-break-input',
       type: 'number',
       min: '3',
       max: '5',
       value: this._shortBreakLength,
     });
-    this.inputBoundShort = createElement('span', {
-      className: 'bounds',
+    this.shortBreakBounds = createElement('span', {
+      className: 'break-input-bounds',
       innerText: '3 - 5 minutes',
     });
-    this.inputErrorShort = createElement('p', {
-      className: 'error',
-      innerText: 'Please enter valid entry',
+    this.shortBreakError = createElement('p', {
+      className: 'error-message',
+      innerText: 'Please enter a valid short break length.',
     });
-    this.inputErrorShort.style.visibility = 'hidden';
-    this.inputContainerLong = createElement('div', {
-      className: 'form-input',
+
+    // long break form
+    this.longBreakContainer = createElement('div', {
+      className: 'form-input-container',
     });
-    this.inputLabelLong = createElement('label', {
+    this.longBreakLabel = createElement('label', {
       innerText: 'Long Break: ',
-      for: 'long-number',
+      for: 'long-break-input',
+      className: 'form-input-label',
     });
-    this.inputBoxLong = createElement('input', {
-      id: 'long-number',
-      name: 'long-number',
+    this.longBreakInput = createElement('input', {
+      id: 'long-break-input',
+      className: 'form-input',
+      name: 'long-break-input',
       type: 'number',
       min: '15',
       max: '30',
       value: this._longBreakLength,
     });
-    this.inputBoundLong = createElement('span', {
-      className: 'bounds',
+    this.longBreakBounds = createElement('span', {
+      className: 'break-input-bounds',
       innerText: '15 - 30 minutes',
     });
-    this.inputErrorLong = createElement('p', {
-      className: 'error',
-      innerText: 'Please enter valid entry',
+    this.longBreakError = createElement('p', {
+      className: 'error-message',
+      innerText: 'Please enter a valid long break length.',
     });
-    this.inputErrorLong.style.visibility = 'hidden';
-    this.inputContainerSound = createElement('div', {
-      className: 'form-input',
+
+    // timer audio form
+    this.timerAudioContainer = createElement('div', {
+      className: 'form-input-container',
     });
-    this.inputLabelSound = createElement('label', {
-      for: 'sound',
+    this.timerAudioLabel = createElement('label', {
+      for: 'timer-audio-input',
       innerText: 'Sound: ',
+      className: 'form-input-label',
     });
-    this.inputBoxSound = createElement('select', {
+    this.timerAudioInput = createElement('select', {
+      id: 'timer-audio-input',
+      className: 'form-input',
       name: 'sound',
-      id: 'sound',
     });
-    this.soundOption1 = createElement('option', {
-      value: 'assets/calm-alarm.mp3',
-      innerText: 'Calm Alarm',
-    });
-    this.soundOption2 = createElement('option', {
-      value: 'assets/original-alarm.mp3',
-      innerText: 'Orginal Alarm',
-    });
-    this.soundOption3 = createElement('option', {
-      value: 'assets/kanye-stop.mp3',
-      innerText: 'Kanye Telling You to Stop',
-    });
+    this.timerAudioOptions = Object.entries(TIMER_AUDIOS).map(([name, path]) =>
+      createElement('option', {
+        value: path,
+        innerText: timerAudioDescriptions[name],
+      }),
+    );
+
+    // save button
     this.saveButton = createElement('button', {
       innerText: 'SAVE',
       className: 'save-button',
+      onmousedown: (e) => e.preventDefault(),
     });
+
+    // popup overlay
     this.overlayEl = createElement('div', {
       id: 'overlay',
     });
 
-    this.inputContainerShort.append(
-      this.inputLabelShort,
-      this.inputBoxShort,
-      this.inputBoundShort,
-      this.inputErrorShort,
-    );
-
-    this.inputContainerLong.append(
-      this.inputLabelLong,
-      this.inputBoxLong,
-      this.inputBoundLong,
-      this.inputErrorLong,
-    );
-
-    this.inputBoxSound.append(
-      this.soundOption1,
-      this.soundOption2,
-      this.soundOption3,
-    );
-
-    this.inputContainerSound.append(this.inputLabelSound, this.inputBoxSound);
-
-    this.contentContainer.append(
+    this.shadow.append(this.styleElement, this.popupContainer, this.overlayEl);
+    this.popupContainer.append(
       this.popupTitle,
-      this.popupTitleLine,
-      this.inputContainerShort,
-      this.inputContainerLong,
-      this.inputContainerSound,
+      this.popupTitleHr,
+      this.formInputsContainer,
       this.saveButton,
     );
-
-    this.popupContainer.append(this.contentContainer);
-
-    this.shadow.append(this.styleElement, this.popupContainer, this.overlayEl);
+    this.formInputsContainer.append(
+      this.shortBreakContainer,
+      this.shortBreakError,
+      this.longBreakContainer,
+      this.longBreakError,
+      this.timerAudioContainer,
+    );
+    this.shortBreakContainer.append(
+      this.shortBreakLabel,
+      this.shortBreakInput,
+      this.shortBreakBounds,
+    );
+    this.longBreakContainer.append(
+      this.longBreakLabel,
+      this.longBreakInput,
+      this.longBreakBounds,
+    );
+    this.timerAudioContainer.append(this.timerAudioLabel, this.timerAudioInput);
+    this.timerAudioInput.append(...this.timerAudioOptions);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -323,8 +322,8 @@ class Settings extends HTMLElement {
         }
 
         this._shortBreakLength = shortBreakLength;
-        this.inputBoxShort.value = this._shortBreakLength;
-        this.inputErrorShort.visibility = 'hidden';
+        this.shortBreakInput.value = this._shortBreakLength;
+        this.shortBreakError.visibility = 'hidden';
         break;
       }
       case 'long-break-length': {
@@ -335,8 +334,8 @@ class Settings extends HTMLElement {
         }
 
         this._longBreakLength = longBreakLength;
-        this.inputBoxLong.value = this._longBreakLength;
-        this.inputErrorLong.visibility = 'hidden';
+        this.longBreakInput.value = this._longBreakLength;
+        this.longBreakError.visibility = 'hidden';
         break;
       }
       case 'timer-audio': {
@@ -347,7 +346,7 @@ class Settings extends HTMLElement {
         }
 
         this._timerAudio = timerAudio;
-        this.inputBoxSound.value = this._timerAudio;
+        this.timerAudioInput.value = this._timerAudio;
         break;
       }
       default:
@@ -414,7 +413,7 @@ export default Settings;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 17 2021 21:57:35 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Mar 18 2021 01:01:17 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
