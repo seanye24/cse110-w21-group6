@@ -1,0 +1,114 @@
+.task-form {
+  margin: 1em;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-input-container {
+  margin-bottom: 1em;
+  border-radius: 5px;
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+
+.name-input-container {
+  flex: 4;
+  position: relative;
+}
+
+.pomodoro-input-container {
+  flex: 1;
+  min-width: 95px;
+  position: relative;
+}
+
+.task-input-label {
+  position: absolute;
+  z-index: 2;
+  font: 0.8rem 'Source Sans Pro', sans-serif;
+  color: #777;
+}
+
+#name-input-label {
+  top: 0.2em;
+  left: 0.75em;
+}
+
+#pomodoro-input-label {
+  top: 0.2em;
+  left: 0.75em;
+}
+
+.task-input[type='text'],
+.task-input[type='number'] {
+  padding: 1.5em 0.75em 0.75em 0.75em;
+  border: none;
+  font: 1rem 'Source Sans Pro', sans-serif;
+  color: #444;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.task-input:focus {
+  box-shadow: 0 0 0 2pt #c8c8c8;
+  outline: none;
+  z-index: 1;
+  position: relative;
+}
+
+#name-input {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+#pomodoro-input {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.task-input[type='text']::placeholder,
+.task-input[type='number']::placeholder {
+  color: #c8c8c8;
+}
+
+#submit-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 50%;
+  margin: auto;
+  border-radius: 5px;
+  outline: none;
+  border: none;
+  color: white;
+  padding: 0.5em;
+  font: 1.1rem 'Duru Sans', sans-serif;
+}
+
+#submit-input.pomodoro {
+  background: rgb(77, 207, 233);
+}
+
+#submit-input.short-break {
+  background: #69da00;
+}
+
+#submit-input.long-break {
+  background: #f98f38;
+}
+
+#submit-input.pomodoro:hover {
+  background: rgb(112, 216, 237);
+  cursor: pointer;
+}
+
+#submit-input.short-break:hover {
+  background: #7ce407;
+  cursor: pointer;
+}
+
+#submit-input.long-break:hover {
+  background: #f99e3d;
+  cursor: pointer;
+}

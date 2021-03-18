@@ -2,6 +2,7 @@
  * @file progress-ring web component
  */
 
+import styles from '../styles/progress-ring.component.css';
 import { subscribe } from '../models';
 import { ACTIONS, INTERVALS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
@@ -109,28 +110,7 @@ class ProgressRing extends HTMLElement {
         transform-origin: 50% 50%;
       }
 
-      .overlay-circle.pomodoro {
-        stroke: #0095b3;
-      }
-
-      .overlay-circle.short-break {
-        stroke: #4ab717;
-      }
-
-      .overlay-circle.long-break {
-        stroke: #f87335;
-      }
-
-      .foreign-object {
-      }
-
-      .foreign-object-container {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+      ${styles}
     `;
 
     this.foreignObjectElement.setAttribute('width', 2 * radius);

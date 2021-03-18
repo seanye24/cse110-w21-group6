@@ -19,10 +19,26 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.css$/i,
+          test: /(?<!\.component)\.css$/i,
           include: [path.join(__dirname, 'src')],
           use: [
             MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: ['postcss-preset-env'],
+                },
+              },
+            },
+          ],
+        },
+        {
+          test: /\.component\.css$/i,
+          include: [path.join(__dirname, 'src')],
+          use: [
+            'to-string-loader',
             'css-loader',
             {
               loader: 'postcss-loader',
@@ -40,7 +56,7 @@ module.exports = (env, argv) => {
           type: 'asset/resource',
         },
         {
-          test: /\.js$/,
+          test: /\.js$/i,
           include: [path.join(__dirname, 'src')],
           use: ['babel-loader'],
         },

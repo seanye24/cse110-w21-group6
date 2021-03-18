@@ -2,6 +2,7 @@
  * @file progress-ring web component
  */
 
+import styles from '../styles/timer.component.css';
 import { createElement, getMinutesAndSeconds } from '../utils/helpers';
 import { validateContainerRadius, validateTime } from '../utils/timer';
 
@@ -23,12 +24,7 @@ class Timer extends HTMLElement {
     this._containerRadius = 0;
 
     this.styleElement = createElement('style', {
-      innerText: `
-        .container {
-          font: initial 'Duru-Sans', sans-serif;
-          color: #fff;
-        }
-      `,
+      innerText: styles,
     });
 
     this.shadow = this.attachShadow({ mode: 'open' });

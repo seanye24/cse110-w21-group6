@@ -2,6 +2,7 @@
  * @file task-list web component
  */
 
+import styles from '../styles/task-list.component.css';
 import { createElement } from '../utils/helpers';
 import TaskItem from './TaskItem';
 import TaskItemForm from './TaskItemForm';
@@ -20,42 +21,9 @@ class TaskList extends HTMLElement {
     super();
 
     this.shadow = this.attachShadow({ mode: 'open' });
-    this.styleElement = document.createElement('style');
-    this.styleElement.innerText = `
-      .container {
-        padding: 1em;
-        font: normal 1rem 'Source Sans Pro', sans-serif;
-        border-radius: 5px;
-        height: 100%;
-        flex: 1 1 0;
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-      }
-
-      .container.pomodoro {
-        background: #00b4d8;
-      }
-
-      .container.short-break {
-        background: #54C800;
-      }
-
-      .container.long-break {
-        background: #f87335;
-      }
-
-      .task-item-container {
-        flex: 1;
-        overflow: auto;
-      }
-
-      .title {
-        text-align: center;
-        color: #fff;
-        margin-top: 0;
-      }
-    `;
+    this.styleElement = createElement('style', {
+      innerText: styles,
+    });
 
     this.containerElement = createElement('div', {
       className: 'container pomodoro',

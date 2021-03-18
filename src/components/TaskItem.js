@@ -2,6 +2,7 @@
  * @file task-item web component
  */
 
+import styles from '../styles/task-item.component.css';
 import { subscribe } from '../models';
 import { ACTIONS, INTERVALS } from '../utils/constants';
 import {
@@ -44,150 +45,9 @@ class TaskItem extends HTMLElement {
     // create shadow root
     this.shadow = this.attachShadow({ mode: 'open' });
 
-    this.styleElement = document.createElement('style');
-    this.styleElement.innerText = `
-      .item-container {
-        margin-bottom: 1em;
-        padding: 0.5em 2em;
-        border-radius: 5px;
-        position: relative;
-        cursor: pointer;
-      }
-
-      .item-container:focus {
-        outline: none;
-      }
-
-      .item-container.selected.pomodoro {
-        background: #90e0ef;
-      }
-
-      .item-container.selected.short-break {
-        background: #7ce407;
-      }
-
-      .item-container.selected.long-break {
-        background: #f99e3d;
-      }
-
-      .text-container {
-        background: rgba(255, 255, 255, 1);
-        color: #555;
-        position: relative;
-        padding: 0.5em;
-        border-radius: 5px;
-        width: 100%;
-        text-align: left;
-        font: 1rem Source Sans Pro, sans-serif;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-      }
-
-      .item-container.completed .text-container {
-        background: #ddd;
-      }
-
-      .item-container:not(.disabled):not(.selected):not(.completed) > .text-container:hover {
-        background: rgba(255, 255, 255, 0.8);
-      }
-
-      .text-container:focus {
-        outline: none;
-        box-shadow: 0 0 0 2pt #90e0ef;
-      }
-
-      .item-container.selected > .text-container:focus {
-        box-shadow: 0 0 0 2pt #00b4d8;
-      }
-      
-      .task-name {
-        width: 80%;
-        display: inline-block;
-        margin: 0.5em 0;
-      }
-
-      .item-container.completed .task-name {
-        text-decoration: line-through;
-      }
-      
-      .task-pomodoro-container {
-        width: 20%;
-        height: 100%;
-        display: inline-block;
-        position: relative;
-        text-align: right;
-      }
-
-      .task-pomodoro-label {
-        position: absolute;
-        top: -0.5em;
-        right: 0;
-        font: 0.8rem 'Source Sans Pro', sans-serif;
-        color: #777;
-      }
-
-      .task-pomodoro {
-        display: inline-block;
-        margin: 1em 0 0 0;
-      }
-
-      .task-button {
-        opacity: 0;
-        position: absolute;
-        border: none;
-        padding: 0.25em;
-        color: rgba(255, 255, 255, 1); 
-        background: transparent;
-        border-radius: 50%;
-      }
-
-      .item-container:hover:not(.disabled) > .task-button,
-      .task-button:focus {
-        opacity: 1;
-      }
-
-      .task-button:focus {
-        outline: none;
-        z-index: 1;
-        position: absolute;
-      }
-
-      .task-button:focus {
-        box-shadow: inset 0 0 0 2pt #90e0ef;
-      }
-
-      .item-container.selected > .task-button:focus {
-        box-shadow: inset 0 0 0 2pt #00b4d8;
-      }
-
-      .task-button:hover {
-        border-radius: 50%;
-        color: rgba(255, 255, 255, 0.8); 
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.3);
-      }
-
-      .item-container.selected > .task-button,
-      .item-container.selected > .task-button:hover {
-        color: rgba(0, 0, 0, 0.54);
-      }
-
-      .task-button:disabled {
-        opacity: 0;
-      }
-
-      .task-button-icon {
-        font-size: 1.2rem;
-      }
-
-      #delete-button {
-        top: 50%;
-        right: 0;
-        transform: translate(0, -50%);
-      }
-    `;
+    this.styleElement = createElement('style', {
+      innerText: styles,
+    });
 
     this.materialIconLinkElement = createElement('link', {
       rel: 'stylesheet',
