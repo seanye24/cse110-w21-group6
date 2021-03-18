@@ -148,7 +148,7 @@ const initializePopup = (root, tasks) => {
   } = subscribe();
 
   createTaskSummaryList(tasks, completedTasks);
-  const totalSessionTime = getTotalSessionTime(numberOfPomodorosCompleted, {
+  const totalSessionTime = getTotalSessionTime({
     intervalName: currentInterval,
     timeRemaining: currentTime,
   });
