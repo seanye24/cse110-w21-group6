@@ -6,6 +6,7 @@ import { subscribe } from '../models';
 import { ACTIONS, INTERVALS } from '../utils/constants';
 import {
   createElement,
+  updateClassesByInterval,
   validateBoolean,
   validateString,
 } from '../utils/helpers';
@@ -249,40 +250,23 @@ class TaskItem extends HTMLElement {
     this.textContainerElement.append(this.nameElement, this.pomodoroContainer);
     this.pomodoroContainer.append(this.pomodoroLabel, this.pomodoroElement);
 
-    subscribe({
+    const { currentInterval } = subscribe({
       [ACTIONS.changeSession]: (sessionState) => {
         if (sessionState.session === 'inactive') {
-          this.itemContainerElement.classList.add('pomodoro');
-          this.itemContainerElement.classList.remove('short-break');
-          this.itemContainerElement.classList.remove('long-break');
+          updateClassesByInterval(INTERVALS.pomodoro, [
+            this.itemContainerElement,
+          ]);
         }
       },
       [ACTIONS.changeCurrentInterval]: (sessionState) => {
         if (sessionState.session === 'active') {
-          switch (sessionState.currentInterval) {
-            case INTERVALS.pomodoro:
-              this.itemContainerElement.classList.add('pomodoro');
-              this.itemContainerElement.classList.remove('short-break');
-              this.itemContainerElement.classList.remove('long-break');
-              break;
-            case INTERVALS.shortBreak:
-              this.itemContainerElement.classList.remove('pomodoro');
-              this.itemContainerElement.classList.add('short-break');
-              this.itemContainerElement.classList.remove('long-break');
-              break;
-            case INTERVALS.longBreak:
-              this.itemContainerElement.classList.remove('pomodoro');
-              this.itemContainerElement.classList.remove('short-break');
-              this.itemContainerElement.classList.add('long-break');
-              break;
-            default:
-              this.itemContainerElement.classList.add('pomodoro');
-              this.itemContainerElement.classList.remove('short-break');
-              this.itemContainerElement.classList.remove('long-break');
-          }
+          updateClassesByInterval(sessionState.currentInterval, [
+            this.itemContainerElement,
+          ]);
         }
       },
     });
+    updateClassesByInterval(currentInterval, [this.itemContainerElement]);
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

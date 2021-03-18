@@ -4,6 +4,7 @@
 
 import { dispatch, subscribe } from '../models';
 import { ACTIONS, ANNOUNCEMENTS, INTERVALS } from '../utils/constants';
+import { updateClassesByInterval } from '../utils/helpers';
 
 let announcementContainer;
 let announcementElement;
@@ -66,32 +67,21 @@ const initializeAnnouncement = (containerElement) => {
     },
     [ACTIONS.changeCurrentInterval]: (sessionState) => {
       if (sessionState.session === 'active') {
+        updateClassesByInterval(sessionState.currentInterval, [
+          yesButton,
+          noButton,
+        ]);
         switch (sessionState.currentInterval) {
           case INTERVALS.pomodoro:
             setAnnouncement(ANNOUNCEMENTS.pomodoroInterval);
-            [yesButton, noButton].forEach((btn) => {
-              btn.classList.add('pomodoro');
-              btn.classList.remove('short-break');
-              btn.classList.remove('long-break');
-            });
             break;
           case INTERVALS.shortBreak:
             setAnnouncement(ANNOUNCEMENTS.taskCompletionQuestion);
             setButtonVisibility('visible');
-            [yesButton, noButton].forEach((btn) => {
-              btn.classList.remove('pomodoro');
-              btn.classList.add('short-break');
-              btn.classList.remove('long-break');
-            });
             break;
           case INTERVALS.longBreak:
             setAnnouncement(ANNOUNCEMENTS.taskCompletionQuestion);
             setButtonVisibility('visible');
-            [yesButton, noButton].forEach((btn) => {
-              btn.classList.remove('pomodoro');
-              btn.classList.remove('short-break');
-              btn.classList.add('long-break');
-            });
             break;
           default:
         }

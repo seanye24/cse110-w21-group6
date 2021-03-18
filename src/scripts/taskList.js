@@ -24,6 +24,7 @@ let taskListItemContainer;
 let taskItemForm;
 let taskItemFormContainer;
 let taskItemFormInputs;
+let shouldTasklistBeUsable = true;
 
 /**
  * Save current tasks to localStorage
@@ -150,6 +151,37 @@ const selectTask = (task) => {
 };
 
 /**
+ * Disable task
+ * @param {Task} task - task to disable
+ */
+const disableTask = (task) => {
+  const { taskElement } = getTask(task);
+  const { shadowRoot } = taskElement;
+  const itemContainer = shadowRoot.querySelector('.item-container');
+  const textContainer = shadowRoot.querySelector('.text-container');
+
+  // disable item container
+  if (shouldTasklistBeUsable) {
+    itemContainer.classList.remove('disabled');
+  } else {
+    itemContainer.classList.add('disabled');
+  }
+
+  // disable select task listener
+  if (shouldTasklistBeUsable && !task.completed) {
+    textContainer.onclick = () => selectTask(task);
+  } else {
+    textContainer.onclick = null;
+  }
+
+  // disable buttons
+  const buttons = getTaskItemButtons(taskElement);
+  Object.values(buttons).forEach((btn) => {
+    btn.disabled = !shouldTasklistBeUsable;
+  });
+};
+
+/**
  * Create a task element from a task object
  * @param {Task} newTask - task to be created
  */
@@ -198,6 +230,7 @@ const addTask = (newTask) => {
     addTaskToDom(newTaskElement);
   }
   saveTasks();
+  return newTask;
 };
 
 /**
@@ -224,13 +257,16 @@ const handleTaskFormSubmit = (e) => {
 
   nameInput.focus();
 
-  addTask({
+  const newTask = addTask({
     name: trimmedName,
     estimatedPomodoros: pomodoroNumber,
     usedPomodoros: 0,
     selected: false,
     completed: false,
   });
+  if (!shouldTasklistBeUsable) {
+    disableTask(newTask);
+  }
   Object.values(taskItemFormInputs).forEach((input) => {
     input.value = '';
   });
@@ -305,33 +341,9 @@ const deselectAllTasks = () => {
  * Disable task list
  * @param {boolean} shouldTasklistBeUsable - whether task list should be usable
  */
-const setTasklistUsability = (shouldTasklistBeUsable) => {
-  tasks.forEach((task) => {
-    const { taskElement } = getTask(task);
-    const { shadowRoot } = taskElement;
-    const itemContainer = shadowRoot.querySelector('.item-container');
-    const textContainer = shadowRoot.querySelector('.text-container');
-
-    // disable item container
-    if (shouldTasklistBeUsable) {
-      itemContainer.classList.remove('disabled');
-    } else {
-      itemContainer.classList.add('disabled');
-    }
-
-    // disable select task listener
-    if (shouldTasklistBeUsable && !task.completed) {
-      textContainer.onclick = () => selectTask(task);
-    } else {
-      textContainer.onclick = null;
-    }
-
-    // disable buttons
-    const buttons = getTaskItemButtons(taskElement);
-    Object.values(buttons).forEach((btn) => {
-      btn.disabled = !shouldTasklistBeUsable;
-    });
-  });
+const setTasklistUsability = (usability) => {
+  shouldTasklistBeUsable = usability;
+  tasks.forEach(disableTask);
 };
 
 /**

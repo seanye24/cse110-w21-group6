@@ -150,11 +150,43 @@ const getTotalSessionTime = (lastInterval) => {
   return estimatedTotalSessionTime;
 };
 
+/**
+ * Update elements' class based on current interval
+ * @param {string} currentInterval - current interval in session
+ * @param {HTMLElement[]} elements - elements whose classes need to be updated
+ */
+const updateClassesByInterval = (currentInterval, elements) => {
+  elements.forEach((elm) => {
+    switch (currentInterval) {
+      case INTERVALS.pomodoro:
+        elm.classList.add('pomodoro');
+        elm.classList.remove('short-break');
+        elm.classList.remove('long-break');
+        break;
+      case INTERVALS.shortBreak:
+        elm.classList.remove('pomodoro');
+        elm.classList.add('short-break');
+        elm.classList.remove('long-break');
+        break;
+      case INTERVALS.longBreak:
+        elm.classList.remove('pomodoro');
+        elm.classList.remove('short-break');
+        elm.classList.add('long-break');
+        break;
+      default:
+        elm.classList.add('pomodoro');
+        elm.classList.remove('short-break');
+        elm.classList.remove('long-break');
+    }
+  });
+};
+
 export {
   createElement,
   getMinutesAndSeconds,
   getHoursMinutesAndSeconds,
   getTotalSessionTime,
+  updateClassesByInterval,
   tick,
   validateNumber,
   validateString,

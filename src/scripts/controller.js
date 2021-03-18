@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { dispatch, subscribe } from '../models';
 import { ACTIONS, INTERVALS } from '../utils/constants';
-import { tick } from '../utils/helpers';
+import { tick, updateClassesByInterval } from '../utils/helpers';
 import { openPopup as openConfirmationPopup } from './confirmationPopup';
 import { openPopup as openSettingsPopup } from './settings';
 import {
@@ -142,11 +142,7 @@ const initializeController = () => {
       sessionButton.innerText = 'End';
       sessionButton.classList.add('session-button', 'in-session');
     } else if (session === 'inactive') {
-      elementsThatChangeTheme.forEach((elem) => {
-        elem.classList.add('pomodoro');
-        elem.classList.remove('short-break');
-        elem.classList.remove('long-break');
-      });
+      updateClassesByInterval(INTERVALS.pomodoro, elementsThatChangeTheme);
       sessionButton.innerText = 'Start';
       sessionButton.classList.remove('in-session');
       endSession();
@@ -160,31 +156,7 @@ const initializeController = () => {
   };
   const onChangeInterval = (sessionState) => {
     currentInterval = sessionState.currentInterval;
-
-    switch (currentInterval) {
-      case INTERVALS.pomodoro:
-        elementsThatChangeTheme.forEach((elem) => {
-          elem.classList.add('pomodoro');
-          elem.classList.remove('short-break');
-          elem.classList.remove('long-break');
-        });
-        break;
-      case INTERVALS.shortBreak:
-        elementsThatChangeTheme.forEach((elem) => {
-          elem.classList.remove('pomodoro');
-          elem.classList.add('short-break');
-          elem.classList.remove('long-break');
-        });
-        break;
-      case INTERVALS.longBreak:
-        elementsThatChangeTheme.forEach((elem) => {
-          elem.classList.remove('pomodoro');
-          elem.classList.remove('short-break');
-          elem.classList.add('long-break');
-        });
-        break;
-      default:
-    }
+    updateClassesByInterval(currentInterval, elementsThatChangeTheme);
 
     // play timer audio at the end of every interval
     if (
