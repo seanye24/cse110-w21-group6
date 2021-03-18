@@ -1,6 +1,9 @@
 /**
  * @file Constants file
  */
+import calm from '../assets/calm-alarm.mp3';
+import annoying from '../assets/original-alarm.mp3';
+import kanye from '../assets/kanye-stop.mp3';
 
 // announcements
 export const ANNOUNCEMENTS = {
@@ -32,9 +35,9 @@ export const KEYS = {
 
 // timer audio paths
 export const TIMER_AUDIOS = {
-  calm: 'assets/calm-alarm.mp3',
-  annoying: 'assets/original-alarm.mp3',
-  kanye: 'assets/kanye-stop.mp3',
+  calm,
+  annoying,
+  kanye,
 };
 
 // default settings
