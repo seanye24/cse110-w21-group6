@@ -351,11 +351,11 @@ describe('testing set functions from script file', () => {
 describe('testing popup actions', () => {
   let settingsPopupElement;
   let popupElement;
-  let overlayElement;
   let shortBreakInputElement;
   let longBreakInputElement;
   let timerAudioInputElement;
   let saveButton;
+  let overlayElement;
   const saveSettingsSpy = jest.spyOn(popupFunctions, 'saveSettings');
   const closePopupSpy = jest.spyOn(popupFunctions, 'closePopup');
   beforeEach(() => {
@@ -363,12 +363,12 @@ describe('testing popup actions', () => {
     settingsPopupElement = createElement('settings-component');
     initializePopup(settingsPopupElement);
     const { shadowRoot } = settingsPopupElement;
-    popupElement = shadowRoot.querySelector('.popup');
-    overlayElement = shadowRoot.querySelector('#overlay');
-    shortBreakInputElement = shadowRoot.querySelector('#short-number');
-    longBreakInputElement = shadowRoot.querySelector('#long-number');
-    timerAudioInputElement = shadowRoot.querySelector('#sound');
+    popupElement = shadowRoot.querySelector('.popup-container');
+    shortBreakInputElement = shadowRoot.querySelector('#short-break-input');
+    longBreakInputElement = shadowRoot.querySelector('#long-break-input');
+    timerAudioInputElement = shadowRoot.querySelector('#timer-audio-input');
     saveButton = shadowRoot.querySelector('.save-button');
+    overlayElement = shadowRoot.querySelector('#overlay');
   });
 
   test('popup opens correctly with default settings', () => {
@@ -448,10 +448,10 @@ describe('testing save actions', () => {
     settingsPopupElement = createElement('settings-component');
     initializePopup(settingsPopupElement);
     const { shadowRoot } = settingsPopupElement;
-    shortBreakInputElement = shadowRoot.querySelector('#short-number');
-    longBreakInputElement = shadowRoot.querySelector('#long-number');
-    timerAudioInputElement = shadowRoot.querySelector('#sound');
-    errorMessageElements = shadowRoot.querySelectorAll('.error');
+    shortBreakInputElement = shadowRoot.querySelector('#short-break-input');
+    longBreakInputElement = shadowRoot.querySelector('#long-break-input');
+    timerAudioInputElement = shadowRoot.querySelector('#timer-audio-input');
+    errorMessageElements = shadowRoot.querySelectorAll('.error-message');
   });
 
   test('valid inputs are saved correctly', () => {
@@ -499,19 +499,19 @@ describe('testing save actions', () => {
     longBreakInputElement.value = 34;
     saveSettings();
     Array.from(errorMessageElements).forEach((el) =>
-      expect(el.style.visibility).toBe('visible'),
+      expect(el.style.display).toBe('initial'),
     );
 
     shortBreakInputElement.value = 10;
     longBreakInputElement.value = 29;
     saveSettings();
-    errorMessageElements[0].style.visibility = 'visible';
-    errorMessageElements[1].style.visibility = 'hidden';
+    errorMessageElements[0].style.display = 'none';
+    errorMessageElements[1].style.display = 'initial';
 
     shortBreakInputElement.value = 5;
     longBreakInputElement.value = 10;
     saveSettings();
-    errorMessageElements[0].style.visibility = 'hidden';
-    errorMessageElements[1].style.visibility = 'visible';
+    errorMessageElements[0].style.display = 'none';
+    errorMessageElements[1].style.display = 'initial';
   });
 });
