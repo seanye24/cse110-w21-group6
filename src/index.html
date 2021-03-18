@@ -90,36 +90,58 @@
       </div>
       <task-list class="task-list"></task-list>
     </div>
-    <div id="instructions">
-      <h1 class="instructions-title">INSTRUCTIONS</h1>
-      <hr class="instructions-hr" />
-      <ol class="instructions-list">
-        <li>
-          Make sure to add tasks that you wish to complete today into the task
-          list!
-        </li>
-        <li>
-          Click on the task you would like to start working on and/or complete.
-        </li>
-        <li>
-          You will work for 25 minute intervals (Pomodoros) with 3-5 minute long
-          breaks in between.
-        </li>
-        <li>
-          After 4 Pomodoros, you will be rewarded a longer 15-30 minute long
-          break.
-        </li>
-        <li>
-          During each break, you will be asked if you have completed your task.
-          If so, click “Yes” and repeat from Step 2 if tasks remain.
-        </li>
-      </ol>
-      <p class="instructions-note">
-        NOTE: Within your 25 minute interval, press the “End” button if you get
-        distracted or need to leave. This will reset your Pomodoro count toward
-        your long break reward and you will be provided a summary page of what
-        you accomplished during your entire session.
-      </p>
+    <div class="info-container">
+      <section class="info-section-container">
+        <h1 class="info-title">INSTRUCTIONS</h1>
+        <hr class="info-hr" />
+        <ol class="instructions-list">
+          <li>Add tasks you want to complete in the task list.</li>
+          <li>
+            Click on the task you would like to start working on and/or
+            complete.
+          </li>
+          <li>
+            You will work for 25 minute intervals (Pomodoros) with 3-5 minute
+            long breaks in between.
+          </li>
+          <li>
+            After 4 Pomodoros, you will be rewarded a longer 15-30 minute long
+            break.
+          </li>
+          <li>
+            When your pomodoro ends, you will be asked if you have completed
+            your task. If so, click “Yes” and repeat from Step 2 if tasks
+            remain.
+          </li>
+        </ol>
+        <p class="instructions-note">
+          NOTE: Within your 25 minute interval, press the “End” button if you
+          get distracted or need to leave. This will reset your Pomodoro count
+          toward your long break reward and you will be provided a summary page
+          of what you accomplished during your entire session.
+        </p>
+      </section>
+      <section class="info-section-container">
+        <h1 class="info-title">FAQ</h1>
+        <hr class="info-hr" />
+        <h2 class="faq-question">What do the summary colors mean?</h2>
+        <div class="faq-answer-container">
+          <ul class="faq-list">
+            <li class="task-summary-item complete under-budget">
+              Completed, under-budget task
+            </li>
+            <li class="task-summary-item complete over-budget">
+              Completed, over-budget task
+            </li>
+            <li class="task-summary-item in-progress">In progress task</li>
+            <li class="task-summary-item not-started">Not started task</li>
+            <li class="task-summary-item complete old">
+              Completed task from previous session (not used in calculations,
+              should be deleted)
+            </li>
+          </ul>
+        </div>
+      </section>
     </div>
 
     <settings-component class="settings"></settings-component>
@@ -131,7 +153,7 @@
           href="https://github.com/seanye24/cse110-w21-group6"
           target="_blank"
           rel="noreferrer noopener"
-          ><img src="assets/github.png" alt="github" class="github-icon"
+          ><img src="assets/github.png" alt="github" class="footer-icon"
         /></a>
       </p>
     </footer>
