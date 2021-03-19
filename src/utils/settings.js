@@ -5,6 +5,7 @@
 import {
   DEFAULT_LONG_BREAK_LENGTH,
   DEFAULT_SHORT_BREAK_LENGTH,
+  KEYS,
   TIMER_AUDIOS,
 } from './constants';
 import { validateNumber, validateString } from './helpers';
@@ -68,10 +69,10 @@ export const initializeIntervalLengths = () => {
   let longBreakLength;
   try {
     shortBreakLength = JSON.parse(
-      window.localStorage.getItem('shortBreakLength'),
+      window.localStorage.getItem(KEYS.shortBreakLength),
     );
     longBreakLength = JSON.parse(
-      window.localStorage.getItem('longBreakLength'),
+      window.localStorage.getItem(KEYS.longBreakLength),
     );
   } catch (error) {
     shortBreakLength = null;
@@ -82,11 +83,11 @@ export const initializeIntervalLengths = () => {
     validateShortBreakLength(shortBreakLength) === null
   ) {
     shortBreakLength = DEFAULT_SHORT_BREAK_LENGTH;
-    window.localStorage.setItem('shortBreakLength', shortBreakLength);
+    window.localStorage.setItem(KEYS.shortBreakLength, shortBreakLength);
   }
   if (!longBreakLength || validateLongBreakLength(longBreakLength) === null) {
     longBreakLength = DEFAULT_LONG_BREAK_LENGTH;
-    window.localStorage.setItem('longBreakLength', longBreakLength);
+    window.localStorage.setItem(KEYS.longBreakLength, longBreakLength);
   }
   return { shortBreakLength, longBreakLength };
 };

@@ -2,6 +2,9 @@
  * @file task-item-form web component
  */
 
+import styles from '../styles/task-item-form.component.css';
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 
 /**
@@ -16,100 +19,9 @@ class TaskItemForm extends HTMLElement {
 
     this.shadow = this.attachShadow({ mode: 'open' });
 
-    this.styleElement = document.createElement('style');
-    this.styleElement.innerText = `
-      .task-form {
-        margin: 1em;
-        padding: 1em ;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .field-input-container {
-        margin-bottom: 1em;
-        border-radius: 5px;
-        position: relative;
-        width: 100%;
-        display: flex;
-      }
-
-      .name-input-container {
-        flex: 4;
-        position: relative;
-      }
-
-      .pomodoro-input-container {
-        flex: 1;
-        min-width: 95px;
-        position: relative;
-      }
-
-      .task-input-label {
-        position: absolute;
-        z-index: 2;
-        font: 0.8rem 'Source Sans Pro', sans-serif;
-        color: #777;
-      }
-
-      #name-input-label {
-        top: 0.2em;
-        left: 0.75em;
-      }
-
-      #pomodoro-input-label {
-        top: 0.2em;
-        left: 0.75em;
-      }
-
-      .task-input[type='text'],
-      .task-input[type='number'] {
-        padding: 1.5em 0.75em 0.75em 0.75em;
-        border: none;
-        font: 1rem 'Source Sans Pro', sans-serif;
-        color: #444;
-        box-sizing: border-box;
-        width: 100%;
-      }
-
-      .task-input:focus {
-        box-shadow: 0 0 0 2pt #90e0ef;
-        outline: none;
-        z-index: 1;
-        position: relative;
-      }
-
-      #name-input {
-        border-top-left-radius: 5px;
-        border-bottom-left-radius: 5px;
-      }
-
-      #pomodoro-input {
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-      }
-
-      .task-input[type='text']::placeholder,
-      .task-input[type='number']::placeholder {
-        color: #c8c8c8;
-      }
-
-      #submit-input {
-        width: 50%;
-        margin: auto;
-        background: rgb(77, 207, 233);
-        border-radius: 5px;
-        outline: none;
-        border: none;
-        color: white;
-        padding: 0.5em;
-        font: 1.2rem 'Source Sans Pro', sans-serif;
-      }
-
-      #submit-input:hover {
-        background: rgb(112, 216, 237);
-        cursor: pointer;
-      }
-    `;
+    this.styleElement = createElement('style', {
+      innerText: styles.toString(),
+    });
 
     this.containerElement = createElement('form', {
       className: 'task-form',
@@ -161,7 +73,7 @@ class TaskItemForm extends HTMLElement {
     });
 
     this.submitInputElement = createElement('input', {
-      className: 'task-input',
+      className: 'task-input pomodoro',
       id: 'submit-input',
       type: 'submit',
       value: 'ADD',
@@ -181,6 +93,31 @@ class TaskItemForm extends HTMLElement {
       this.pomodoroInputLabel,
       this.pomodoroInputElement,
     );
+
+    subscribe({
+      [ACTIONS.changeSession]: (sessionState) => {
+        if (sessionState.session === 'inactive') {
+          this.submitInputElement.className = 'pomodoro';
+        }
+      },
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
+        if (sessionState.session === 'active') {
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
+              this.submitInputElement.className = 'pomodoro';
+              break;
+            case INTERVALS.shortBreak:
+              this.submitInputElement.className = 'short-break';
+              break;
+            case INTERVALS.longBreak:
+              this.submitInputElement.className = 'long-break';
+              break;
+            default:
+              this.submitInputElement.className = 'pomodoro';
+          }
+        }
+      },
+    });
   }
 }
 

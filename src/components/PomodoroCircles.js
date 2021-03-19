@@ -2,6 +2,7 @@
  * @file pomodoro-circles web component
  */
 
+import styles from '../styles/pomodoro-circles.component.css';
 import { createElement } from '../utils/helpers';
 import { validateCircleCount } from '../utils/pomodoroCircles';
 
@@ -19,24 +20,7 @@ class PomodoroCircles extends HTMLElement {
 
     this._circleCount = 0;
     this.styleElement = createElement('style', {
-      innerText: `
-      .circle-container {
-        display: flex;
-      }
-      
-      .circle {
-        height: 15px;
-        width: 15px;
-        border: 1px solid white;
-        border-radius: 50%;
-        margin: 15px 7px 0px;
-        display: inline-block;
-      }
-
-      .circle.active {
-        background-color: #fff;
-      }
-      `,
+      innerText: styles,
     });
 
     this.shadow = this.attachShadow({ mode: 'open' });
@@ -59,6 +43,8 @@ class PomodoroCircles extends HTMLElement {
         this.setAttribute(name, oldValue);
         return;
       }
+
+      this._circleCount = circleCount;
 
       this.circles.forEach((circle, i) => {
         if (i < circleCount) {

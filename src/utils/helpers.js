@@ -2,6 +2,9 @@
  * @file Various utility methods
  */
 
+import { subscribe } from '../models';
+import { INTERVALS } from './constants';
+
 /**
  * Creates an HTMLElement and set its attributes
  * Created to reduce boilerplate from element creation
@@ -94,7 +97,7 @@ const tick = async (duration) =>
   new Promise((res) => setTimeout(res, 1000 * duration));
 
 /**
- * Converts seconds into MM : SS
+ * Converts seconds into MM:SS
  * @param {string} seconds - seconds to convert
  * @return {string} - time in format MM:SS
  */
@@ -106,9 +109,84 @@ const getMinutesAndSeconds = (totalSeconds) => {
   return `${minutes}:${seconds}`;
 };
 
+/**
+ * Converts seconds into HH:MM:SS
+ * @param {string} seconds - seconds to convert
+ * @return {string} - time in format HH h MM m SS s
+ */
+const getHoursMinutesAndSeconds = (totalSeconds) => {
+  const hours = Math.floor(totalSeconds / (60 * 60));
+  const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+  const seconds = totalSeconds % 60;
+  const hoursFormatted = hours > 0 ? `${hours}h` : '';
+  const minutesFormatted = minutes > 0 ? `${minutes}m` : '';
+  const secondsFormatted =
+    seconds > 0 || (hours === 0 && minutes === 0) ? `${seconds}s` : '';
+  return [hoursFormatted, minutesFormatted, secondsFormatted]
+    .filter((s) => s !== '')
+    .join(' ');
+};
+
+/**
+ * Computes total time elapsed during a session
+ * @param {{intervalName: string, timeRemaining: number}} lastInterval - the interval in which the session stopped in
+ */
+const getTotalSessionTime = (lastInterval) => {
+  const {
+    totalSessionTime: estimatedTotalSessionTime,
+    shortBreakLength,
+    longBreakLength,
+  } = subscribe();
+  const { intervalName, timeRemaining } = lastInterval;
+
+  // if session was interrupted during break, add on time elapsed during break before the interrupt
+  // otherwise, use recorded session time
+  if (intervalName === INTERVALS.shortBreak && timeRemaining !== -1) {
+    return estimatedTotalSessionTime + (60 * shortBreakLength - timeRemaining);
+  }
+  if (intervalName === INTERVALS.longBreak && timeRemaining !== -1) {
+    return estimatedTotalSessionTime + (60 * longBreakLength - timeRemaining);
+  }
+  return estimatedTotalSessionTime;
+};
+
+/**
+ * Update elements' class based on current interval
+ * @param {string} currentInterval - current interval in session
+ * @param {HTMLElement[]} elements - elements whose classes need to be updated
+ */
+const updateClassesByInterval = (currentInterval, elements) => {
+  elements.forEach((elm) => {
+    switch (currentInterval) {
+      case INTERVALS.pomodoro:
+        elm.classList.add('pomodoro');
+        elm.classList.remove('short-break');
+        elm.classList.remove('long-break');
+        break;
+      case INTERVALS.shortBreak:
+        elm.classList.remove('pomodoro');
+        elm.classList.add('short-break');
+        elm.classList.remove('long-break');
+        break;
+      case INTERVALS.longBreak:
+        elm.classList.remove('pomodoro');
+        elm.classList.remove('short-break');
+        elm.classList.add('long-break');
+        break;
+      default:
+        elm.classList.add('pomodoro');
+        elm.classList.remove('short-break');
+        elm.classList.remove('long-break');
+    }
+  });
+};
+
 export {
   createElement,
   getMinutesAndSeconds,
+  getHoursMinutesAndSeconds,
+  getTotalSessionTime,
+  updateClassesByInterval,
   tick,
   validateNumber,
   validateString,

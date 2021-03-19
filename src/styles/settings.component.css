@@ -1,0 +1,110 @@
+.popup-container {
+  position: fixed;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 65%;
+  min-width: 360px;
+  max-width: 500px;
+  border-radius: 5px;
+  padding: 1.5rem 3rem;
+  transition: 200ms ease-in-out;
+  background: white;
+  font: 1.1rem 'Source Sans Pro', sans-serif;
+  color: #2b2b2b;
+}
+
+.popup-container.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.popup-title {
+  margin: 0;
+  font: 2rem 'Lato', sans-serif;
+  color: #757575;
+  opacity: 0.9;
+}
+
+.popup-title-hr {
+  margin: 0 0 1rem 0;
+}
+
+.form-inputs-container {
+  margin: 0 0 2rem 0;
+}
+
+.form-input-container {
+  margin: 1rem 0 0 0;
+  display: flex;
+  align-items: center;
+}
+
+.form-input-label {
+  width: 12ch;
+  margin-right: 1rem;
+}
+
+.form-input {
+  cursor: pointer;
+  width: 4.5ch;
+  border: none;
+  border-radius: 5px;
+  margin-right: 1rem;
+  padding: 0.3em 0.5em;
+  font: 1.1rem 'Source Sans Pro', sans-serif;
+  color: #2b2b2b;
+  background: #eee;
+}
+
+#timer-audio-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 30ch;
+  background: url('../assets/sound.png') 96% / 10% no-repeat #eee;
+}
+
+.break-input-bounds {
+  color: #808080;
+}
+
+.error-message {
+  margin: 0;
+  display: none;
+  color: red;
+}
+
+.save-button {
+  cursor: pointer;
+  width: 75%;
+  display: block;
+  border: none;
+  border-radius: 0.25rem;
+  margin: 0 auto 0.5rem auto;
+  padding: 0.5em;
+  background: #b0b0b0;
+  font: 1.1rem 'Duru Sans', sans-serif;
+  text-align: center;
+  color: #2b2b2b;
+}
+
+.save-button:hover {
+  opacity: 0.9;
+}
+
+#overlay {
+  position: fixed;
+  z-index: 4;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  transition: 200ms ease-in-out;
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#overlay.active {
+  cursor: pointer;
+  visibility: visible;
+}

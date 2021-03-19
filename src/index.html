@@ -12,10 +12,9 @@
     />
     <meta name="author" content="Group 6" />
 
-    <link rel="icon" href="assets/favicon.ico" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Open+Sans&family=Roboto&family=Source+Sans+Pro&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Duru+Sans&family=Lato&family=Roboto&family=Source+Sans+Pro&display=swap"
       rel="stylesheet"
     />
     <link
@@ -24,27 +23,28 @@
     />
   </head>
   <body>
-    <nav class="navbar">
+    <nav class="navbar pomodoro">
       <ul class="links">
-        <li><a class="link" href="#main">POMODORO TIMER</a></li>
-        <li><a class="link" href="#instructions">INSTRUCTIONS</a></li>
+        <li><a class="navbar-link" href="#main">POMODORO TIMER</a></li>
+        <li><a class="navbar-link" href="#info">INSTRUCTIONS</a></li>
       </ul>
-      <span 
+      <span
         alt="settings"
         data-popup-target="#popup"
         id="open-popup"
-        class="material-icons">
+        class="material-icons"
+      >
         settings
       </span>
     </nav>
-    <div id="main" role="main">
+    <div class="pomodoro" id="main" role="main">
       <progress-ring
         progress="100"
         radius="150"
-        stroke="5"
+        stroke="6"
         class="progress-ring"
       ></progress-ring>
-      <button class="session-button" id="session-button">Start</button>
+      <button class="session-button pomodoro" id="session-button">Start</button>
 
       <div id="confirmation-overlay" class="overlay">
         <div id="confirmation-popup" class="popup">
@@ -67,67 +67,131 @@
           <h1 class="summary-title">Summary</h1>
           <hr class="summary-hr" />
           <div class="task-summary-list"></div>
-          <div class="summary-stats-container">
-            <span class="summary-actual-pomos"></span>
-            <span class="summary-estimated-pomos"></span>
-          </div>
+          <p id="summary-pomodoros" class="summary-stats"></p>
+          <p id="summary-tasks" class="summary-stats"></p>
+          <p id="summary-time" class="summary-stats"></p>
           <button class="summary-close-button">CLOSE</button>
         </div>
       </div>
 
       <div class="announcement-container">
-        <h2 class="announcement">Work on your tasks!</h2>
-        <button class="announcement-button announcement-yes-button hidden">
+        <h2 class="announcement"></h2>
+        <button
+          class="announcement-button announcement-yes-button hidden pomodoro"
+        >
           Yes
         </button>
-        <button class="announcement-button announcement-no-button hidden">
+        <button
+          class="announcement-button announcement-no-button hidden pomodoro"
+        >
           No
         </button>
       </div>
       <task-list class="task-list"></task-list>
     </div>
-    <div id="instructions">
-      <h1 class="instructions-title">INSTRUCTIONS</h1>
-      <hr class="instructions-hr" />
-      <ol class="instructions-list">
-        <li>
-          Make sure to add tasks that you wish to complete today into the 
-          task list!
-        </li>
-        <li>
-          Click on the task you would like to start working on and/or complete.
-        </li>
-        <li>
-          You will work for 25 minute intervals (Pomodoros) with 3-5 minute 
-          long breaks in between.
-        </li>
-        <li>
-          After 4 Pomodoros, you will be rewarded a longer 15-30 minute long 
-          break.
-        </li>
-        <li>
-          During each break, you will be asked if you have completed your task.
-          If so, click “Yes” and repeat from Step 2 if tasks remain.
-        </li>
-      </ol>
-      <p class="instructions-note">
-        NOTE: Within your 25 minute interval, press the “End” button if you get
-        distracted or need to leave. This will reset your Pomodoro count toward
-        your long break reward and you will be provided a summary page of what
-        you accomplished during your entire session.
-      </p>
+    <div id="info" class="info-container">
+      <section class="info-section-container">
+        <h1 class="info-title">INSTRUCTIONS</h1>
+        <hr class="info-hr" />
+        <ol class="instructions-list">
+          <li>Add tasks you want to complete in the task list.</li>
+          <li>
+            Click on the task you would like to start working on and/or
+            complete.
+          </li>
+          <li>
+            You will work for 25 minute intervals (Pomodoros) with 3-5 minute
+            long breaks in between.
+          </li>
+          <li>
+            After 4 Pomodoros, you will be rewarded a longer 15-30 minute long
+            break.
+          </li>
+          <li>
+            When your pomodoro ends, you will be asked if you have completed
+            your task. If so, click “Yes” and repeat from Step 2 if tasks
+            remain.
+          </li>
+        </ol>
+        <p class="instructions-note">
+          NOTE: Within your 25 minute interval, press the “End” button if you
+          get distracted or need to leave. This will reset your Pomodoro count
+          toward your long break reward and you will be provided a summary page
+          of what you accomplished during your entire session.
+        </p>
+      </section>
+      <section class="info-section-container">
+        <h1 class="info-title">FAQ</h1>
+        <hr class="info-hr" />
+        <h2 class="faq-question">What is the Pomodoro Technique?</h2>
+        <h3 class="faq-answer">
+          The Pomodoro technique is a time management method to help battle
+          procrastination and become more efficient through its framework of
+          breaking work down into intervals with rewarding breaks in between.
+          Learn more about the Pomodoro technique
+          <a
+            href="https://en.wikipedia.org/wiki/Pomodoro_Technique"
+            target="_blank"
+            rel="noreferrer noopener"
+            >here</a
+          >.
+        </h3>
+        <br />
+        <h2 class="faq-question">
+          What are the benefits of the Pomodoro Technique?
+        </h2>
+        <h3 class="faq-answer">
+          There are 5 main benefits when it comes to the Pomodoro technique:
+          <ol>
+            <li>Manage your time and avoid distractions</li>
+            <li>Keeps accountability</li>
+            <li>Improves Planning</li>
+            <li>Is better for health</li>
+            <li>Keeps you motivated</li>
+          </ol>
+          Check out
+          <a
+            href="https://seeken.org/5-benefits-of-pomodoro-technique/"
+            target="_blank"
+            rel="noreferrer noopener"
+            >this link</a
+          >
+          for more information regarding the benefits of the Pomodoro technique.
+        </h3>
+        <br />
+        <h2 class="faq-question">What do the summary colors mean?</h2>
+        <div class="faq-answer-container">
+          <ul class="faq-list summary-list">
+            <li class="task-summary-item complete under-budget">
+              Completed, under-budget task
+            </li>
+            <li class="task-summary-item complete over-budget">
+              Completed, over-budget task
+            </li>
+            <li class="task-summary-item in-progress">In progress task</li>
+            <li class="task-summary-item not-started">Not started task</li>
+            <li class="task-summary-item complete old">
+              Completed task from previous session (not used in calculations,
+              should be deleted)
+            </li>
+          </ul>
+        </div>
+      </section>
     </div>
 
     <settings-component class="settings"></settings-component>
 
-    <footer>
+    <footer class="footer pomodoro">
       <p>
         Created by Pomodo Dragons © 2021&ensp;
         <a
           href="https://github.com/seanye24/cse110-w21-group6"
           target="_blank"
           rel="noreferrer noopener"
-          ><img src="assets/github-icon.png" alt="github" class="github-icon"
+          ><img
+            src="<%= require('./assets/github.png') %>"
+            alt="github"
+            class="footer-icon"
         /></a>
       </p>
     </footer>

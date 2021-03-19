@@ -3,13 +3,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = (env, argv) => {
   const config = {
     entry: ['./src/scripts/index.js'],
-    mode: argv.mode || 'production',
+    mode: argv.mode,
     target: 'web',
     output: {
       filename: 'main.js',
@@ -19,10 +18,25 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.css$/i,
+          test: /(?<!\.component)\.css$/i,
           include: [path.join(__dirname, 'src')],
           use: [
             MiniCssExtractPlugin.loader,
+            'css-loader',
+            {
+              loader: 'postcss-loader',
+              options: {
+                postcssOptions: {
+                  plugins: ['postcss-preset-env'],
+                },
+              },
+            },
+          ],
+        },
+        {
+          test: /\.component\.css$/i,
+          include: [path.join(__dirname, 'src')],
+          use: [
             'css-loader',
             {
               loader: 'postcss-loader',
@@ -40,7 +54,7 @@ module.exports = (env, argv) => {
           type: 'asset/resource',
         },
         {
-          test: /\.js$/,
+          test: /\.js$/i,
           include: [path.join(__dirname, 'src')],
           use: ['babel-loader'],
         },
@@ -52,15 +66,10 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         inject: true,
         template: 'src/index.html',
+        favicon: 'src/assets/favicon.ico',
       }),
-      new MiniCssExtractPlugin(),
-      new CopyPlugin({
-        patterns: [
-          {
-            from: 'src/assets',
-            to: 'assets',
-          },
-        ],
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
       }),
     ],
     optimization: {
@@ -71,7 +80,7 @@ module.exports = (env, argv) => {
       contentBase: path.join(__dirname, 'dist'),
       compress: true,
     },
-    devtool: 'inline-source-map',
+    ...(argv.mode === 'development' ? { devtool: 'inline-source-map' } : null),
   };
   return config;
 };

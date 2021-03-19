@@ -3,15 +3,10 @@
  * @file Timer script used to emulate the pomodoro process
  */
 
-let timerElement;
+import { subscribe } from '../models';
+import { ACTIONS } from '../utils/constants';
 
-/**
- * Initialize timer component
- * @param {HTMLElement} element - timer element
- */
-const initializeTimer = (element) => {
-  timerElement = element;
-};
+let timerElement;
 
 /**
  * Set time of timer component
@@ -26,5 +21,26 @@ const setTimer = (time) => {
  * @return {number} - current time of timer (in seconds)
  */
 const getTime = () => timerElement.time;
+
+/**
+ * Initialize timer component
+ * @param {HTMLElement} element - timer element
+ */
+const initializeTimer = (element) => {
+  timerElement = element;
+  const { pomodoroLength } = subscribe({
+    [ACTIONS.changeSession]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        setTimer(60 * sessionState.pomodoroLength);
+      }
+    },
+    [ACTIONS.changeCurrentTime]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        setTimer(sessionState.currentTime);
+      }
+    },
+  });
+  setTimer(pomodoroLength * 60);
+};
 
 export { initializeTimer, setTimer, getTime };

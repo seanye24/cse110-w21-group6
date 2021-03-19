@@ -1,0 +1,33 @@
+.container {
+  padding: 1em;
+  font: normal 1rem 'Source Sans Pro', sans-serif;
+  border-radius: 5px;
+  height: 100%;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.container.pomodoro {
+  background: #00b4d8;
+}
+
+.container.short-break {
+  background: #54c800;
+}
+
+.container.long-break {
+  background: #f87335;
+}
+
+.task-item-container {
+  flex: 1;
+  overflow: auto;
+}
+
+.title {
+  text-align: center;
+  color: #fff;
+  margin-top: 0;
+}

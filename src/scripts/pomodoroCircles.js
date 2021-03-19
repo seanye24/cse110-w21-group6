@@ -2,6 +2,8 @@
  * @file Manage pomodoro circles for page
  */
 
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import { validateCircleCount } from '../utils/pomodoroCircles';
 
 let circlesElement;
@@ -31,6 +33,27 @@ const setCircleCount = (value) => {
  */
 const initializePomodoroCircles = (element) => {
   circlesElement = element;
+  subscribe({
+    [ACTIONS.changeSession]: (sessionState) => {
+      if (sessionState.session === 'inactive') {
+        setCircleCount(0);
+      }
+    },
+    [ACTIONS.changeCurrentInterval]: (sessionState) => {
+      if (sessionState.session === 'active') {
+        // reset circles if starting new set of 4 pomos
+        if (sessionState.currentInterval === INTERVALS.pomodoro) {
+          if (sessionState.numberOfPomodorosCompleted % 4 === 0) {
+            setCircleCount(0);
+          }
+        } else {
+          setCircleCount(
+            ((sessionState.numberOfPomodorosCompleted - 1) % 4) + 1,
+          );
+        }
+      }
+    },
+  });
 };
 
 export { initializePomodoroCircles, getCircleCount, setCircleCount };

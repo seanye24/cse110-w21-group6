@@ -1,0 +1,16 @@
+.circle-container {
+  display: flex;
+}
+
+.circle {
+  height: 15px;
+  width: 15px;
+  border: 1px solid white;
+  border-radius: 50%;
+  margin: 15px 7px 0;
+  display: inline-block;
+}
+
+.circle.active {
+  background-color: #fff;
+}

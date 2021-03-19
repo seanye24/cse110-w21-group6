@@ -2,7 +2,8 @@
  * @file Manage tasklist for page
  */
 
-import { TIMER_AUDIOS } from '../utils/constants';
+import { dispatch } from '../models';
+import { ACTIONS, KEYS, TIMER_AUDIOS } from '../utils/constants';
 import {
   validateShortBreakLength,
   validateLongBreakLength,
@@ -11,13 +12,12 @@ import {
 } from '../utils/settings';
 
 let settingsElement;
-let popupEl;
+let popupElement;
 let saveButton;
 let overlay;
 let shortBreakInput;
 let longBreakInput;
 let timerAudioInput;
-let soundInput;
 let errorMessages;
 const timerAudioElement = new Audio();
 timerAudioElement.volume = 0.2;
@@ -83,12 +83,16 @@ const setTimerAudio = (value) => {
  * Open settings popup
  */
 const openPopup = () => {
-  popupEl.classList.add('active');
+  // enable audio element, ignore if interrupted
+  timerAudioElement.src = '';
+  timerAudioElement.play().catch(() => true);
+
+  popupElement.classList.add('active');
   overlay.classList.add('active');
 
   shortBreakInput.value = getShortBreakLength();
   longBreakInput.value = getLongBreakLength();
-  soundInput.value = getTimerAudio();
+  timerAudioInput.value = getTimerAudio();
 };
 
 /**
@@ -96,8 +100,11 @@ const openPopup = () => {
  */
 const closePopup = () => {
   timerAudioElement.pause();
-  popupEl.classList.remove('active');
+  popupElement.classList.remove('active');
   overlay.classList.remove('active');
+  errorMessages.forEach((msg) => {
+    msg.style.display = 'none';
+  });
 };
 
 /**
@@ -111,22 +118,25 @@ const saveSettings = () => {
   const isNewShortBreakLengthValid = newShortBreakLength !== null;
   const isNewLongBreakLengthValid = newLongBreakLength !== null;
 
-  errorMessages[0].style.visibility = isNewShortBreakLengthValid
-    ? 'hidden'
-    : 'visible';
-  errorMessages[1].style.visibility = isNewLongBreakLengthValid
-    ? 'hidden'
-    : 'visible';
+  errorMessages[0].style.display = isNewShortBreakLengthValid
+    ? 'none'
+    : 'initial';
+  errorMessages[1].style.display = isNewLongBreakLengthValid
+    ? 'none'
+    : 'initial';
   if (!isNewShortBreakLengthValid || !isNewLongBreakLengthValid) {
     return null;
   }
 
-  setTimerAudio(soundInput.value);
   setShortBreakLength(newShortBreakLength);
   setLongBreakLength(newLongBreakLength);
-  window.localStorage.setItem('shortBreakLength', newShortBreakLength);
-  window.localStorage.setItem('longBreakLength', newLongBreakLength);
-  window.localStorage.setItem('timerAudio', timerAudio);
+  setTimerAudio(timerAudio);
+  dispatch(ACTIONS.changeShortBreakLength, newShortBreakLength);
+  dispatch(ACTIONS.changeLongBreakLength, newLongBreakLength);
+  dispatch(ACTIONS.changeTimerAudio, timerAudio);
+  window.localStorage.setItem(KEYS.shortBreakLength, newShortBreakLength);
+  window.localStorage.setItem(KEYS.longBreakLength, newLongBreakLength);
+  window.localStorage.setItem(KEYS.timerAudio, timerAudio);
   return [newShortBreakLength, newLongBreakLength];
 };
 
@@ -145,33 +155,35 @@ const popupFunctions = {
 const initializeElements = (root) => {
   settingsElement = root;
   const { shadowRoot } = settingsElement;
-  popupEl = shadowRoot.querySelector('.popup');
+  popupElement = shadowRoot.querySelector('.popup-container');
+  shortBreakInput = shadowRoot.querySelector('#short-break-input');
+  longBreakInput = shadowRoot.querySelector('#long-break-input');
+  timerAudioInput = shadowRoot.querySelector('#timer-audio-input');
+  errorMessages = shadowRoot.querySelectorAll('.error-message');
   saveButton = shadowRoot.querySelector('.save-button');
   overlay = shadowRoot.querySelector('#overlay');
-  shortBreakInput = shadowRoot.querySelector('#short-number');
-  longBreakInput = shadowRoot.querySelector('#long-number');
-  timerAudioInput = shadowRoot.querySelector('#sound');
-  soundInput = shadowRoot.querySelector('#sound');
-  errorMessages = shadowRoot.querySelectorAll('.error');
 };
 
 /**
  * Set the initial settings element
  * @param {HTMLElement} root - settings element
- * @param {Function} saveSettingsCallback - callback for when settings are saved
  */
-const initializePopup = (root, saveSettingsCallback) => {
+const initializePopup = (root) => {
   const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
   initializeElements(root);
   setShortBreakLength(shortBreakLength);
   setLongBreakLength(longBreakLength);
+  dispatch(ACTIONS.changeShortBreakLength, shortBreakLength);
+  dispatch(ACTIONS.changeLongBreakLength, longBreakLength);
 
-  const savedTimerAudio = window.localStorage.getItem('timerAudio');
+  const savedTimerAudio = window.localStorage.getItem(KEYS.timerAudio);
   if (validateTimerAudio(savedTimerAudio) === null) {
     setTimerAudio(TIMER_AUDIOS.calm);
-    window.localStorage.setItem('timerAudio', TIMER_AUDIOS.calm);
+    window.localStorage.setItem(KEYS.timerAudio, TIMER_AUDIOS.calm);
+    dispatch(ACTIONS.changeTimerAudio, TIMER_AUDIOS.calm);
   } else {
     setTimerAudio(savedTimerAudio);
+    dispatch(ACTIONS.changeTimerAudio, savedTimerAudio);
   }
 
   overlay.onclick = closePopup;
@@ -182,13 +194,14 @@ const initializePopup = (root, saveSettingsCallback) => {
       return;
     }
     popupFunctions.closePopup();
-    saveSettingsCallback(...newBreakLengths);
+    dispatch(ACTIONS.changeShortBreakLength, newBreakLengths[0]);
+    dispatch(ACTIONS.changeLongBreakLength, newBreakLengths[1]);
   });
 
-  soundInput.onchange = () => {
+  timerAudioInput.onchange = () => {
     timerAudioElement.pause();
-    timerAudioElement.src = soundInput.value;
-    timerAudioElement.play();
+    timerAudioElement.src = timerAudioInput.value;
+    timerAudioElement.play().catch(() => true); // ignore if interrupted
   };
 };
 

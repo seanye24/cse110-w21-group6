@@ -2,9 +2,12 @@
  * @file task-list web component
  */
 
+import styles from '../styles/task-list.component.css';
 import { createElement } from '../utils/helpers';
 import TaskItem from './TaskItem';
 import TaskItemForm from './TaskItemForm';
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 
 customElements.define('task-item', TaskItem);
 customElements.define('task-item-form', TaskItemForm);
@@ -18,33 +21,12 @@ class TaskList extends HTMLElement {
     super();
 
     this.shadow = this.attachShadow({ mode: 'open' });
-    this.styleElement = document.createElement('style');
-    this.styleElement.innerText = `
-      .container {
-        padding: 1em;
-        font: normal 1rem 'Source Sans Pro', sans-serif;
-        border-radius: 5px;
-        background: #00b4d8;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-      }
-
-      .task-item-container {
-        flex: 1;
-        overflow: auto;
-      }
-
-      .title {
-        text-align: center;
-        color: #fff;
-        margin-top: 0;
-      }
-    `;
+    this.styleElement = createElement('style', {
+      innerText: styles.toString(),
+    });
 
     this.containerElement = createElement('div', {
-      className: 'container',
+      className: 'container pomodoro',
     });
 
     this.titleElement = createElement('h1', {
@@ -66,6 +48,31 @@ class TaskList extends HTMLElement {
       this.taskItemListContainerElement,
       this.taskItemFormElement,
     );
+
+    subscribe({
+      [ACTIONS.changeSession]: (sessionState) => {
+        if (sessionState.session === 'inactive') {
+          this.containerElement.className = 'container pomodoro';
+        }
+      },
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
+        if (sessionState.session === 'active') {
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
+              this.containerElement.className = 'container pomodoro';
+              break;
+            case INTERVALS.shortBreak:
+              this.containerElement.className = 'container short-break';
+              break;
+            case INTERVALS.longBreak:
+              this.containerElement.className = 'container long-break';
+              break;
+            default:
+              this.containerElement.className = 'container pomodoro';
+          }
+        }
+      },
+    });
   }
 }
 

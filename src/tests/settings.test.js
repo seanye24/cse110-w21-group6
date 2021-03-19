@@ -17,6 +17,7 @@ import {
   DEFAULT_LONG_BREAK_LENGTH,
   DEFAULT_SHORT_BREAK_LENGTH,
   DEFAULT_TIMER_AUDIO,
+  KEYS,
   TIMER_AUDIOS,
 } from '../utils/constants';
 import {
@@ -27,10 +28,12 @@ import {
 } from '../utils/settings';
 
 // add audio element api (jsdom doens't support video/audio elements right now)
-window.HTMLMediaElement.prototype.load = jest.fn();
-window.HTMLMediaElement.prototype.play = jest.fn();
-window.HTMLMediaElement.prototype.pause = jest.fn();
-window.HTMLMediaElement.prototype.addTextTrack = jest.fn();
+window.HTMLMediaElement.prototype.load = jest.fn(() => Promise.resolve());
+window.HTMLMediaElement.prototype.play = jest.fn(() => Promise.resolve());
+window.HTMLMediaElement.prototype.pause = jest.fn(() => Promise.resolve());
+window.HTMLMediaElement.prototype.addTextTrack = jest.fn(() =>
+  Promise.resolve(),
+);
 
 customElements.define('settings-component', SettingsPopup);
 
@@ -247,8 +250,8 @@ describe('testing initializeIntervalLengths', () => {
   });
 
   test('saved lengths are retrieved correctly', () => {
-    window.localStorage.setItem('shortBreakLength', 3);
-    window.localStorage.setItem('longBreakLength', 30);
+    window.localStorage.setItem(KEYS.shortBreakLength, 3);
+    window.localStorage.setItem(KEYS.longBreakLength, 30);
 
     const { shortBreakLength, longBreakLength } = initializeIntervalLengths();
     expect(shortBreakLength).toBe(3);
@@ -256,15 +259,15 @@ describe('testing initializeIntervalLengths', () => {
   });
 
   test('if invalid lengths are saved, correctly fallback to defaults', () => {
-    window.localStorage.setItem('shortBreakLength', 10);
-    window.localStorage.setItem('longBreakLength', 35);
+    window.localStorage.setItem(KEYS.shortBreakLength, 10);
+    window.localStorage.setItem(KEYS.longBreakLength, 35);
 
     let { shortBreakLength, longBreakLength } = initializeIntervalLengths();
     expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
     expect(longBreakLength).toBe(DEFAULT_LONG_BREAK_LENGTH);
 
-    window.localStorage.setItem('shortBreakLength', '$@#$');
-    window.localStorage.setItem('longBreakLength', true);
+    window.localStorage.setItem(KEYS.shortBreakLength, '$@#$');
+    window.localStorage.setItem(KEYS.longBreakLength, true);
 
     ({ shortBreakLength, longBreakLength } = initializeIntervalLengths());
     expect(shortBreakLength).toBe(DEFAULT_SHORT_BREAK_LENGTH);
@@ -348,25 +351,24 @@ describe('testing set functions from script file', () => {
 describe('testing popup actions', () => {
   let settingsPopupElement;
   let popupElement;
-  let overlayElement;
   let shortBreakInputElement;
   let longBreakInputElement;
   let timerAudioInputElement;
   let saveButton;
-  const mockSaveSettingsCallback = jest.fn();
+  let overlayElement;
   const saveSettingsSpy = jest.spyOn(popupFunctions, 'saveSettings');
   const closePopupSpy = jest.spyOn(popupFunctions, 'closePopup');
   beforeEach(() => {
     window.localStorage.clear();
     settingsPopupElement = createElement('settings-component');
-    initializePopup(settingsPopupElement, mockSaveSettingsCallback);
+    initializePopup(settingsPopupElement);
     const { shadowRoot } = settingsPopupElement;
-    popupElement = shadowRoot.querySelector('.popup');
-    overlayElement = shadowRoot.querySelector('#overlay');
-    shortBreakInputElement = shadowRoot.querySelector('#short-number');
-    longBreakInputElement = shadowRoot.querySelector('#long-number');
-    timerAudioInputElement = shadowRoot.querySelector('#sound');
+    popupElement = shadowRoot.querySelector('.popup-container');
+    shortBreakInputElement = shadowRoot.querySelector('#short-break-input');
+    longBreakInputElement = shadowRoot.querySelector('#long-break-input');
+    timerAudioInputElement = shadowRoot.querySelector('#timer-audio-input');
     saveButton = shadowRoot.querySelector('.save-button');
+    overlayElement = shadowRoot.querySelector('#overlay');
   });
 
   test('popup opens correctly with default settings', () => {
@@ -416,11 +418,6 @@ describe('testing popup actions', () => {
       value: [DEFAULT_SHORT_BREAK_LENGTH, DEFAULT_LONG_BREAK_LENGTH],
     });
     expect(closePopupSpy).toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).toHaveBeenCalledWith(
-      DEFAULT_SHORT_BREAK_LENGTH,
-      DEFAULT_LONG_BREAK_LENGTH,
-    );
   });
 
   test("save button doesn't close when errors are present", () => {
@@ -436,7 +433,6 @@ describe('testing popup actions', () => {
       value: null,
     });
     expect(closePopupSpy).not.toHaveBeenCalled();
-    expect(mockSaveSettingsCallback).not.toHaveBeenCalled();
   });
 });
 
@@ -452,10 +448,10 @@ describe('testing save actions', () => {
     settingsPopupElement = createElement('settings-component');
     initializePopup(settingsPopupElement);
     const { shadowRoot } = settingsPopupElement;
-    shortBreakInputElement = shadowRoot.querySelector('#short-number');
-    longBreakInputElement = shadowRoot.querySelector('#long-number');
-    timerAudioInputElement = shadowRoot.querySelector('#sound');
-    errorMessageElements = shadowRoot.querySelectorAll('.error');
+    shortBreakInputElement = shadowRoot.querySelector('#short-break-input');
+    longBreakInputElement = shadowRoot.querySelector('#long-break-input');
+    timerAudioInputElement = shadowRoot.querySelector('#timer-audio-input');
+    errorMessageElements = shadowRoot.querySelectorAll('.error-message');
   });
 
   test('valid inputs are saved correctly', () => {
@@ -467,9 +463,9 @@ describe('testing save actions', () => {
     expect(settingsPopupElement.shortBreakLength).toBe(4);
     expect(settingsPopupElement.longBreakLength).toBe(17);
     expect(settingsPopupElement.timerAudio).toBe(TIMER_AUDIOS.annoying);
-    expect(window.localStorage.getItem('shortBreakLength')).toBe('4');
-    expect(window.localStorage.getItem('longBreakLength')).toBe('17');
-    expect(window.localStorage.getItem('timerAudio')).toBe(
+    expect(window.localStorage.getItem(KEYS.shortBreakLength)).toBe('4');
+    expect(window.localStorage.getItem(KEYS.longBreakLength)).toBe('17');
+    expect(window.localStorage.getItem(KEYS.timerAudio)).toBe(
       TIMER_AUDIOS.annoying,
     );
   });
@@ -487,13 +483,15 @@ describe('testing save actions', () => {
       DEFAULT_LONG_BREAK_LENGTH,
     );
     expect(settingsPopupElement.timerAudio).toBe(DEFAULT_TIMER_AUDIO);
-    expect(window.localStorage.getItem('shortBreakLength')).toBe(
+    expect(window.localStorage.getItem(KEYS.shortBreakLength)).toBe(
       String(DEFAULT_SHORT_BREAK_LENGTH),
     );
-    expect(window.localStorage.getItem('longBreakLength')).toBe(
+    expect(window.localStorage.getItem(KEYS.longBreakLength)).toBe(
       String(DEFAULT_LONG_BREAK_LENGTH),
     );
-    expect(window.localStorage.getItem('timerAudio')).toBe(DEFAULT_TIMER_AUDIO);
+    expect(window.localStorage.getItem(KEYS.timerAudio)).toBe(
+      DEFAULT_TIMER_AUDIO,
+    );
   });
 
   test('invalid inputs trigger error messages', () => {
@@ -501,19 +499,19 @@ describe('testing save actions', () => {
     longBreakInputElement.value = 34;
     saveSettings();
     Array.from(errorMessageElements).forEach((el) =>
-      expect(el.style.visibility).toBe('visible'),
+      expect(el.style.display).toBe('initial'),
     );
 
     shortBreakInputElement.value = 10;
     longBreakInputElement.value = 29;
     saveSettings();
-    errorMessageElements[0].style.visibility = 'visible';
-    errorMessageElements[1].style.visibility = 'hidden';
+    errorMessageElements[0].style.display = 'none';
+    errorMessageElements[1].style.display = 'initial';
 
     shortBreakInputElement.value = 5;
     longBreakInputElement.value = 10;
     saveSettings();
-    errorMessageElements[0].style.visibility = 'hidden';
-    errorMessageElements[1].style.visibility = 'visible';
+    errorMessageElements[0].style.display = 'none';
+    errorMessageElements[1].style.display = 'initial';
   });
 });

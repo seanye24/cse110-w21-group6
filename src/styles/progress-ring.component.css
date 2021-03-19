@@ -1,0 +1,19 @@
+.overlay-circle.pomodoro {
+  stroke: #0095b3;
+}
+
+.overlay-circle.short-break {
+  stroke: #4ab717;
+}
+
+.overlay-circle.long-break {
+  stroke: #f87335;
+}
+
+.foreign-object-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

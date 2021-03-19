@@ -2,6 +2,9 @@
  * @file progress-ring web component
  */
 
+import styles from '../styles/progress-ring.component.css';
+import { subscribe } from '../models';
+import { ACTIONS, INTERVALS } from '../utils/constants';
 import { createElement } from '../utils/helpers';
 import { validateLength, validateProgress } from '../utils/progressRing';
 
@@ -30,9 +33,9 @@ class ProgressRing extends HTMLElement {
       { namespace: svgNamespace },
     );
 
-    this.circleElement = createElement(
+    this.overlayCircleElement = createElement(
       'circle',
-      { class: 'circle' },
+      { class: 'overlay-circle pomodoro' },
       { namespace: svgNamespace },
     );
     this.baseCircleElement = createElement(
@@ -61,7 +64,7 @@ class ProgressRing extends HTMLElement {
     this.root.append(this.styleElement, this.svgElement);
     this.svgElement.append(
       this.baseCircleElement,
-      this.circleElement,
+      this.overlayCircleElement,
       this.foreignObjectElement,
     );
     this.foreignObjectElement.appendChild(this.foreignObjectContainer);
@@ -93,14 +96,13 @@ class ProgressRing extends HTMLElement {
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: 0;
         stroke-width: ${stroke};
-        fill: #48cae4;
+        fill: transparent;
       }
 
-      .circle {
-        stroke: #0095b3;
+      .overlay-circle {
         stroke-dasharray: ${circumference} ${circumference};
         stroke-dashoffset: ${(1 - progress / 100) * circumference};
-        stroke-width: ${stroke + 2};
+        stroke-width: ${stroke};
         fill: transparent;
 
         transition: stroke-dashoffset 0.5s;
@@ -108,29 +110,60 @@ class ProgressRing extends HTMLElement {
         transform-origin: 50% 50%;
       }
 
-      .foreign-object {
-      }
-
-      .foreign-object-container {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+      ${styles.toString()}
     `;
 
     this.foreignObjectElement.setAttribute('width', 2 * radius);
     this.foreignObjectElement.setAttribute('height', 2 * radius);
-    this.circleElement.setAttribute('r', normalizedRadius);
-    this.circleElement.setAttribute('cx', radius);
-    this.circleElement.setAttribute('cy', radius);
+    this.overlayCircleElement.setAttribute('r', normalizedRadius);
+    this.overlayCircleElement.setAttribute('cx', radius);
+    this.overlayCircleElement.setAttribute('cy', radius);
 
     this.baseCircleElement.setAttribute('r', normalizedRadius);
     this.baseCircleElement.setAttribute('cx', radius);
     this.baseCircleElement.setAttribute('cy', radius);
 
     this.timerComponent.containerRadius = radius;
+
+    subscribe({
+      [ACTIONS.changeSession]: (sessionState) => {
+        if (sessionState.session === 'inactive') {
+          this.overlayCircleElement.setAttribute(
+            'class',
+            'overlay-circle pomodoro',
+          );
+        }
+      },
+      [ACTIONS.changeCurrentInterval]: (sessionState) => {
+        if (sessionState.session === 'active') {
+          switch (sessionState.currentInterval) {
+            case INTERVALS.pomodoro:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle pomodoro',
+              );
+              break;
+            case INTERVALS.shortBreak:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle short-break',
+              );
+              break;
+            case INTERVALS.longBreak:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle long-break',
+              );
+              break;
+            default:
+              this.overlayCircleElement.setAttribute(
+                'class',
+                'overlay-circle pomodoro',
+              );
+          }
+        }
+      },
+    });
   }
 
   attributeChangedCallback(name, oldValue, newValue) {

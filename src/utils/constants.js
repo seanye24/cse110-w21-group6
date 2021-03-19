@@ -1,31 +1,43 @@
 /**
  * @file Constants file
  */
+import calm from '../assets/calm-alarm.mp3';
+import annoying from '../assets/original-alarm.mp3';
+import kanye from '../assets/kanye-stop.mp3';
 
 // announcements
-export const POMODORO_ANNOUNCEMENT = 'Focus.';
-export const SHORT_BREAK_ANNOUNCEMENT = 'Enjoy your short break!';
-export const LONG_BREAK_ANNOUNCEMENT = 'Good work. Enjoy a longer break!';
-export const INTRO_ANNOUNCEMENT = 'What do you need to work on today?';
-export const INTRO_SELECT_TASK_ANNOUNCEMENT = 'Select a task then hit start!';
-export const NEW_SELECT_TASK_ANNOUNCEMENT = 'Select another task.';
-export const CONTINUING_SELECT_TASK_ANNOUNCEMENT =
-  'Select another task if you would like.';
-export const TASK_COMPLETION_QUESTION = 'Did you finish the task?';
-export const END_OF_SESSION_ANNOUNCEMENT = 'Good work today!';
-export const NO_TASKS_ANNOUNCEMENT = 'No work to be done.';
+export const ANNOUNCEMENTS = {
+  pomodoroInterval: 'Focus.',
+  shortBreakInterval: 'Enjoy your short break!',
+  longBreakInterval: 'Good work. Enjoy a longer break!',
+  introduction: 'What do you need to work on today?',
+  clickToStart: 'Hit start to begin your pomodoro session!',
+  selectNewTask: 'Select a new task!',
+  taskCompletionQuestion: 'Did you finish the task?',
+  endOfSession: 'Good work today!',
+  noTasksAvailable: 'Add a task to get started!',
+};
 
-// various names (mainly for localStorage)
-export const POMODORO_INTERVAL = 'pomodoroInterval';
-export const SHORT_BREAK_INTERVAL = 'shortBreakInterval';
-export const LONG_BREAK_INTERVAL = 'longBreakInterval';
-export const TIMER_AUDIO = 'timerAudio';
+// interval names
+export const INTERVALS = {
+  pomodoro: 'pomodoroInterval',
+  shortBreak: 'shortBreakInterval',
+  longBreak: 'longBreakInterval',
+};
+
+// localStorage keys
+export const KEYS = {
+  shortBreakLength: 'shortBreakLength',
+  longBreakLength: 'longBreakLength',
+  timerAudio: 'timerAudio',
+  tasks: 'tasks',
+};
 
 // timer audio paths
 export const TIMER_AUDIOS = {
-  calm: 'assets/calm-alarm.mp3',
-  annoying: 'assets/original-alarm.mp3',
-  kanye: 'assets/kanye-stop.mp3',
+  calm,
+  annoying,
+  kanye,
 };
 
 // default settings
@@ -33,3 +45,22 @@ export const DEFAULT_POMODORO_LENGTH = 25;
 export const DEFAULT_SHORT_BREAK_LENGTH = 5;
 export const DEFAULT_LONG_BREAK_LENGTH = 15;
 export const DEFAULT_TIMER_AUDIO = TIMER_AUDIOS.calm;
+
+// actions
+export const ACTIONS = {
+  changeSession: 'change current session',
+  changeTotalSessionTime: 'change total session time',
+  changeCurrentTime: 'change current time',
+  changeCurrentInterval: 'change current interval',
+  changeNumberOfPomodoros: 'change number of pomodoros completed',
+  changePomodoroLength: 'change pomodoro length',
+  changeShortBreakLength: 'change short break length',
+  changeLongBreakLength: 'change long break length',
+  changeTimerAudio: 'change timer audio',
+  changeSelectedTask: 'change currently selected task',
+  incrementSelectedTask: 'increment current task',
+  completeSelectedTask: 'complete current task',
+  doNotCompleteSelectedTask: 'do not complete current task',
+  addToCompletedTasks: 'add to completed tasks',
+  clearCompletedTasks: 'clear completed tasks',
+};
