@@ -20,7 +20,7 @@ const sessionState = {
   currentInterval: INTERVALS.pomodoro,
   currentSelectedTask: null,
   completedTasks: [],
-  pomodoroLength: 0.1 || DEFAULT_POMODORO_LENGTH, // TODO: FOR TESTING, use DEFAULT_POMODORO_LENGTH later
+  pomodoroLength: DEFAULT_POMODORO_LENGTH,
   shortBreakLength: 0,
   longBreakLength: 0,
   timerAudio,
